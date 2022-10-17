@@ -73,8 +73,7 @@ class AppUser extends Model
     /**
      * @OA\Property(
      *     description="Disabilities",
-     *     title="Disabilities",
-    *      allowableValues = { "Motor", "Visual", "Hearing", "Intellectual" }
+     *     title="Disabilities"
      * )
      *
      * @var string
