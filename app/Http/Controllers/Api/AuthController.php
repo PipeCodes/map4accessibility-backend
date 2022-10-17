@@ -33,7 +33,9 @@ class AuthController extends Controller
      *     summary="login AppUser",
      *     description="",
      *     operationId="loginUser",
-     *     security={},
+    *     security={
+    *          {"api_key_security": {}}
+    *      },
      *     @OA\RequestBody(
      *         description=" object",
      *         required=true,
@@ -112,7 +114,9 @@ class AuthController extends Controller
      *     summary="Create AppUser",
      *     description="",
      *     operationId="createUser",
-     *      security={"api_key_security"},
+    *     security={
+    *          {"api_key_security": {}}
+    *      },
      *     @OA\RequestBody(
      *         description="Create AppUser object",
      *         required=true,

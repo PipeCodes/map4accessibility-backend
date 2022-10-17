@@ -47,7 +47,7 @@ class AppUserResource extends Resource
                     ->placeholder('')
                     ->suggestions(__('validation.disabilities'))
                     ->separator(','),
-                Forms\Components\DatePicker::make('date_of_birth')
+                Forms\Components\DatePicker::make('birthdate')
                     ->required(),
                 Forms\Components\FileUpload::make('avatar')
                     ->image(),

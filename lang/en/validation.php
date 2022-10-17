@@ -167,6 +167,7 @@ return [
 
     'attributes' => [],
     'disabilities' => [
+        '',
         'motor',
         'visual',
         'hearing',

@@ -72,7 +72,11 @@
                         "description": "Internal error"
                     }
                 },
-                "security": []
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
             }
         },
         "/auth/register": {
@@ -133,95 +137,6 @@
                         "scalar": "api_key_security"
                     }
                 ]
-            }
-        },
-        "/api/v1/faqs": {
-            "get": {
-                "tags": [
-                    "FAQ's"
-                ],
-                "summary": "Get list of FAQs",
-                "description": "Returns list of FAQs",
-                "operationId": "getFaqs",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "Set language parameter",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "en"
-                        }
-                    },
-                    {
-                        "name": "x-api-key",
-                        "in": "header",
-                        "description": "Set apiKey parameter",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/FAQs"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/legal-text/{type}": {
-            "get": {
-                "tags": [
-                    "Legal Texts"
-                ],
-                "summary": "Get a legal text",
-                "description": "Returns a legal text",
-                "operationId": "getLegalText",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "Set language parameter",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "en"
-                        }
-                    },
-                    {
-                        "name": "x-api-key",
-                        "in": "header",
-                        "description": "Set apiKey parameter",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "$ref": "#/components/parameters/LegalText--type"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/LegalText"
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     },
