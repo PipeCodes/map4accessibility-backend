@@ -112,7 +112,7 @@ class AuthController extends Controller
      *     summary="Create AppUser",
      *     description="",
      *     operationId="createUser",
-    *      security={"api_key_security"},
+     *      security={"api_key_security"},
      *     @OA\RequestBody(
      *         description="Create AppUser object",
      *         required=true,
@@ -158,8 +158,11 @@ class AuthController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|string|max:255',
+                    'surname' => 'required|string|max:255',
+                    'birthdate' => 'required|date|max:255',
                     'email' => 'required|string|email|max:255|unique:users',
                     'password' => 'required|string|min:6',
+                    'disabilities' => 'string',
                     'avatar' => 'image|mimes:jpg,jpeg,png|max:2048',
                     'terms_accepted' => 'required',
                 ]
