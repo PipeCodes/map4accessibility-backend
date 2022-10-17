@@ -64,7 +64,7 @@ return [
                 'api' => [],
                 'asset' => [],
                 'docs' => [],
-                'oauth2_callback' => [],
+                'CheckApiKey' => [],
             ],
 
             /*
@@ -87,7 +87,7 @@ return [
             /*
              * Edit to set the api's base path
             */
-            'base' => env('L5_SWAGGER_BASE_PATH', null),
+            'base' => env('L5_SWAGGER_BASE_PATH', '/api/v1'),
 
             /*
              * Edit to set path where swagger ui assets should be stored
@@ -153,6 +153,18 @@ return [
         */
         'securityDefinitions' => [
             'securitySchemes' => [
+                'api_key_security' => [ // Unique name of security
+                    'type' => 'apiKey', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
+                    'description' => 'A API_KEY 1 security validation',
+                    'name' => 'x-api-key', // The name of the header or query parameter to be used.
+                    'in' => 'header', // The location of the API key. Valid values are "query" or "header".
+                ],
+                'sanctum' => [ // Unique name of security
+                    'type' => 'apiKey', // Valid values are "basic", "apiKey" or "oauth2".
+                    'description' => 'A 2 security validation, enter token in format (Bearer <token>)',
+                    'name' => 'Authorization', // The name of the header or query parameter to be used.
+                    'in' => 'header', // The location of the API key. Valid values are "query" or "header".
+                ],
                 /*
                  * Examples of Security schemes
                 */
@@ -204,6 +216,14 @@ return [
                  * Examples of Securities
                 */
                 [
+                    'api_key_security' => [
+                        'read',
+                        'write'
+                    ],
+                    'sanctum' => [
+                        'read',
+                        'write'
+                    ],
                     /*
                     'oauth2_security_example' => [
                         'read',

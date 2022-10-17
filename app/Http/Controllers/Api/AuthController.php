@@ -17,6 +17,61 @@ class AuthController extends Controller
     use ApiResponseTrait;
     use UploadTrait;
 
+    /**
+     *
+     *
+     * @OA\Schema(
+     *     schema="requestLoginObject",
+     *     type="object",
+     *     @OA\Property(property="email", format="email"),
+     *     @OA\Property(property="password")
+     * )
+     *
+     * @OA\Post(
+     *     path="/auth/login",
+     *     tags={"appUser"},
+     *     summary="login AppUser",
+     *     description="",
+     *     operationId="loginUser",
+     *     security={},
+     *     @OA\RequestBody(
+     *         description=" object",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/requestLoginObject")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
     public function login(Request $request)
     {
         try {
@@ -34,7 +89,7 @@ class AuthController extends Controller
 
             $user = AppUser::where('email', $request->email)->first();
 
-            if (! $user || ! Hash::check($request->password, $user->password)) {
+            if (!$user || !Hash::check($request->password, $user->password)) {
                 return $this->respondUnAuthorized();
             }
 
@@ -50,6 +105,52 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/auth/register",
+     *     tags={"appUser"},
+     *     summary="Create AppUser",
+     *     description="",
+     *     operationId="createUser",
+     *      security={"api_key_security"},
+     *     @OA\RequestBody(
+     *         description="Create AppUser object",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/AppUser")
+     *     ),
+     *      @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
     public function register(Request $request)
     {
         try {
@@ -57,8 +158,11 @@ class AuthController extends Controller
                 $request->all(),
                 [
                     'name' => 'required|string|max:255',
+                    'surname' => 'required|string|max:255',
+                    'birthdate' => 'required|date|max:255',
                     'email' => 'required|string|email|max:255|unique:users',
                     'password' => 'required|string|min:6',
+                    'disabilities' => 'string',
                     'avatar' => 'image|mimes:jpg,jpeg,png|max:2048',
                     'terms_accepted' => 'required',
                 ]

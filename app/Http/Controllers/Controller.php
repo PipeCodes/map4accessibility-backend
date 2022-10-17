@@ -7,18 +7,38 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller as BaseController;
 
+
 /**
  * @OA\Info(
- *      version="1.0.0",
- *      title="Map4Accessibility API",
- *      description="Swagger API documentation for Map4Accessibility project",
- *      @OA\Contact(
- *          name="PipeCodes",
- *          email="info@pipecodes.com"
- *      )
+ *     description="Map4Accessibility Backend",
+ *     version="0.0.2",
+ *     title="Map4Accessibility Backend",
+ *     termsOfService="http://swagger.io/terms/",
+ *     @OA\Contact(
+ *         email="apiteam@swagger.io"
+ *     ),
+ *     @OA\License(
+ *         name="Apache 2.0",
+ *         url="http://www.apache.org/licenses/LICENSE-2.0.html"
+ *     )
+ * )
+ * @OA\Tag(
+ *     name="appUser",
+ *     description="Operations about App User",
+ *     @OA\ExternalDocumentation(
+ *         description="Find out more about store",
+ *         url="http://swagger.io"
+ *     )
+ * )
+ * @OA\ExternalDocumentation(
+ *     description="Find out more about Swagger",
+ *     url="http://swagger.io"
  * )
  */
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+   
+
 }
