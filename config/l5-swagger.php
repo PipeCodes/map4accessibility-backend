@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'L5 Swagger UI',
+                'title' => 'Map4Accessibility API Documentation',
             ],
 
             'routes' => [
@@ -240,7 +240,7 @@ return [
          * Set this to `true` in development mode so that docs would be regenerated on each request
          * Set this to `false` to disable swagger generation on production
         */
-        'generate_always' => env('L5_SWAGGER_GENERATE_ALWAYS', false),
+        'generate_always' => env('L5_SWAGGER_GENERATE_ALWAYS', true),
 
         /*
          * Set this to `true` to generate a copy of documentation in yaml format
