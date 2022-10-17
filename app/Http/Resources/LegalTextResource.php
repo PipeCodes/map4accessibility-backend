@@ -14,13 +14,17 @@ class LegalTextResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'type' => $this->type,
-            'description' => $this->description,
-            'locale' => $this->locale,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-        ];
+        if(isset($this->id)) {
+            return [
+                'id' => $this->id,
+                'type' => $this->type,
+                'description' => $this->description,
+                'locale' => $this->locale,
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ];
+        }else {
+            return [];
+        }
     }
 }
