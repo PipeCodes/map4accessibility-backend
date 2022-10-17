@@ -9,6 +9,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use App\Helper\AppLocales;
 
 class FaqResource extends Resource
 {
@@ -34,9 +35,7 @@ class FaqResource extends Resource
                     ->maxLength(65535),
                 Forms\Components\TextInput::make('order')
                     ->required(),
-                Forms\Components\TextInput::make('locale')
-                    ->required()
-                    ->maxLength(255),
+                AppLocales::SelectLocales(),
             ]);
     }
 

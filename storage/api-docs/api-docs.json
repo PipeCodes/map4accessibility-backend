@@ -1,0 +1,270 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Map4Accessibility API",
+        "description": "Swagger API documentation for Map4Accessibility project",
+        "contact": {
+            "name": "PipeCodes",
+            "email": "info@pipecodes.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/v1/faqs": {
+            "get": {
+                "tags": [
+                    "FAQ's"
+                ],
+                "summary": "Get list of FAQs",
+                "description": "Returns list of FAQs",
+                "operationId": "getFaqs",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "x-api-key",
+                        "in": "header",
+                        "description": "Set apiKey parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FAQs"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/legal-text/{type}": {
+            "get": {
+                "tags": [
+                    "Legal Texts"
+                ],
+                "summary": "Get a legal text",
+                "description": "Returns a legal text",
+                "operationId": "getLegalText",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "x-api-key",
+                        "in": "header",
+                        "description": "Set apiKey parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/LegalText--type"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LegalText"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "FAQ": {
+                "title": "FAQ Object",
+                "description": "FAQ model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "id of Book",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "question": {
+                        "title": "question",
+                        "type": "string",
+                        "example": "Is this a question?"
+                    },
+                    "answer": {
+                        "title": "answer",
+                        "type": "string",
+                        "example": "This is an answer!"
+                    },
+                    "order": {
+                        "title": "order",
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "locale": {
+                        "title": "locale",
+                        "type": "string",
+                        "example": "en"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    }
+                },
+                "type": "object"
+            },
+            "FAQs": {
+                "title": "FAQ Response",
+                "properties": {
+                    "success": {
+                        "title": "success",
+                        "type": "boolean",
+                        "readOnly": "true",
+                        "example": "true"
+                    },
+                    "message": {
+                        "title": "message",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "null"
+                    },
+                    "result": {
+                        "title": "result",
+                        "properties": {
+                            "data": {
+                                "title": "data",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/FAQ"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "LegalText": {
+                "title": "Legal Text Object",
+                "description": "Legal Text model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "id of Legal Text",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "type": {
+                        "title": "type",
+                        "type": "string",
+                        "example": "terms"
+                    },
+                    "description": {
+                        "title": "description",
+                        "type": "string",
+                        "example": "This is a Legal Text!"
+                    },
+                    "locale": {
+                        "title": "locale",
+                        "type": "string",
+                        "example": "en"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    }
+                },
+                "type": "object"
+            },
+            "LegalTexts": {
+                "title": "Legal Text Response",
+                "properties": {
+                    "success": {
+                        "title": "success",
+                        "type": "boolean",
+                        "readOnly": "true",
+                        "example": "true"
+                    },
+                    "message": {
+                        "title": "message",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "null"
+                    },
+                    "result": {
+                        "title": "result",
+                        "properties": {
+                            "data": {
+                                "title": "data",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/LegalText"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "parameters": {
+            "LegalText--type": {
+                "name": "type",
+                "in": "path",
+                "description": "Type of Legal Text",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "example": "terms"
+                }
+            }
+        }
+    }
+}
