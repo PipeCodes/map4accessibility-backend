@@ -6,9 +6,101 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
 
+/**
+ * Class AppUser.
+ *
+ * @author  Miguel Fortes <miguel.fortes@pipecodes.com>
+ *
+ *
+ * @OA\Schema(schema="AppUser")
+ *
+ */
 class AppUser extends Model
 {
     use HasFactory, HasApiTokens;
+
+    /**
+     * @OA\Property(
+     *     format="int64",
+     *     description="ID",
+     *     title="ID",
+     * )
+     *
+     * @var int
+     */
+    private $id;
+
+    /**
+     * @OA\Property(
+     *     format="email",
+     *     description="Email",
+     *     title="Email",
+     * )
+     *
+     * @var string
+     */
+    private $email;
+    /**
+     * @OA\Property(
+     *     description="Name",
+     *     title="Name"
+     * )
+     *
+     * @var string
+     */
+    private $name;
+    /**
+     * @OA\Property(
+     *     description="Surname",
+     *     title="Surname"
+     * )
+     *
+     * @var string
+     */
+    private $surname;
+    /**
+     * @OA\Property(
+     *     description="Surname",
+     *     title="Surname",
+     *     format="date"
+     * )
+     *
+     * @var string
+     */
+    private $birthdate;
+
+
+    /**
+     * @OA\Property(
+     *     description="Disabilities",
+     *     title="Disabilities",
+    *      allowableValues = { "Motor", "Visual", "Hearing", "Intellectual" }
+     * )
+     *
+     * @var string
+     */
+    private $disabilities;
+
+    /**
+     * @OA\Property(
+     *     description="password",
+     *     title="password"
+     * )
+     *
+     * @var string
+     */
+    private $password;
+
+    /**
+     * @OA\Property(
+     *     type="bool",
+     *     description="Terms Accepted",
+     *     title="Terms Accepted"
+     * )
+     *
+     * @var bool
+     */
+    private $terms_accepted;
 
     /**
      * The attributes that are mass assignable.
@@ -17,19 +109,13 @@ class AppUser extends Model
      */
     protected $fillable = [
         'name',
+        'surname',
         'email',
+        'birthdate',
+        'disabilities',
         'avatar',
         'password',
         'terms_accepted',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
     ];
 
     /**

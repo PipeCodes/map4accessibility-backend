@@ -153,11 +153,17 @@ return [
         */
         'securityDefinitions' => [
             'securitySchemes' => [
+                'api_key_security' => [ // Unique name of security
+                    'type' => 'apiKey', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
+                    'description' => 'A API_KEY 1 security validation',
+                    'name' => 'x-api-key', // The name of the header or query parameter to be used.
+                    'in' => 'header', // The location of the API key. Valid values are "query" or "header".
+                ],
                 'sanctum' => [ // Unique name of security
-                'type' => 'apiKey', // Valid values are "basic", "apiKey" or "oauth2".
-                'description' => 'Enter token in format (Bearer <token>)',
-                'name' => 'Authorization', // The name of the header or query parameter to be used.
-                'in' => 'header', // The location of the API key. Valid values are "query" or "header".
+                    'type' => 'apiKey', // Valid values are "basic", "apiKey" or "oauth2".
+                    'description' => 'A 2 security validation, enter token in format (Bearer <token>)',
+                    'name' => 'Authorization', // The name of the header or query parameter to be used.
+                    'in' => 'header', // The location of the API key. Valid values are "query" or "header".
                 ],
                 /*
                  * Examples of Security schemes
@@ -210,6 +216,10 @@ return [
                  * Examples of Securities
                 */
                 [
+                    'api_key_security' => [
+                        'read',
+                        'write'
+                    ],
                     'sanctum' => [
                         'read',
                         'write'
