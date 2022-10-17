@@ -56,7 +56,7 @@
         "/api/v1/legal-text/{type}": {
             "get": {
                 "tags": [
-                    "FAQ's"
+                    "Legal Texts"
                 ],
                 "summary": "Get a legal text",
                 "description": "Returns a legal text",

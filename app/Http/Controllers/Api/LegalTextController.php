@@ -19,7 +19,7 @@ class LegalTextController extends Controller
      * @OA\Get(
      *  path="/api/v1/legal-text/{type}",
      *  operationId="getLegalText",
-     *  tags={"FAQ's"},
+     *  tags={"Legal Texts"},
      *  summary="Get a legal text",
      *  description="Returns a legal text",
      *  @OA\Parameter(
