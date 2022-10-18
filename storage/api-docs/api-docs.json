@@ -79,6 +79,66 @@
                 ]
             }
         },
+        "/auth/login-by-provider": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "login provider AppUser",
+                "description": "",
+                "operationId": "loginUserProvider",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestLoginByProviderObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid provider data supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
         "/auth/register": {
             "post": {
                 "tags": [
@@ -134,9 +194,98 @@
                 },
                 "security": [
                     {
-                        "scalar": "api_key_security"
+                        "api_key_security": []
                     }
                 ]
+            }
+        },
+        "/api/v1/faqs": {
+            "get": {
+                "tags": [
+                    "FAQ's"
+                ],
+                "summary": "Get list of FAQs",
+                "description": "Returns list of FAQs",
+                "operationId": "getFaqs",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "x-api-key",
+                        "in": "header",
+                        "description": "Set apiKey parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FAQs"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/legal-text/{type}": {
+            "get": {
+                "tags": [
+                    "Legal Texts"
+                ],
+                "summary": "Get a legal text",
+                "description": "Returns a legal text",
+                "operationId": "getLegalText",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "name": "x-api-key",
+                        "in": "header",
+                        "description": "Set apiKey parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/LegalText--type"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LegalText"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },
@@ -148,6 +297,21 @@
                         "format": "email"
                     },
                     "password": {}
+                },
+                "type": "object"
+            },
+            "requestLoginByProviderObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    },
+                    "auth_type": {
+                        "example": "facebook"
+                    },
+                    "auth_code": {
+                        "type": "string",
+                        "example": "123"
+                    }
                 },
                 "type": "object"
             },
@@ -196,6 +360,18 @@
                         "title": "Terms Accepted",
                         "description": "Terms Accepted",
                         "type": "boolean"
+                    },
+                    "auth_providers": {
+                        "title": "Auth Providers",
+                        "description": "Auth Providers",
+                        "type": "object",
+                        "example": {
+                            "facebook": 123,
+                            "gmail": 456456546
+                        },
+                        "additionalProperties": {
+                            "type": "string"
+                        }
                     }
                 },
                 "type": "object"
