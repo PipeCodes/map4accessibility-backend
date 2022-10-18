@@ -7,10 +7,48 @@ use App\Http\Resources\FaqResourceCollection;
 use App\Http\Traits\ApiResponseTrait;
 use App\Models\Faq;
 
+/**
+ * Class FaqControllerController
+ * @package  App\Http\Controllers\Api
+ */
 class FaqController extends Controller
 {
     use ApiResponseTrait;
 
+    /**
+     * @OA\Get(
+     *  path="/api/v1/faqs",
+     *  operationId="getFaqs",
+     *  tags={"FAQ's"},
+     *  summary="Get list of FAQs",
+     *  description="Returns list of FAQs",
+     *  @OA\Parameter(
+     *      name="Accept-Language",
+     *      in="header",
+     *      required=true,
+     *      description="Set language parameter",
+     *      @OA\Schema(
+     *         type="string",
+     *         example="en",
+     *      )
+     *  ),
+     *  @OA\Parameter(
+     *      name="x-api-key",
+     *      in="header",
+     *      required=true,
+     *      description="Set apiKey parameter",
+     *      @OA\Schema(
+     *         type="string"
+     *      )
+     *  ),
+     *  @OA\Response(response=200, description="Successful operation",
+     *    @OA\JsonContent(ref="#/components/schemas/FAQs"),
+     *  ),
+     * )
+     *
+     * Display a listing of FAQ.
+     * @return JsonResponse
+     */
     public function getFaqs()
     {
         try {
@@ -18,7 +56,7 @@ class FaqController extends Controller
                 'locale',
                 '=',
                 app()->getLocale()
-            )->get();
+            )->orderBy('order', 'ASC')->get();
 
             return $this->respondWithResourceCollection(new FaqResourceCollection($faqs));
         } catch (\Throwable $th) {

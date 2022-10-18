@@ -9,6 +9,7 @@ use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Illuminate\Support\Facades\Hash;
 
 class AppUserResource extends Resource
 {
@@ -27,6 +28,10 @@ class AppUserResource extends Resource
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('surname')
+                    ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('email')
                     ->email()
@@ -34,8 +39,16 @@ class AppUserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->password()
-                    ->required()
+                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                    ->dehydrated(fn($state) => filled($state))
+                    ->required(fn(string $context): bool => $context === 'create')
                     ->maxLength(255),
+                Forms\Components\TagsInput::make('disabilities')
+                    ->placeholder('')
+                    ->suggestions(__('validation.disabilities'))
+                    ->separator(','),
+                Forms\Components\DatePicker::make('birthdate')
+                    ->required(),
                 Forms\Components\FileUpload::make('avatar')
                     ->image(),
                 Forms\Components\Toggle::make('terms_accepted')

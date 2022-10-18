@@ -15,7 +15,7 @@ class CheckApiKey
         $requestKey = $request->headers->get('x-api-key');
         $apiKey = env('API_KEY');
 
-        if ($requestKey !== $apiKey) {
+        if ( empty($requestKey) || empty($apiKey) || $requestKey !== $apiKey) {
             return $this->respondForbidden(__('api.api_key_mismatch'));
         }
 

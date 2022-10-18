@@ -1,0 +1,408 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Map4Accessibility Backend",
+        "description": "Map4Accessibility Backend",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "email": "apiteam@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "0.0.2"
+    },
+    "servers": [
+        {
+            "url": "/api/v1"
+        }
+    ],
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "login AppUser",
+                "description": "",
+                "operationId": "loginUser",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestLoginObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Create AppUser",
+                "description": "",
+                "operationId": "createUser",
+                "requestBody": {
+                    "description": "Create AppUser object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppUser"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "scalar": "api_key_security"
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "requestLoginObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    },
+                    "password": {}
+                },
+                "type": "object"
+            },
+            "AppUser": {
+                "description": "Class AppUser.",
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "email": {
+                        "title": "Email",
+                        "description": "Email",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "description": "Name",
+                        "type": "string"
+                    },
+                    "surname": {
+                        "title": "Surname",
+                        "description": "Surname",
+                        "type": "string"
+                    },
+                    "birthdate": {
+                        "title": "Surname",
+                        "description": "Surname",
+                        "type": "string",
+                        "format": "date"
+                    },
+                    "disabilities": {
+                        "title": "Disabilities",
+                        "description": "Disabilities",
+                        "type": "string"
+                    },
+                    "password": {
+                        "title": "password",
+                        "description": "password",
+                        "type": "string"
+                    },
+                    "terms_accepted": {
+                        "title": "Terms Accepted",
+                        "description": "Terms Accepted",
+                        "type": "boolean"
+                    }
+                },
+                "type": "object"
+            },
+            "FAQ": {
+                "title": "FAQ Object",
+                "description": "FAQ model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "id of Book",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "question": {
+                        "title": "question",
+                        "type": "string",
+                        "example": "Is this a question?"
+                    },
+                    "answer": {
+                        "title": "answer",
+                        "type": "string",
+                        "example": "This is an answer!"
+                    },
+                    "order": {
+                        "title": "order",
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "locale": {
+                        "title": "locale",
+                        "type": "string",
+                        "example": "en"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    }
+                },
+                "type": "object"
+            },
+            "FAQs": {
+                "title": "FAQ Response",
+                "properties": {
+                    "success": {
+                        "title": "success",
+                        "type": "boolean",
+                        "readOnly": "true",
+                        "example": "true"
+                    },
+                    "message": {
+                        "title": "message",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "null"
+                    },
+                    "result": {
+                        "title": "result",
+                        "properties": {
+                            "data": {
+                                "title": "data",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/FAQ"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "LegalText": {
+                "title": "Legal Text Object",
+                "description": "Legal Text model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "id of Legal Text",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "type": {
+                        "title": "type",
+                        "type": "string",
+                        "example": "terms"
+                    },
+                    "description": {
+                        "title": "description",
+                        "type": "string",
+                        "example": "This is a Legal Text!"
+                    },
+                    "locale": {
+                        "title": "locale",
+                        "type": "string",
+                        "example": "en"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    }
+                },
+                "type": "object"
+            },
+            "LegalTexts": {
+                "title": "Legal Text Response",
+                "properties": {
+                    "success": {
+                        "title": "success",
+                        "type": "boolean",
+                        "readOnly": "true",
+                        "example": "true"
+                    },
+                    "message": {
+                        "title": "message",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "null"
+                    },
+                    "result": {
+                        "title": "result",
+                        "properties": {
+                            "data": {
+                                "title": "data",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/LegalText"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "parameters": {
+            "LegalText--type": {
+                "name": "type",
+                "in": "path",
+                "description": "Type of Legal Text",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "example": "terms"
+                }
+            }
+        },
+        "securitySchemes": {
+            "api_key_security": {
+                "type": "apiKey",
+                "description": "A API_KEY 1 security validation",
+                "name": "x-api-key",
+                "in": "header"
+            },
+            "sanctum": {
+                "type": "apiKey",
+                "description": "A 2 security validation, enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "appUser",
+            "description": "Operations about App User",
+            "externalDocs": {
+                "description": "Find out more about store",
+                "url": "http://swagger.io"
+            }
+        }
+    ],
+    "externalDocs": {
+        "description": "Find out more about Swagger",
+        "url": "http://swagger.io"
+    },
+    "security": [
+        {
+            "api_key_security": [
+                "read",
+                "write"
+            ],
+            "sanctum": [
+                "read",
+                "write"
+            ]
+        }
+    ]
+}
