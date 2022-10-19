@@ -102,6 +102,19 @@ class AppUser extends Model
     private $terms_accepted;
 
     /**
+     * @OA\Property(
+     *     type="object",
+     *     additionalProperties={"type":"string"},
+     *     example={"facebook": 123, "gmail":456456546},
+     *     description="Auth Providers",
+     *     title="Auth Providers"
+     * )
+     *
+     * @var array
+     */
+    private $auth_providers;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
@@ -115,6 +128,7 @@ class AppUser extends Model
         'avatar',
         'password',
         'terms_accepted',
+        'auth_providers',
     ];
 
     /**
@@ -124,6 +138,7 @@ class AppUser extends Model
      */
     protected $casts = [
         'terms_accepted' => 'boolean',
+        'auth_providers' => 'array',
     ];
 
     public function accountStatus()

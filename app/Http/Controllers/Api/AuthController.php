@@ -33,9 +33,9 @@ class AuthController extends Controller
      *     summary="login AppUser",
      *     description="",
      *     operationId="loginUser",
-    *     security={
-    *          {"api_key_security": {}}
-    *      },
+     *     security={
+     *          {"api_key_security": {}}
+     *      },
      *     @OA\RequestBody(
      *         description=" object",
      *         required=true,
@@ -89,16 +89,115 @@ class AuthController extends Controller
                 return $this->respondError($validateUser->errors(), 401);
             }
 
-            $user = AppUser::where('email', $request->email)->first();
+            $user = AppUser::with('accountStatus')->where('email', $request->email)->first();
 
             if (!$user || !Hash::check($request->password, $user->password)) {
                 return $this->respondUnAuthorized();
+            } elseif (!$user->accountStatus || 'active' !== $user->accountStatus->slug) {
+                // Only AppUsers with confirmed email can login
+                return $this->respondUnAuthorized(__('validation.appusers_confirmed_email'));
             }
 
             return $this->respondWithResource(new AuthResource(
                 new AppUserResource($user),
                 [
-                    'token' => $user->createToken($request->email)->plainTextToken,
+                    'token' => $user->createToken($user->email)->plainTextToken,
+                    'type' => 'bearer',
+                ],
+            ));
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
+
+    /**
+     *
+     * @OA\Schema(
+     *     schema="requestLoginByProviderObject",
+     *     type="object",
+     *     @OA\Property(property="email", format="email"),
+     *     @OA\Property(property="auth_type", example="facebook"),
+    *     @OA\Property(type="string", property="auth_code", example="123")
+     * )
+     *
+     * @OA\Post(
+     *     path="/auth/login-by-provider",
+     *     tags={"appUser"},
+     *     summary="login provider AppUser",
+     *     description="",
+     *     operationId="loginUserProvider",
+     *     security={
+     *          {"api_key_security": {}}
+     *      },
+     *     @OA\RequestBody(
+     *         description=" object",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/requestLoginByProviderObject")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid provider data supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function loginByProvider(Request $request)
+    {
+        try {
+            $validate = Validator::make(
+                $request->all(),
+                [
+                    'email' => 'required|string|email',
+                    'auth_type' => 'required|string',
+                    'auth_code' => 'required|string',
+                ]
+            );
+
+            if ($validate->fails()) {
+                return $this->respondError($validate->errors(), 401);
+            }
+
+            $user = AppUser::with('accountStatus')
+                ->where('email', $request->email)->where("auth_providers->$request->auth_type", $request->auth_code)
+            ->first();
+
+            if (!$user) {
+                return $this->respondUnAuthorized();
+            } elseif (!$user->accountStatus || 'active' !== $user->accountStatus->slug) {
+                // Only AppUsers with confirmed email can login
+                return $this->respondUnAuthorized(__('validation.appusers_confirmed_email'));
+            }
+
+            return $this->respondWithResource(new AuthResource(
+                new AppUserResource($user),
+                [
+                    'token' => $user->createToken($user->email)->plainTextToken,
                     'type' => 'bearer',
                 ],
             ));
@@ -114,9 +213,9 @@ class AuthController extends Controller
      *     summary="Create AppUser",
      *     description="",
      *     operationId="createUser",
-    *     security={
-    *          {"api_key_security": {}}
-    *      },
+     *     security={
+     *          {"api_key_security": {}}
+     *      },
      *     @OA\RequestBody(
      *         description="Create AppUser object",
      *         required=true,
@@ -182,13 +281,7 @@ class AuthController extends Controller
                 return $this->respondError(__('api.user_exists_error'), 409);
             }
 
-            AppUser::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
-                'terms_accepted' => $request->boolean('terms_accepted'),
-                'avatar' => $this->upload($request, 'avatar', 'images/app-users'),
-            ]);
+            AppUser::create($request->all());
 
             // we need this to access the relationships
             $user = AppUser::where('email', $request->email)->first();

@@ -173,5 +173,6 @@ return [
         'hearing',
         'intellectual',
     ],
+    'appusers_confirmed_email' => 'Only Users with confirmed email can login',
 
 ];

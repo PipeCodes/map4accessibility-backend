@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('surname');
             $table->date('birthdate');
             $table->enum('disabilities', __('validation.disabilities'))->nullable();
+            $table->json('auth_providers')->nullable();
         });
     }
 
