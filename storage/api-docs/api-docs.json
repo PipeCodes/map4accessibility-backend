@@ -393,7 +393,14 @@
                     "disabilities": {
                         "title": "Disabilities",
                         "description": "Disabilities",
-                        "type": "string"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "visual",
+                            "motor"
+                        ]
                     },
                     "terms_accepted": {
                         "title": "Terms Accepted",

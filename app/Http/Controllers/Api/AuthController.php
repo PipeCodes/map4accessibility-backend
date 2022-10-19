@@ -265,7 +265,7 @@ class AuthController extends Controller
                     'birthdate' => 'required|date|max:255',
                     'email' => 'required|string|email|max:255|unique:users',
                     'password' => 'required|string|min:6',
-                    'disabilities' => 'string',
+                    'disabilities' => 'array',
                     'avatar' => 'image|mimes:jpg,jpeg,png|max:2048',
                     'terms_accepted' => 'required',
                 ]
@@ -324,7 +324,7 @@ class AuthController extends Controller
      *                 format="datetime"
      *             )
      *         ),
-    *         @OA\JsonContent(ref="#/components/schemas/AppUser")
+     *         @OA\JsonContent(ref="#/components/schemas/AppUser")
      *     ),
      *     @OA\Response(
      *          response=401,

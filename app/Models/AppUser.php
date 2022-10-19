@@ -73,10 +73,13 @@ class AppUser extends Model
     /**
      * @OA\Property(
      *     description="Disabilities",
-     *     title="Disabilities"
+     *     title="Disabilities",
+     *     type="array",
+     *      @OA\Items(type="string"),
+     *     example={"visual", "motor"}
      * )
      *
-     * @var string
+     * @var array
      */
     private $disabilities;
 
@@ -129,6 +132,7 @@ class AppUser extends Model
     protected $casts = [
         'terms_accepted' => 'boolean',
         'auth_providers' => 'array',
+        'disabilities' => 'array',
     ];
 
     public function accountStatus()
