@@ -45,8 +45,7 @@ class AppUserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TagsInput::make('disabilities')
                     ->placeholder('')
-                    ->suggestions(__('validation.disabilities'))
-                    ->separator(','),
+                    ->suggestions(__('validation.disabilities')),
                 Forms\Components\DatePicker::make('birthdate')
                     ->required(),
                 Forms\Components\FileUpload::make('avatar')
