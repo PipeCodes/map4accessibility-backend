@@ -32,7 +32,7 @@ class AuthController extends Controller
      *     tags={"appUser"},
      *     summary="login AppUser",
      *     description="",
-     *     operationId="loginUser",
+     *     operationId="login",
      *     security={
      *          {"api_key_security": {}}
      *      },
@@ -117,7 +117,7 @@ class AuthController extends Controller
      *     type="object",
      *     @OA\Property(property="email", format="email"),
      *     @OA\Property(property="auth_type", example="facebook"),
-    *     @OA\Property(type="string", property="auth_code", example="123")
+     *     @OA\Property(type="string", property="auth_code", example="123")
      * )
      *
      * @OA\Post(
@@ -125,7 +125,7 @@ class AuthController extends Controller
      *     tags={"appUser"},
      *     summary="login provider AppUser",
      *     description="",
-     *     operationId="loginUserProvider",
+     *     operationId="loginByProvider",
      *     security={
      *          {"api_key_security": {}}
      *      },
@@ -185,7 +185,7 @@ class AuthController extends Controller
 
             $user = AppUser::with('accountStatus')
                 ->where('email', $request->email)->where("auth_providers->$request->auth_type", $request->auth_code)
-            ->first();
+                ->first();
 
             if (!$user) {
                 return $this->respondUnAuthorized();
@@ -198,7 +198,7 @@ class AuthController extends Controller
                 new AppUserResource($user),
                 [
                     'token' => $user->createToken($user->email)->plainTextToken,
-                    'type' => 'bearer',
+                    'type' => 'Bearer',
                 ],
             ));
         } catch (\Throwable $th) {
@@ -212,7 +212,7 @@ class AuthController extends Controller
      *     tags={"appUser"},
      *     summary="Create AppUser",
      *     description="",
-     *     operationId="createUser",
+     *     operationId="register",
      *     security={
      *          {"api_key_security": {}}
      *      },
@@ -290,11 +290,61 @@ class AuthController extends Controller
                 new AppUserResource($user),
                 [
                     'token' => $user->createToken($request->email)->plainTextToken,
-                    'type' => 'bearer',
+                    'type' => 'Bearer',
                 ],
             ), __('api.create_user_success'), 201);
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
     }
+
+    /**
+     * @OA\Get (
+     *     path="/auth/profile",
+     *     tags={"appUser"},
+     *     summary="Get AppUser Data",
+     *     description="",
+     *     operationId="getAuthenticated",
+     *      @OA\Response(
+     *         response=200,
+     *         description="successful get data",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+    *         @OA\JsonContent(ref="#/components/schemas/AppUser")
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function getAuthenticated(Request $request)
+    {
+        try {
+            return $this->respondWithResource(new AppUserResource(
+                $request->user()
+            ));
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
+
 }

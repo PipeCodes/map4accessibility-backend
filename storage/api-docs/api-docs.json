@@ -26,7 +26,7 @@
                 ],
                 "summary": "login AppUser",
                 "description": "",
-                "operationId": "loginUser",
+                "operationId": "login",
                 "requestBody": {
                     "description": " object",
                     "required": true,
@@ -86,7 +86,7 @@
                 ],
                 "summary": "login provider AppUser",
                 "description": "",
-                "operationId": "loginUserProvider",
+                "operationId": "loginByProvider",
                 "requestBody": {
                     "description": " object",
                     "required": true,
@@ -146,7 +146,7 @@
                 ],
                 "summary": "Create AppUser",
                 "description": "",
-                "operationId": "createUser",
+                "operationId": "register",
                 "requestBody": {
                     "description": "Create AppUser object",
                     "required": true,
@@ -197,6 +197,50 @@
                         "api_key_security": []
                     }
                 ]
+            }
+        },
+        "/auth/profile": {
+            "get": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Get AppUser Data",
+                "description": "",
+                "operationId": "getAuthenticated",
+                "responses": {
+                    "200": {
+                        "description": "successful get data",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUser"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
             }
         },
         "/api/v1/faqs": {
@@ -349,11 +393,6 @@
                     "disabilities": {
                         "title": "Disabilities",
                         "description": "Disabilities",
-                        "type": "string"
-                    },
-                    "password": {
-                        "title": "password",
-                        "description": "password",
                         "type": "string"
                     },
                     "terms_accepted": {
