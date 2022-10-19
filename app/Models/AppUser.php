@@ -82,16 +82,6 @@ class AppUser extends Model
 
     /**
      * @OA\Property(
-     *     description="password",
-     *     title="password"
-     * )
-     *
-     * @var string
-     */
-    private $password;
-
-    /**
-     * @OA\Property(
      *     type="bool",
      *     description="Terms Accepted",
      *     title="Terms Accepted"
