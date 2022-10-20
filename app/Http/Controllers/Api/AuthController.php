@@ -264,7 +264,7 @@ class AuthController extends Controller
                     'surname' => 'required|string|max:255',
                     'birthdate' => 'required|date|max:255',
                     'email' => 'required|string|email|max:255|unique:users',
-                    'password' => 'required|string|min:6',
+                    'password' => 'required_without:auth_providers|string|min:6',
                     'disabilities' => 'array',
                     'avatar' => 'image|mimes:jpg,jpeg,png|max:2048',
                     'terms_accepted' => 'required',
