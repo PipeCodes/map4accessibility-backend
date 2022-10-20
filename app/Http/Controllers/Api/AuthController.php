@@ -8,7 +8,9 @@ use App\Http\Resources\AuthResource;
 use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
 use App\Models\AppUser;
+use App\Mail\EmailConfirmation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -281,10 +283,19 @@ class AuthController extends Controller
                 return $this->respondError(__('api.user_exists_error'), 409);
             }
 
-            AppUser::create($request->all());
+            AppUser::create(
+                array_merge(
+                    $request->all(),
+                    [
+                        'password' => Hash::make($request->password)
+                    ]
+                )
+            );
 
             // we need this to access the relationships
             $user = AppUser::where('email', $request->email)->first();
+
+            Mail::to($user->email)->send(new EmailConfirmation($user));
 
             return $this->respondWithResource(new AuthResource(
                 new AppUserResource($user),
@@ -344,6 +355,18 @@ class AuthController extends Controller
             ));
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
+        }
+    }
+
+    public function changeStatus($userEmail)
+    {
+        try {
+            $user = AppUser::where('email', $userEmail)->first();
+            $user->markEmailAsActive();
+
+            return redirect(env('APP_FRONTEND_URL').'/email-confirmation');
+        } catch (\Throwable $th) {
+            return redirect(env('APP_FRONTEND_URL'));
         }
     }
 

@@ -139,4 +139,9 @@ class AppUser extends Model
     {
         return $this->belongsTo(AccountStatus::class);
     }
+
+    public function markEmailAsActive()
+    {
+        return $this->forceFill(['account_status_id' => 2])->save();
+    }
 }

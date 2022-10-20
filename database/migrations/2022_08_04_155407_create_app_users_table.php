@@ -22,7 +22,7 @@ return new class extends Migration
             $table->boolean('terms_accepted')->default(false);
             $table->timestamps();
 
-            $table->unsignedBigInteger('account_status_id')->default(2);
+            $table->unsignedBigInteger('account_status_id')->default(1);
             $table->foreign('account_status_id')->references('id')->on('account_statuses');
         });
     }
