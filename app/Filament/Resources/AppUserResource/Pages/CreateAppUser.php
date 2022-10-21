@@ -15,6 +15,6 @@ class CreateAppUser extends CreateRecord
     protected function afterCreate(): void
     {
         $user = $this->record;
-        Mail::to($user->email)->send(new EmailConfirmation($user->record));
+        Mail::to($user->email)->send(new EmailConfirmation($user));
     }
 }

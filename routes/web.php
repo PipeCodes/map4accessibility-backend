@@ -22,6 +22,6 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
-Route::get('/auth/email-confirmation/{email}', [AuthController::class, 'changeStatus'])->name('emailConfirmation');
+Route::get('/auth/email-confirmation/{token}', [AuthController::class, 'changeStatus'])->name('emailConfirmation');
 
 require __DIR__.'/auth.php';
