@@ -46,8 +46,7 @@ class AppUserResource extends Resource
                 Forms\Components\TagsInput::make('disabilities')
                     ->placeholder('')
                     ->suggestions(__('validation.disabilities')),
-                Forms\Components\DatePicker::make('birthdate')
-                    ->required(),
+                Forms\Components\DatePicker::make('birthdate'),
                 Forms\Components\FileUpload::make('avatar')
                     ->image(),
                 Forms\Components\Toggle::make('terms_accepted')

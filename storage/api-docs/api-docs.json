@@ -367,10 +367,11 @@
                         "type": "string"
                     },
                     "birthdate": {
-                        "title": "Surname",
-                        "description": "Surname",
+                        "title": "Birthdate",
+                        "description": "Birthdate",
                         "type": "string",
-                        "format": "date"
+                        "format": "date",
+                        "nullable": true
                     },
                     "disabilities": {
                         "title": "Disabilities",

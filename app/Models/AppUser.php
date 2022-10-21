@@ -60,9 +60,10 @@ class AppUser extends Model
     private $surname;
     /**
      * @OA\Property(
-     *     description="Surname",
-     *     title="Surname",
-     *     format="date"
+     *     description="Birthdate",
+     *     title="Birthdate",
+     *     format="date",
+     *     nullable=true
      * )
      *
      * @var string

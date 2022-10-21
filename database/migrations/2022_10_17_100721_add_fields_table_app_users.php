@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('app_users', function (Blueprint $table) {
             $table->string('surname');
-            $table->date('birthdate');
+            $table->date('birthdate')->nullable();
             $table->text('disabilities')->nullable();
             $table->json('auth_providers')->nullable();
         });
