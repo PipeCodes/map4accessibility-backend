@@ -31,22 +31,28 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *      example="user@example.com"
  * ),
  * @OA\Property(
-*      property="name",
+ *      property="password",
+ *     description="Password",
+ *     title="Password"
+ * ),
+ * @OA\Property(
+ *      property="name",
  *     description="Name",
  *     title="Name"
  * ),
  * @OA\Property(
-*      property="surname",
+ *      property="surname",
  *     description="Surname",
  *     title="Surname"
  * ),
  * @OA\Property(
+ *       property="birthdate",
  *     description="Birthdate",
  *     title="Birthdate",
  *     format="date"
  * ),
  * @OA\Property(
-*      property="birthdate",
+ *      property="disabilities",
  *     description="Disabilities",
  *     title="Disabilities",
  *     type="array",
@@ -54,13 +60,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     example={"visual", "motor"}
  * ),
  * @OA\Property(
-*      property="terms_accepted",
+ *      property="terms_accepted",
  *     type="bool",
  *     description="Terms Accepted",
  *     title="Terms Accepted"
  * ),
  * @OA\Property(
-*      property="auth_providers",
+ *      property="auth_providers",
  *     type="object",
  *     additionalProperties={"type":"string"},
  *     example={"facebook": 123, "gmail":456456546},

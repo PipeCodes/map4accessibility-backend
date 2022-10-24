@@ -440,6 +440,10 @@
                         "format": "email",
                         "example": "user@example.com"
                     },
+                    "password": {
+                        "title": "Password",
+                        "description": "Password"
+                    },
                     "name": {
                         "title": "Name",
                         "description": "Name"
@@ -448,12 +452,12 @@
                         "title": "Surname",
                         "description": "Surname"
                     },
-                    "": {
+                    "birthdate": {
                         "title": "Birthdate",
                         "description": "Birthdate",
                         "format": "date"
                     },
-                    "birthdate": {
+                    "disabilities": {
                         "title": "Disabilities",
                         "description": "Disabilities",
                         "type": "array",
