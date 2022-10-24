@@ -139,6 +139,129 @@
                 ]
             }
         },
+        "/auth/password-recover": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "password recover AppUser",
+                "description": "",
+                "operationId": "passwordRecover",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestpasswordRecoverObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid API KEY supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/auth/check-email": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "check-email AppUser",
+                "description": "",
+                "operationId": "checkEmail",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestCheckEmailObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Duplicate content"
+                    },
+                    "401": {
+                        "description": "Invalid API KEY supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
         "/auth/register": {
             "post": {
                 "tags": [
@@ -341,35 +464,50 @@
                 },
                 "type": "object"
             },
+            "requestpasswordRecoverObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    }
+                },
+                "type": "object"
+            },
+            "requestCheckEmailObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    }
+                },
+                "type": "object"
+            },
             "AppUser": {
-                "description": "Class AppUser.",
                 "properties": {
                     "id": {
                         "title": "ID",
                         "description": "ID",
-                        "type": "integer",
                         "format": "int64"
                     },
                     "email": {
                         "title": "Email",
                         "description": "Email",
-                        "type": "string",
-                        "format": "email"
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "password": {
+                        "title": "Password",
+                        "description": "Password"
                     },
                     "name": {
                         "title": "Name",
-                        "description": "Name",
-                        "type": "string"
+                        "description": "Name"
                     },
                     "surname": {
                         "title": "Surname",
-                        "description": "Surname",
-                        "type": "string"
+                        "description": "Surname"
                     },
                     "birthdate": {
-                        "title": "Surname",
-                        "description": "Surname",
-                        "type": "string",
+                        "title": "Birthdate",
+                        "description": "Birthdate",
                         "format": "date"
                     },
                     "disabilities": {
