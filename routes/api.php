@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('v1')->group(function () {
+
+    Route::post('/auth/check-email', [AuthController::class, 'checkEmail']);
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/login-by-provider', [AuthController::class, 'loginByProvider']);
