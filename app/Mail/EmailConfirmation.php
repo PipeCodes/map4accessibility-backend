@@ -38,7 +38,7 @@ class EmailConfirmation extends Mailable implements ShouldQueue
     public function build()
     {
         $token = $this->user->createToken($this->user->email, ['email-confirmation'])->plainTextToken;
-        $url = route('emailConfirmation', ['token' => $token]);
+        $url = route('emailConfirmation', ['tokenEmailConfirmation' => $token]);
 
         return $this->markdown('emails.appUsers.confirmation')
             ->subject(__('mail.subject_email_confirmation'))

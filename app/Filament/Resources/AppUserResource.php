@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AppUserResource\Pages;
 use App\Models\AppUser;
+use Closure;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -38,15 +39,19 @@ class AppUserResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
-                    ->password()
+                    ->password()->label('New password')->reactive()->rules(['confirmed'])
                     ->dehydrateStateUsing(fn($state) => Hash::make($state))
                     ->dehydrated(fn($state) => filled($state))
+                    ->required(fn(string $context): bool => $context === 'create'),
+                Forms\Components\TextInput::make('password_confirmation')
+                    ->password()->dehydrateStateUsing(fn($state) => Hash::make($state))
                     ->required(fn(string $context): bool => $context === 'create')
-                    ->maxLength(255),
-                Forms\Components\TagsInput::make('disabilities')
-                    ->placeholder('')
-                    ->suggestions(__('validation.disabilities')),
-                Forms\Components\DatePicker::make('birthdate'),
+                    ->hidden(fn(Closure $get) => $get('password') == null),
+                Forms\Components\Select::make('disabilities')
+                    ->multiple()->searchable()->disablePlaceholderSelection()
+                    ->options(__('validation.disabilities')),
+                Forms\Components\DatePicker::make('birthdate')
+                    ->required(),
                 Forms\Components\FileUpload::make('avatar')
                     ->image(),
                 Forms\Components\Toggle::make('terms_accepted')
