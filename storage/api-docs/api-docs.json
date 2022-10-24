@@ -26,7 +26,7 @@
                 ],
                 "summary": "login AppUser",
                 "description": "",
-                "operationId": "loginUser",
+                "operationId": "login",
                 "requestBody": {
                     "description": " object",
                     "required": true,
@@ -79,6 +79,189 @@
                 ]
             }
         },
+        "/auth/login-by-provider": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "login provider AppUser",
+                "description": "",
+                "operationId": "loginByProvider",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestLoginByProviderObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid provider data supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/auth/password-recover": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "password recover AppUser",
+                "description": "",
+                "operationId": "passwordRecover",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestpasswordRecoverObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid API KEY supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/auth/check-email": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "check-email AppUser",
+                "description": "",
+                "operationId": "checkEmail",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestCheckEmailObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Duplicate content"
+                    },
+                    "401": {
+                        "description": "Invalid API KEY supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
         "/auth/register": {
             "post": {
                 "tags": [
@@ -86,7 +269,7 @@
                 ],
                 "summary": "Create AppUser",
                 "description": "",
-                "operationId": "createUser",
+                "operationId": "register",
                 "requestBody": {
                     "description": "Create AppUser object",
                     "required": true,
@@ -134,9 +317,124 @@
                 },
                 "security": [
                     {
-                        "scalar": "api_key_security"
+                        "api_key_security": []
                     }
                 ]
+            }
+        },
+        "/auth/profile": {
+            "get": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Get AppUser Data",
+                "description": "",
+                "operationId": "getAuthenticated",
+                "responses": {
+                    "200": {
+                        "description": "successful get data",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUser"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/faqs": {
+            "get": {
+                "tags": [
+                    "FAQ's"
+                ],
+                "summary": "Get list of FAQs",
+                "description": "Returns list of FAQs",
+                "operationId": "getFaqs",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FAQs"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/legal-text/{type}": {
+            "get": {
+                "tags": [
+                    "Legal Texts"
+                ],
+                "summary": "Get a legal text",
+                "description": "Returns a legal text",
+                "operationId": "getLegalText",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/LegalText--type"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LegalText"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },
@@ -151,51 +449,97 @@
                 },
                 "type": "object"
             },
+            "requestLoginByProviderObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    },
+                    "auth_type": {
+                        "example": "facebook"
+                    },
+                    "auth_code": {
+                        "type": "string",
+                        "example": "123"
+                    }
+                },
+                "type": "object"
+            },
+            "requestpasswordRecoverObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    }
+                },
+                "type": "object"
+            },
+            "requestCheckEmailObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    }
+                },
+                "type": "object"
+            },
             "AppUser": {
-                "description": "Class AppUser.",
                 "properties": {
                     "id": {
                         "title": "ID",
                         "description": "ID",
-                        "type": "integer",
                         "format": "int64"
                     },
                     "email": {
                         "title": "Email",
                         "description": "Email",
-                        "type": "string",
-                        "format": "email"
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "password": {
+                        "title": "Password",
+                        "description": "Password"
                     },
                     "name": {
                         "title": "Name",
-                        "description": "Name",
-                        "type": "string"
+                        "description": "Name"
                     },
                     "surname": {
                         "title": "Surname",
-                        "description": "Surname",
-                        "type": "string"
+                        "description": "Surname"
                     },
                     "birthdate": {
-                        "title": "Surname",
-                        "description": "Surname",
+                        "title": "Birthdate",
+                        "description": "Birthdate",
                         "type": "string",
-                        "format": "date"
+                        "format": "date",
+                        "nullable": true
                     },
                     "disabilities": {
                         "title": "Disabilities",
                         "description": "Disabilities",
-                        "type": "string"
-                    },
-                    "password": {
-                        "title": "password",
-                        "description": "password",
-                        "type": "string"
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "visual",
+                            "motor"
+                        ]
                     },
                     "terms_accepted": {
                         "title": "Terms Accepted",
                         "description": "Terms Accepted",
                         "type": "boolean"
+                    },
+                    "auth_providers": {
+                        "title": "Auth Providers",
+                        "description": "Auth Providers",
+                        "type": "object",
+                        "example": {
+                            "facebook": 123,
+                            "gmail": 456456546
+                        },
+                        "additionalProperties": {
+                            "type": "string"
+                        }
                     }
                 },
                 "type": "object"

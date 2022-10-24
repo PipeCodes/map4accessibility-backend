@@ -167,11 +167,11 @@ return [
 
     'attributes' => [],
     'disabilities' => [
-        '',
-        'motor',
-        'visual',
-        'hearing',
-        'intellectual',
+        'motor' => 'motor',
+        'visual' => 'visual',
+        'hearing' => 'hearing',
+        'intellectual' => 'intellectual',
     ],
+    'appusers_confirmed_email' => 'Only Users with confirmed email can login',
 
 ];
