@@ -366,7 +366,7 @@
                 }
             }
         },
-        "/api/v1/faqs": {
+        "/faqs": {
             "get": {
                 "tags": [
                     "FAQ's"
@@ -384,15 +384,6 @@
                             "type": "string",
                             "example": "en"
                         }
-                    },
-                    {
-                        "name": "x-api-key",
-                        "in": "header",
-                        "description": "Set apiKey parameter",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
                     }
                 ],
                 "responses": {
@@ -409,7 +400,7 @@
                 }
             }
         },
-        "/api/v1/legal-text/{type}": {
+        "/legal-text/{type}": {
             "get": {
                 "tags": [
                     "Legal Texts"
@@ -426,15 +417,6 @@
                         "schema": {
                             "type": "string",
                             "example": "en"
-                        }
-                    },
-                    {
-                        "name": "x-api-key",
-                        "in": "header",
-                        "description": "Set apiKey parameter",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
                         }
                     },
                     {
