@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/login-by-provider', [AuthController::class, 'loginByProvider']);
+    Route::post('/auth/password-recover', [AuthController::class, 'passwordRecover']);
 
     Route::middleware('auth:sanctum')->get('/auth/profile', [AuthController::class, 'getAuthenticated']);
 
