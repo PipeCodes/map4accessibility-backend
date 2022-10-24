@@ -10,6 +10,7 @@ use App\Http\Traits\UploadTrait;
 use App\Models\AppUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -201,6 +202,164 @@ class AuthController extends Controller
                     'type' => 'Bearer',
                 ],
             ));
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
+
+    /**
+     *
+     *
+     * @OA\Schema(
+     *     schema="requestpasswordRecoverObject",
+     *     type="object",
+     *     @OA\Property(property="email", format="email")
+     * )
+     *
+     * @OA\Post(
+     *     path="/auth/password-recover",
+     *     tags={"appUser"},
+     *     summary="password recover AppUser",
+     *     description="",
+     *     operationId="passwordRecover",
+     *     security={
+     *          {"api_key_security": {}}
+     *      },
+     *     @OA\RequestBody(
+     *         description=" object",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/requestpasswordRecoverObject")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid API KEY supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function passwordRecover(Request $request)
+    {
+        try {
+            $validateUser = Validator::make(
+                $request->all(),
+                [
+                    'email' => 'required|string|email'
+                ]
+            );
+
+            if ($validateUser->fails()) {
+                return $this->respondError($validateUser->errors(), 401);
+            }
+
+            $status = Password::broker('app_users')->sendResetLink($request->only('email'));
+
+            return $this->respondSuccess('success');
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
+
+    /**
+     *
+     *
+     * @OA\Schema(
+     *     schema="requestCheckEmailObject",
+     *     type="object",
+     *     @OA\Property(property="email", format="email")
+     * )
+     *
+     * @OA\Post(
+     *     path="/auth/check-email",
+     *     tags={"appUser"},
+     *     summary="check-email AppUser",
+     *     description="",
+     *     operationId="checkEmail",
+     *     security={
+     *          {"api_key_security": {}}
+     *      },
+     *     @OA\RequestBody(
+     *         description=" object",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/requestCheckEmailObject")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=409,
+    *          description="Duplicate content"
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid API KEY supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function checkEmail(Request $request)
+    {
+        try {
+            $validateUser = Validator::make(
+                $request->all(),
+                [
+                    'email' => 'required|email|unique:app_users,email'
+                ]
+            );
+
+            if ($validateUser->fails()) {
+                return $this->respondErrorDuplicate();
+            }
+
+            return $this->respondSuccess('email not found');
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }

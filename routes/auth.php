@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AppUserPasswordResetLinkController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
@@ -19,7 +20,14 @@ Route::middleware('guest')->group(function () {
         ->name('password.reset');
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
-                ->name('password.update');
+        ->name('password.update');
+
+    Route::prefix('appuser')->group(function () {
+        Route::get('reset-password/{token}', [AppUserPasswordResetLinkController::class, 'create'])
+        ->name('appuser.password.reset');
+        Route::post('reset-password', [AppUserPasswordResetLinkController::class, 'store'])
+        ->name('appuser.password.update');
+    });
 });
 
 Route::middleware('auth')->group(function () {
