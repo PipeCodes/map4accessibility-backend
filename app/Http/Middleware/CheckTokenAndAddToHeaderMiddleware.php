@@ -19,7 +19,7 @@ class CheckTokenAndAddToHeaderMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $token = $request->route('token');
+        $token = $request->route('tokenEmailConfirmation');
         if(isset($token)) {
             $request->headers->set('Authorization', 'Bearer '.$token);
         }

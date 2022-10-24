@@ -20,17 +20,6 @@ class AuthController extends Controller
     use UploadTrait;
 
     /**
-     * Instantiate a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum')->only('changeStatus');
-        $this->middleware('ability:email-confirmation')->only('changeStatus');
-    }
-
-    /**
      *
      *
      * @OA\Schema(
@@ -368,17 +357,4 @@ class AuthController extends Controller
             return $this->respondInternalError($th->getMessage());
         }
     }
-
-    public function changeStatus()
-    {
-        try {
-            $user = auth('sanctum')->user();
-            $user->markEmailAsActive();
-
-            return redirect(env('APP_FRONTEND_URL').'/email-confirmation');
-        } catch (\Throwable $th) {
-            return redirect(env('APP_FRONTEND_URL'));
-        }
-    }
-
 }
