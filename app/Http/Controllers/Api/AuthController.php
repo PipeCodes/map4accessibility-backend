@@ -423,7 +423,7 @@ class AuthController extends Controller
                 [
                     'name' => 'required|string|max:255',
                     'surname' => 'required|string|max:255',
-                    'birthdate' => 'required|date|max:255',
+                    'birthdate' => 'date|max:255',
                     'email' => 'required|string|email|max:255|unique:users',
                     'password' => 'required_without:auth_providers|string|min:6',
                     'disabilities' => 'array',

@@ -508,7 +508,9 @@
                     "birthdate": {
                         "title": "Birthdate",
                         "description": "Birthdate",
-                        "format": "date"
+                        "type": "string",
+                        "format": "date",
+                        "nullable": true
                     },
                     "disabilities": {
                         "title": "Disabilities",
