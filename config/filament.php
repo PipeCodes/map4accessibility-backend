@@ -285,7 +285,7 @@ return [
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             SubstituteBindings::class,
-            DispatchServingFilamentEvent::class,
+            // DispatchServingFilamentEvent::class,
             MirrorConfigToSubpackages::class,
         ],
     ],
