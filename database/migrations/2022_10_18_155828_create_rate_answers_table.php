@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('body');
             $table->string('slug');
             $table->integer('order')->default(1);
+            $table->unique(['rate_question_id', 'slug']);
             $table->timestamps();
         });
     }

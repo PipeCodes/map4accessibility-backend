@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('country_responsibles', function (Blueprint $table) {
             $table->id();
-            $table->string('country_iso');
+            $table->string('country_iso')->unique();
             $table->string('email');
             $table->timestamps();
         });

@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class RateAnswer extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'id', 'order', 'body', 'slug', 'rate_question_id'
+    ];
 }

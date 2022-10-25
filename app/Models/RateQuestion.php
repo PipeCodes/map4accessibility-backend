@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class RateQuestion extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'id', 'slug', 'title', 'place_type'
+    ];
+
+    public function answers()
+    {
+        return $this->hasMany(RateAnswer::class);
+    }
 }
