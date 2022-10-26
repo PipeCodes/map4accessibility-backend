@@ -94,8 +94,11 @@ class PlaceEvaluation extends Model
      * @var array
      */
     protected $fillable = [
-        'place_id',
         'google_place_id',
+        'name',
+        'country',
+        'latitude',
+        'longitude',
         'thumb_direction',
         'comment',
         'questions_answers',
