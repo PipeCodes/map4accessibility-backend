@@ -12,8 +12,6 @@ class ListPlaceEvaluations extends ListRecords
 
     protected function getActions(): array
     {
-        return [
-            Actions\CreateAction::make(),
-        ];
+        return [];
     }
 }
