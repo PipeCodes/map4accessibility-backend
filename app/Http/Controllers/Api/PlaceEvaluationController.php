@@ -220,4 +220,118 @@ class PlaceEvaluationController extends Controller
 
     }
 
+    /**
+     *
+     * @OA\Schema(
+     *     schema="requestPlaceEvaluationByPlaceCoordsObject",
+     *     type="object",
+     *     @OA\Property(
+     *          property="latitude",
+     *          format="decimal",
+     *          description="Coord. Latitude",
+     *          title="Coord. Latitude",
+     *          example=""
+     *     ),
+     *     @OA\Property(
+     *          property="longitude",
+     *          format="decimal",
+     *          description="Coord. Longitude",
+     *          title="Coord. Longitude",
+     *          example=""
+     *     )
+     * )
+     *
+     * @OA\Post (
+     *     path="/place-evaluation-by-place-coords",
+     *     tags={"PlaceEvaluation"},
+     *     security={
+     *          {"api_key_security": {}}
+     *      },
+     *     summary="filter for evaluations for the given coords, place",
+     *     description="filter for evaluations for the given coords, place",
+     *     operationId="placeEvaluationByPlaceCoords",
+     *     @OA\RequestBody(
+     *          @OA\JsonContent(
+     *             ref="#/components/schemas/requestPlaceEvaluationByPlaceCoordsObject"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function placeEvaluationByPlaceCoords(Request $request)
+    {
+        try {
+
+            $validate = Validator::make(
+                $request->all(),
+                [
+                    'latitude' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+                    'longitude' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/']
+                ],
+                [
+                    'latitude.regex' => 'Latitude value appears to be incorrect format.',
+                    'longitude.regex' => 'Longitude value appears to be incorrect format.'
+                ]
+            );
+
+            if ($validate->fails()) {
+                return $this->respondError($validate->errors(), 401);
+            }
+
+            /**
+             * @var AppUser|null $appUser
+             */
+            if ($appUser = auth()->user()) {
+                /**
+                 * @var PlaceEvaluation|null $placeEvaluation
+                 */
+                $placeEvaluation = PlaceEvaluation::where([
+                    ['latitude', '=', $request->latitude],
+                    ['longitude', '=', $request->longitude],
+                ])->paginate();
+                if ($placeEvaluation) {
+
+                    return $this->respondWithResource(new JsonResource($placeEvaluation));
+
+                }
+            }
+
+            return $this->respondNotFound();
+
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+
+    }
+
 }
