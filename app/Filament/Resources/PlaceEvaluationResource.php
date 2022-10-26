@@ -28,7 +28,7 @@ class PlaceEvaluationResource extends Resource
                 Forms\Components\TextInput::make('country')->required(),
                 Forms\Components\TextInput::make('latitude')->required(),
                 Forms\Components\TextInput::make('longitude')->required(),
-                Forms\Components\Toggle::make('thumb_direction')->required(),
+                Forms\Components\Toggle::make('thumb_direction'),
                 Forms\Components\Textarea::make('comment')
                     ->maxLength(65535),
                 Forms\Components\TextInput::make('questions_answers'),
