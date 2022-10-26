@@ -17,7 +17,7 @@ class FaqController extends Controller
 
     /**
      * @OA\Get(
-     *  path="/api/v1/faqs",
+     *  path="/faqs",
      *  operationId="getFaqs",
      *  tags={"FAQ's"},
      *  summary="Get list of FAQs",
@@ -30,15 +30,6 @@ class FaqController extends Controller
      *      @OA\Schema(
      *         type="string",
      *         example="en",
-     *      )
-     *  ),
-     *  @OA\Parameter(
-     *      name="x-api-key",
-     *      in="header",
-     *      required=true,
-     *      description="Set apiKey parameter",
-     *      @OA\Schema(
-     *         type="string"
      *      )
      *  ),
      *  @OA\Response(response=200, description="Successful operation",

@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::table('app_users', function (Blueprint $table) {
             $table->string('surname');
-            $table->date('birthdate');
-            $table->enum('disabilities', __('validation.disabilities'))->nullable();
+            $table->date('birthdate')->nullable();
+            $table->text('disabilities')->nullable();
+            $table->json('auth_providers')->nullable();
         });
     }
 

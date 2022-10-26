@@ -167,10 +167,13 @@ return [
 
     'attributes' => [],
     'disabilities' => [
-        'motor',
-        'visual',
-        'hearing',
-        'intellectual',
+        'motor' => 'motor',
+        'visual' => 'visual',
+        'hearing' => 'hearing',
+        'intellectual' => 'intellectual',
     ],
+    'appusers_confirmed_email' => 'Only Users with confirmed email can login',
+    'latitude.regex' => 'Latitude value appears to be incorrect format.',
+    'longitude.regex' => 'Longitude value appears to be incorrect format.',
 
 ];

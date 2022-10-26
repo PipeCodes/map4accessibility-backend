@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\Auth\AppUserPasswordResetLinkController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\VerifyEmailAppUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,8 +21,18 @@ Route::middleware('guest')->group(function () {
         ->name('password.reset');
 
     Route::post('reset-password', [NewPasswordController::class, 'store'])
-                ->name('password.update');
+        ->name('password.update');
+
+    Route::prefix('appuser')->group(function () {
+        Route::get('reset-password/{token}', [AppUserPasswordResetLinkController::class, 'create'])
+            ->name('appuser.password.reset');
+        Route::post('reset-password', [AppUserPasswordResetLinkController::class, 'store'])
+            ->name('appuser.password.update');
+    });
 });
+
+Route::get('email-confirmation/{tokenEmailConfirmation}', [VerifyEmailAppUserController::class, 'changeStatus'])
+        ->name('emailConfirmation');
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', [EmailVerificationPromptController::class, '__invoke'])

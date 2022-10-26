@@ -17,7 +17,7 @@ class LegalTextController extends Controller
 
     /**
      * @OA\Get(
-     *  path="/api/v1/legal-text/{type}",
+     *  path="/legal-text/{type}",
      *  operationId="getLegalText",
      *  tags={"Legal Texts"},
      *  summary="Get a legal text",
@@ -30,15 +30,6 @@ class LegalTextController extends Controller
      *      @OA\Schema(
      *         type="string",
      *         example="en",
-     *      )
-     *  ),
-     *  @OA\Parameter(
-     *      name="x-api-key",
-     *      in="header",
-     *      required=true,
-     *      description="Set apiKey parameter",
-     *      @OA\Schema(
-     *         type="string"
      *      )
      *  ),
      *  @OA\Parameter(ref="#/components/parameters/LegalText--type"),

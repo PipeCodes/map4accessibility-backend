@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\Api\AppUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\LegalTextController;
+use App\Http\Controllers\Api\PlaceEvaluationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,16 +17,25 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// required ---> API_KEY in Header, security validation
 Route::prefix('v1')->group(function () {
+
+    Route::post('/auth/check-email', [AuthController::class, 'checkEmail']);
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);
+    Route::post('/auth/login-by-provider', [AuthController::class, 'loginByProvider']);
+    Route::post('/auth/password-recover', [AuthController::class, 'passwordRecover']);
 
-    Route::get('/user', [AppUserController::class, 'getAuthenticated']);
+    // required ---> Authorization Token Header in format (Bearer ) security validation, token return in login,loginByProvider,register function
+    Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
+        // APP_USER Authenticated, use token to get user DATA
 
-    // form-data is only possible for POST methods,
-    // in this case editing the user can receive a file for avatar
-    // (this can be splitted in 2 different methods, one for edit user info and another to update the avatar)
-    Route::post('/user/edit', [AppUserController::class, 'editAuthenticated']);
+        Route::get('/profile', [AuthController::class, 'getAuthenticated']);
+
+        Route::post('/place-evaluation', [PlaceEvaluationController::class, 'placeEvaluationByAuthenticated']);
+        Route::post('/place-evaluation/{placeEvaluationId}/media', [PlaceEvaluationController::class, 'attachMediaPlaceEvaluationByAuthenticated']);
+
+    });
 
     Route::get('/legal-text/{type}', [LegalTextController::class, 'getLegalText']);
     Route::get('/faqs', [FaqController::class, 'getFaqs']);
