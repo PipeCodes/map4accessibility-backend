@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\LegalTextController;
+use App\Http\Controllers\Api\PlaceEvaluationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// required ---> API_KEY in Header, security validation
 Route::prefix('v1')->group(function () {
 
     Route::post('/auth/check-email', [AuthController::class, 'checkEmail']);
@@ -24,7 +26,16 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/login-by-provider', [AuthController::class, 'loginByProvider']);
     Route::post('/auth/password-recover', [AuthController::class, 'passwordRecover']);
 
-    Route::middleware('auth:sanctum')->get('/auth/profile', [AuthController::class, 'getAuthenticated']);
+    // required ---> Authorization Token Header in format (Bearer ) security validation, token return in login,loginByProvider,register function
+    Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
+        // APP_USER Authenticated, use token to get user DATA
+
+        Route::get('/profile', [AuthController::class, 'getAuthenticated']);
+
+        Route::post('/place-evaluation', [PlaceEvaluationController::class, 'placeEvaluationByAuthenticated']);
+        Route::post('/place-evaluation/{placeEvaluationId}/media', [PlaceEvaluationController::class, 'attachMediaPlaceEvaluationByAuthenticated']);
+
+    });
 
     Route::get('/legal-text/{type}', [LegalTextController::class, 'getLegalText']);
     Route::get('/faqs', [FaqController::class, 'getFaqs']);
