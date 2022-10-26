@@ -18,55 +18,56 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *  schema="AppUser",
  * type="object",
  *   @OA\Property(
- *      property="id",
+ *     readOnly=1,
+ *     property="id",
  *     format="int64",
  *     description="ID",
  *     title="ID",
  * ),
  * @OA\Property(
- *      property="email",
+ *     property="email",
  *     format="email",
  *     description="Email",
  *     title="Email",
- *      example="user@example.com"
+ *     example="user@example.com"
  * ),
  * @OA\Property(
- *      property="password",
+ *     property="password",
  *     description="Password",
  *     title="Password"
  * ),
  * @OA\Property(
- *      property="name",
+ *     property="name",
  *     description="Name",
  *     title="Name"
  * ),
  * @OA\Property(
- *      property="surname",
+ *     property="surname",
  *     description="Surname",
  *     title="Surname"
  * ),
  * @OA\Property(
- *       property="birthdate",
+ *     property="birthdate",
  *     description="Birthdate",
  *     title="Birthdate",
  *     format="date"
  * ),
  * @OA\Property(
- *      property="disabilities",
+ *     property="disabilities",
  *     description="Disabilities",
  *     title="Disabilities",
  *     type="array",
- *      @OA\Items(type="string"),
+ *     @OA\Items(type="string"),
  *     example={"visual", "motor"}
  * ),
  * @OA\Property(
- *      property="terms_accepted",
+ *     property="terms_accepted",
  *     type="bool",
  *     description="Terms Accepted",
  *     title="Terms Accepted"
  * ),
  * @OA\Property(
- *      property="auth_providers",
+ *     property="auth_providers",
  *     type="object",
  *     additionalProperties={"type":"string"},
  *     example={"facebook": 123, "gmail":456456546},
@@ -121,6 +122,17 @@ class AppUser extends Authenticatable
     {
         return $this->forceFill(['account_status_id' => 2])->save();
     }
+
+    public function placeEvaluations()
+    {
+        return $this->hasMany(PlaceEvaluation::class);
+    }
+
+    public function placeEvaluation($placeEvaluationId)
+    {
+        return $this->hasMany(PlaceEvaluation::class)->find($placeEvaluationId);
+    }
+
 
     public function sendPasswordResetNotification($token)
     {
