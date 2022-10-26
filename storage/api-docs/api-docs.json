@@ -817,20 +817,34 @@
                 "properties": {
                     "id": {
                         "title": "ID",
-                        "description": "ID",
+                        "description": "placeEvaluationId",
                         "format": "int64",
                         "readOnly": 1
-                    },
-                    "place_id": {
-                        "title": "Place id",
-                        "description": "Place id",
-                        "format": "int64",
-                        "example": ""
                     },
                     "google_place_id": {
                         "title": "Google Place id",
                         "description": "Google Place id",
                         "format": "int64",
+                        "example": ""
+                    },
+                    "name": {
+                        "title": "Name",
+                        "description": "Name Place"
+                    },
+                    "country": {
+                        "title": "country",
+                        "description": "country"
+                    },
+                    "latitude": {
+                        "title": "Coord. Latitude",
+                        "description": "Coord. Latitude",
+                        "format": "decimal",
+                        "example": ""
+                    },
+                    "longitude": {
+                        "title": "Coord. Longitude",
+                        "description": "Coord. Longitude",
+                        "format": "decimal",
                         "example": ""
                     },
                     "thumb_direction": {
