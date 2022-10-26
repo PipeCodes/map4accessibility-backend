@@ -22,24 +22,18 @@ class PlaceEvaluationResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('place_id'),
-                Forms\Components\TextInput::make('google_place_id'),
-                Forms\Components\Toggle::make('thumb_direction'),
-                Forms\Components\Textarea::make('comment')
-                    ->maxLength(65535),
-                Forms\Components\TextInput::make('questions_answers'),
-                Forms\Components\FileUpload::make('attachment')
-                    ->disk('cloudinary')
-            ]);
+            ->schema([]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('place_id'),
                 Tables\Columns\TextColumn::make('google_place_id'),
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('country'),
+                Tables\Columns\TextColumn::make('latitude'),
+                Tables\Columns\TextColumn::make('longitude'),
                 Tables\Columns\BooleanColumn::make('thumb_direction'),
                 Tables\Columns\TextColumn::make('comment'),
                 Tables\Columns\TextColumn::make('questions_answers'),
