@@ -11,6 +11,7 @@ use App\Models\AppUser;
 use App\Models\PlaceEvaluation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
@@ -214,6 +215,139 @@ class PlaceEvaluationController extends Controller
                     return $this->respondWithResource(new JsonResource($placeEvaluation));
 
                 }
+            }
+
+            return $this->respondNotFound();
+
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+
+    }
+
+    /**
+     *
+     * @OA\Schema(
+     *     schema="requestPlaceEvaluationsObject",
+     *     type="object",
+     *     @OA\Property(
+     *          property="google_place_id",
+     *          format="int64",
+     *          description="Google Place id",
+     *          title="Google Place id",
+     *          example=""
+     *     ),
+     *     @OA\Property(
+     *          property="latitude",
+     *          format="decimal",
+     *          description="Coord. Latitude",
+     *          title="Coord. Latitude",
+     *          example=""
+     *     ),
+     *     @OA\Property(
+     *          property="longitude",
+     *          format="decimal",
+     *          description="Coord. Longitude",
+     *          title="Coord. Longitude",
+     *          example=""
+     *     )
+     * )
+     *
+     * @OA\Post (
+     *     path="/place-evaluations",
+     *     tags={"PlaceEvaluation"},
+     *     security={
+     *          {"api_key_security": {}}
+     *      },
+     *     summary="filter for evaluations for the given google_place_id OR coords, place",
+     *     description="filter for evaluations for the given google_place_id OR coords, place",
+     *     operationId="placeEvaluations",
+     *     @OA\RequestBody(
+     *          @OA\JsonContent(
+     *             ref="#/components/schemas/requestPlaceEvaluationsObject"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function placeEvaluations(Request $request)
+    {
+        try {
+
+            $validate = Validator::make(
+                $request->all(),
+                [
+                    'google_place_id' => 'required_if:latitude,null|required_if:longitude,null|exists:place_evaluations,google_place_id|int64|exclude_with:latitude|exclude_with:longitude',
+                    'latitude' => ['required_if:google_place_id,null', 'exclude_with:google_place_id', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+                    'longitude' => ['required_if:google_place_id,null', 'exclude_with:google_place_id', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/']
+                ]
+            );
+
+            if ($validate->fails()) {
+                return $this->respondError($validate->errors(), 401);
+            }
+
+            /**
+             * @var PlaceEvaluation|null $placeEvaluation
+             */
+            $placeEvaluation = null;
+
+            if ($request->has('google_place_id')) {
+
+                $placeEvaluation = PlaceEvaluation::where('google_place_id', '=', $request->google_place_id);
+
+            } else {
+
+                $placeEvaluation = PlaceEvaluation::where([
+                    ['latitude', '=', $request->latitude],
+                    ['longitude', '=', $request->longitude],
+                ]);
+
+            }
+
+            if ($placeEvaluation) {
+
+                $countThumbDirection = collect(
+                    [
+                        'count_thumb_up' => (clone $placeEvaluation)->where('thumb_direction', '=', 1)->count(),
+                        'count_thumb_down' => (clone $placeEvaluation)->where('thumb_direction', '=', 0)->count(),
+                    ]
+                );
+
+                $placeEvaluation = $countThumbDirection->merge($placeEvaluation->paginate());
+
+                return $this->respondWithResource(new JsonResource($placeEvaluation));
+
             }
 
             return $this->respondNotFound();
