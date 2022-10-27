@@ -555,6 +555,64 @@
                     }
                 }
             }
+        },
+        "/place-evaluations": {
+            "post": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "filter for evaluations for the given google_place_id OR coords, place",
+                "description": "filter for evaluations for the given google_place_id OR coords, place",
+                "operationId": "placeEvaluations",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestPlaceEvaluationsObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -595,6 +653,29 @@
                 "properties": {
                     "email": {
                         "format": "email"
+                    }
+                },
+                "type": "object"
+            },
+            "requestPlaceEvaluationsObject": {
+                "properties": {
+                    "google_place_id": {
+                        "title": "Google Place id",
+                        "description": "Google Place id",
+                        "format": "int64",
+                        "example": ""
+                    },
+                    "latitude": {
+                        "title": "Coord. Latitude",
+                        "description": "Coord. Latitude",
+                        "format": "decimal",
+                        "example": ""
+                    },
+                    "longitude": {
+                        "title": "Coord. Longitude",
+                        "description": "Coord. Longitude",
+                        "format": "decimal",
+                        "example": ""
                     }
                 },
                 "type": "object"

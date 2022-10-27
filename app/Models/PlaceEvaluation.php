@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use CloudinaryLabs\CloudinaryLaravel\Model\Media;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
@@ -106,6 +107,13 @@ class PlaceEvaluation extends Model
     ];
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['media_url'];
+
+    /**
      * The attributes that should be cast.
      *
      * @var array
@@ -122,17 +130,16 @@ class PlaceEvaluation extends Model
         return $this->belongsTo(AppUser::class);
     }
 
-    public function toArray()
+    /**
+     * Get the media from cloud.
+     *
+     * @return Attribute
+     */
+    protected function mediaUrl(): Attribute
     {
-        $parentArrayData = parent::toArray();
-
-        /**
-         * @var Media|null $mediaRecord
-         */
-        if ($mediaRecord = $this->fetchLastMedia()) {
-            $parentArrayData['media_url'] = $mediaRecord->getSecurePath();
-        }
-
-        return $parentArrayData;
+        return Attribute::make(
+            get: fn() => $this->fetchLastMedia() ? $this->fetchLastMedia()->getSecurePath() : null,
+        );
     }
+
 }
