@@ -4,7 +4,6 @@ namespace App\Http\Livewire;
 
 use App\Models\RateAnswer;
 use App\Models\RateQuestion;
-use Carbon\Carbon;
 use Closure;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
@@ -67,6 +66,8 @@ class RateQuestionForm extends Component implements HasForms
                         ->schema([
                             TextInput::make('order')
                                 ->numeric()
+                                ->minValue(1)
+                                ->maxValue(4)
                                 ->label('Answer Order')
                                 ->placeholder('Answer Order')
                                 ->required(),
