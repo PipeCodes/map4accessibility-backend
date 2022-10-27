@@ -37,7 +37,7 @@ Route::prefix('v1')->group(function () {
 
     });
 
-    Route::post('/place-evaluation-by-place-coords', [PlaceEvaluationController::class, 'placeEvaluationByPlaceCoords']);
+    Route::post('/place-evaluations', [PlaceEvaluationController::class, 'placeEvaluations']);
 
     Route::get('/legal-text/{type}', [LegalTextController::class, 'getLegalText']);
     Route::get('/faqs', [FaqController::class, 'getFaqs']);

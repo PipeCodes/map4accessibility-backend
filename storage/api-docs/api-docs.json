@@ -556,19 +556,19 @@
                 }
             }
         },
-        "/place-evaluation-by-place-coords": {
+        "/place-evaluations": {
             "post": {
                 "tags": [
                     "PlaceEvaluation"
                 ],
-                "summary": "filter for evaluations for the given coords, place",
-                "description": "filter for evaluations for the given coords, place",
-                "operationId": "placeEvaluationByPlaceCoords",
+                "summary": "filter for evaluations for the given google_place_id OR coords, place",
+                "description": "filter for evaluations for the given google_place_id OR coords, place",
+                "operationId": "placeEvaluations",
                 "requestBody": {
                     "content": {
                         "application/json": {
                             "schema": {
-                                "$ref": "#/components/schemas/requestPlaceEvaluationByPlaceCoordsObject"
+                                "$ref": "#/components/schemas/requestPlaceEvaluationsObject"
                             }
                         }
                     }
@@ -657,8 +657,14 @@
                 },
                 "type": "object"
             },
-            "requestPlaceEvaluationByPlaceCoordsObject": {
+            "requestPlaceEvaluationsObject": {
                 "properties": {
+                    "google_place_id": {
+                        "title": "Google Place id",
+                        "description": "Google Place id",
+                        "format": "int64",
+                        "example": ""
+                    },
                     "latitude": {
                         "title": "Coord. Latitude",
                         "description": "Coord. Latitude",
