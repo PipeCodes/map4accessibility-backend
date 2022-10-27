@@ -74,6 +74,10 @@ class PlaceEvaluationController extends Controller
                 [
                     'place_id"' => 'int64',
                     'google_place_id"' => 'int64',
+                    'name' => 'string|min:6',
+                    'country' => 'required|string|min:1',
+                    'latitude' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+                    'longitude' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                     'comment' => 'string|min:6',
                     'thumb_direction' => 'required|boolean',
                 ]
