@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\LegalTextController;
 use App\Http\Controllers\Api\PlaceEvaluationController;
+use App\Http\Controllers\Api\RateSettingsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -34,6 +35,8 @@ Route::prefix('v1')->group(function () {
 
         Route::post('/place-evaluation', [PlaceEvaluationController::class, 'placeEvaluationByAuthenticated']);
         Route::post('/place-evaluation/{placeEvaluationId}/media', [PlaceEvaluationController::class, 'attachMediaPlaceEvaluationByAuthenticated']);
+
+        Route::get('/place-rate-settings', [RateSettingsController::class, 'getPlaceRateSettings']);
 
     });
 

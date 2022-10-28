@@ -613,6 +613,40 @@
                     }
                 ]
             }
+        },
+        "/auth/place-rate-settings": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Get the settings for the place rating",
+                "description": "Returns the settings for the place rating",
+                "operationId": "getPlaceRateSettings",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlaceRateSettingsResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -680,6 +714,44 @@
                 },
                 "type": "object"
             },
+            "PlaceRateSettingsResponse": {
+                "title": "Place Rate Settings Response",
+                "properties": {
+                    "success": {
+                        "title": "success",
+                        "type": "boolean",
+                        "readOnly": "true",
+                        "example": "true"
+                    },
+                    "message": {
+                        "title": "message",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "null"
+                    },
+                    "result": {
+                        "title": "result",
+                        "properties": {
+                            "questions": {
+                                "title": "questions",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RateQuestion"
+                                }
+                            },
+                            "country_responsibles": {
+                                "title": "country_responsibles",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/CountryResponsible"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
             "AppUser": {
                 "properties": {
                     "id": {
@@ -739,6 +811,43 @@
                         "additionalProperties": {
                             "type": "string"
                         }
+                    }
+                },
+                "type": "object"
+            },
+            "CountryResponsible": {
+                "title": "Country Responsible Object",
+                "description": "Country Responsible model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "Country responsible's ID",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "country_iso": {
+                        "title": "country_iso",
+                        "type": "string",
+                        "example": "PT"
+                    },
+                    "email": {
+                        "title": "email",
+                        "type": "string",
+                        "example": "example@example.com"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
                     }
                 },
                 "type": "object"
@@ -949,6 +1058,106 @@
                         "title": "Media Url Cloudinary",
                         "description": "Media Url Cloudinary",
                         "readOnly": 1
+                    }
+                },
+                "type": "object"
+            },
+            "RateAnswer": {
+                "title": "Rate Answer Object",
+                "description": "Rate Answer model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "Answers's ID",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "rate_question_id": {
+                        "title": "rate_question_id",
+                        "description": "Answers's Question ID",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "order": {
+                        "title": "order",
+                        "description": "Answer's placement order",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "body": {
+                        "title": "body",
+                        "type": "string",
+                        "example": "My Answer"
+                    },
+                    "slug": {
+                        "title": "slug",
+                        "type": "string",
+                        "example": "my-answer"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    }
+                },
+                "type": "object"
+            },
+            "RateQuestion": {
+                "title": "Rate Question Object",
+                "description": "Rate Question model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "Question's ID",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "title": {
+                        "title": "title",
+                        "type": "string",
+                        "example": "My Question"
+                    },
+                    "slug": {
+                        "title": "slug",
+                        "type": "string",
+                        "example": "my-question"
+                    },
+                    "place_type": {
+                        "title": "place_type",
+                        "type": "string",
+                        "example": "type3"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "answers": {
+                        "title": "answers",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RateAnswer"
+                        }
                     }
                 },
                 "type": "object"
