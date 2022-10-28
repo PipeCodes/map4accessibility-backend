@@ -2,7 +2,7 @@
 
 namespace App\Http\Livewire;
 
-use App\Helper\Countries;
+use App\Helper\Country;
 use App\Models\CountryResponsible;
 use Carbon\Carbon;
 use Filament\Forms\Components\Grid;
@@ -32,8 +32,33 @@ class CountryResponsibleForm extends Component implements HasForms
         ]);
     }
 
+    protected function getCountryLabelByISO(?string $iso)
+    {
+        try {
+            $name = Country::from($iso)->name;
+            return $this->getCountryLabel($name);
+        } catch (\ValueError $e) {
+            return null;
+        }
+    }
+
+    protected function getCountryLabel(string $name)
+    {
+        return ucwords(
+            strtolower(
+                str_replace("_", " ", $name)
+            )
+        );
+    }
+
     protected function getFormSchema(): array
     {
+        $countryCases = Country::cases();
+        $countries = array_combine(
+            keys: array_column($countryCases, 'value'),
+            values: array_map(fn ($country) => $this->getCountryLabel($country), array_column($countryCases, 'name'))
+        );
+
         return [
             Repeater::make('countries')
                 ->schema([
@@ -42,7 +67,7 @@ class CountryResponsibleForm extends Component implements HasForms
                             ->required()
                             ->label('Country')
                             ->searchable()
-                            ->options(Countries::all()),
+                            ->options($countries),
                         TextInput::make('email')
                             ->email()
                             ->required()
@@ -51,7 +76,7 @@ class CountryResponsibleForm extends Component implements HasForms
                     ]),
                 ])
                 ->disableItemMovement()
-                ->itemLabel(fn (array $state): ?string => Countries::nameByCode($state['country_iso']) ?? null)
+                ->itemLabel(fn (array $state): ?string => $this->getCountryLabelByISO($state['country_iso']) ?? null)
                 ->collapsible()
         ];
     }
