@@ -250,6 +250,45 @@ class PlaceEvaluationController extends Controller
      *          description="Coord. Longitude",
      *          title="Coord. Longitude",
      *          example=""
+     *     ),
+     *     @OA\Property(
+     *          property="geo_query_radius",
+     *          format="integer",
+     *          description="GeoQuery Radius in Meters",
+     *          title="GeoQuery Radius",
+     *          example="5"
+     *     ),
+     *     @OA\Property(
+     *          property="country",
+     *          description="Country",
+     *          title="Country",
+     *          example=""
+     *     ),
+     *     @OA\Property(
+     *          property="asc_order_by",
+     *          description="Order by :field ASC",
+     *          title="Order by :field ASC",
+     *          example="thumb_direction"
+     *     ),
+     *     @OA\Property(
+     *          property="desc_order_by",
+     *          description=" Order by DESC",
+     *          title="Order by :field DESC",
+     *          example=""
+     *     ),
+     *     @OA\Property(
+     *          property="page",
+     *          format="integer",
+     *          description="Page Number",
+     *          title="Page Number",
+     *          example="1"
+     *     ),
+     *     @OA\Property(
+     *          property="per_page",
+     *          format="integer",
+     *          description="Per. Page",
+     *          title="Per. Page",
+     *          example="20"
      *     )
      * )
      *
@@ -309,7 +348,13 @@ class PlaceEvaluationController extends Controller
                 [
                     'google_place_id' => 'required_if:latitude,null|required_if:longitude,null|exists:place_evaluations,google_place_id|int64|exclude_with:latitude|exclude_with:longitude',
                     'latitude' => ['required_if:google_place_id,null', 'exclude_with:google_place_id', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
-                    'longitude' => ['required_if:google_place_id,null', 'exclude_with:google_place_id', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/']
+                    'longitude' => ['required_if:google_place_id,null', 'exclude_with:google_place_id', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
+                    'geo_query_radius' => ['integer', 'min:1'],
+                    'asc_order_by' => ['string', 'in:name,country,thumb_direction,comment,created_at,updated_at'],
+                    'desc_order_by' => ['string', 'in:name,country,thumb_direction,comment,created_at,updated_at', 'exclude_with:asc_order_by'],
+                    'country' => ['string', 'exists:place_evaluations,country'],
+                    'page' => ['integer', 'min:1'],
+                    'per_page' => ['integer', 'min:1']
                 ]
             );
 
@@ -328,14 +373,32 @@ class PlaceEvaluationController extends Controller
 
             } else {
 
-                $placeEvaluation = PlaceEvaluation::where([
-                    ['latitude', '=', $request->latitude],
-                    ['longitude', '=', $request->longitude],
-                ]);
+                $radius = $request->get('geo_query_radius', env('GEO_QUERY_RADIUS', 5));
+
+                // replace 6371000 (for radius in meters) with 6371 (for radius in kilometer) and 3956 (for radius in miles)
+                $placeEvaluation = PlaceEvaluation::selectRaw('*,
+                    ( 6371000 * acos( cos( radians(?) ) *
+                    cos( radians( latitude ) )
+                    * cos( radians( longitude ) - radians(?)
+                    ) + sin( radians(?) ) *
+                    sin( radians( latitude ) ) )
+                    ) AS distance',
+                    [$request->latitude, $request->longitude, $request->latitude]
+                )->havingRaw("distance < ?", [$radius]);
 
             }
 
             if ($placeEvaluation) {
+
+                if ($request->has('country')) {
+                    $placeEvaluation->where('country', $request->country);
+                }
+
+                if ($request->has('asc_order_by')) {
+                    $placeEvaluation->orderBy($request->asc_order_by, 'asc');
+                } elseif ($request->has('desc_order_by')) {
+                    $placeEvaluation->orderBy($request->desc_order_by, 'desc');
+                }
 
                 $countThumbDirection = collect(
                     [
@@ -344,7 +407,7 @@ class PlaceEvaluationController extends Controller
                     ]
                 );
 
-                $placeEvaluation = $countThumbDirection->merge($placeEvaluation->paginate());
+                $placeEvaluation = $countThumbDirection->merge($placeEvaluation->paginate($request->get('per_page', 20)));
 
                 return $this->respondWithResource(new JsonResource($placeEvaluation));
 

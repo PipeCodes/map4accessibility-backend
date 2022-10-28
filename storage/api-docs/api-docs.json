@@ -676,6 +676,39 @@
                         "description": "Coord. Longitude",
                         "format": "decimal",
                         "example": ""
+                    },
+                    "geo_query_radius": {
+                        "title": "GeoQuery Radius",
+                        "description": "GeoQuery Radius in Meters",
+                        "format": "integer",
+                        "example": "5"
+                    },
+                    "country": {
+                        "title": "Country",
+                        "description": "Country",
+                        "example": ""
+                    },
+                    "asc_order_by": {
+                        "title": "Order by :field ASC",
+                        "description": "Order by :field ASC",
+                        "example": ""
+                    },
+                    "desc_order_by": {
+                        "title": "Order by :field DESC",
+                        "description": " Order by DESC",
+                        "example": ""
+                    },
+                    "page": {
+                        "title": "Page Number",
+                        "description": "Page Number",
+                        "format": "integer",
+                        "example": ""
+                    },
+                    "per_page": {
+                        "title": "Per. Page",
+                        "description": "Per. Page",
+                        "format": "integer",
+                        "example": ""
                     }
                 },
                 "type": "object"
