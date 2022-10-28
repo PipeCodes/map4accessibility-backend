@@ -556,40 +556,6 @@
                 }
             }
         },
-<<<<<<< HEAD
-        "/auth/place-rate-settings": {
-            "get": {
-                "tags": [
-                    "Settings"
-                ],
-                "summary": "Get the settings for the place rating",
-                "description": "Returns the settings for the place rating",
-                "operationId": "getPlaceRateSettings",
-                "parameters": [
-                    {
-                        "name": "Accept-Language",
-                        "in": "header",
-                        "description": "Set language parameter",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "en"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PlaceRateSettingsResponse"
-                                }
-                            }
-                        }
-                    }
-                }
-===
         "/place-evaluations": {
             "post": {
                 "tags": [
@@ -646,7 +612,40 @@
                         "api_key_security": []
                     }
                 ]
->>>>>>> develop
+            }
+        },
+        "/auth/place-rate-settings": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Get the settings for the place rating",
+                "description": "Returns the settings for the place rating",
+                "operationId": "getPlaceRateSettings",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlaceRateSettingsResponse"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },
@@ -692,7 +691,29 @@
                 },
                 "type": "object"
             },
-<<<<<<< HEAD
+            "requestPlaceEvaluationsObject": {
+                "properties": {
+                    "google_place_id": {
+                        "title": "Google Place id",
+                        "description": "Google Place id",
+                        "format": "int64",
+                        "example": ""
+                    },
+                    "latitude": {
+                        "title": "Coord. Latitude",
+                        "description": "Coord. Latitude",
+                        "format": "decimal",
+                        "example": ""
+                    },
+                    "longitude": {
+                        "title": "Coord. Longitude",
+                        "description": "Coord. Longitude",
+                        "format": "decimal",
+                        "example": ""
+                    }
+                },
+                "type": "object"
+            },
             "PlaceRateSettingsResponse": {
                 "title": "Place Rate Settings Response",
                 "properties": {
@@ -727,27 +748,6 @@
                             }
                         },
                         "type": "object"
-===
-            "requestPlaceEvaluationsObject": {
-                "properties": {
-                    "google_place_id": {
-                        "title": "Google Place id",
-                        "description": "Google Place id",
-                        "format": "int64",
-                        "example": ""
-                    },
-                    "latitude": {
-                        "title": "Coord. Latitude",
-                        "description": "Coord. Latitude",
-                        "format": "decimal",
-                        "example": ""
-                    },
-                    "longitude": {
-                        "title": "Coord. Longitude",
-                        "description": "Coord. Longitude",
-                        "format": "decimal",
-                        "example": ""
->>>>>>> develop
                     }
                 },
                 "type": "object"
