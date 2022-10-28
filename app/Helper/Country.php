@@ -253,4 +253,13 @@ enum Country: string
     case YEMEN = 'YE';
     case ZAMBIA = 'ZM';
     case ZIMBABWE = 'ZW';
+
+	public function getLabel()
+    {
+        return ucwords(
+            strtolower(
+                str_replace("_", " ", $this->name)
+            )
+        );
+    }
 }

@@ -32,31 +32,12 @@ class CountryResponsibleForm extends Component implements HasForms
         ]);
     }
 
-    protected function getCountryLabelByISO(?string $iso)
-    {
-        try {
-            $name = Country::from($iso)->name;
-            return $this->getCountryLabel($name);
-        } catch (\ValueError $e) {
-            return null;
-        }
-    }
-
-    protected function getCountryLabel(string $name)
-    {
-        return ucwords(
-            strtolower(
-                str_replace("_", " ", $name)
-            )
-        );
-    }
-
     protected function getFormSchema(): array
     {
         $countryCases = Country::cases();
         $countries = array_combine(
             keys: array_column($countryCases, 'value'),
-            values: array_map(fn ($country) => $this->getCountryLabel($country), array_column($countryCases, 'name'))
+            values: array_map(fn ($c) => $c->getLabel(), $countryCases)
         );
 
         return [
@@ -76,7 +57,7 @@ class CountryResponsibleForm extends Component implements HasForms
                     ]),
                 ])
                 ->disableItemMovement()
-                ->itemLabel(fn (array $state): ?string => $this->getCountryLabelByISO($state['country_iso']) ?? null)
+                ->itemLabel(fn (array $state): ?string => Country::tryFrom($state['country_iso'])?->getLabel() ?? null)
                 ->collapsible()
         ];
     }
