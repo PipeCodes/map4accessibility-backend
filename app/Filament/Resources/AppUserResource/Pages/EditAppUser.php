@@ -16,4 +16,11 @@ class EditAppUser extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            AppUserResource\Widgets\AppUserComments::class,
+        ];
+    }
 }
