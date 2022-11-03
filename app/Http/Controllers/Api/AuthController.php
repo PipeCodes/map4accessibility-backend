@@ -466,6 +466,7 @@ class AuthController extends Controller
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
+
     }
 
     /**
