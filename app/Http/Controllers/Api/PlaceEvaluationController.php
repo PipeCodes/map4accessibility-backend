@@ -73,8 +73,7 @@ class PlaceEvaluationController extends Controller
             $validate = Validator::make(
                 $request->all(),
                 [
-                    'place_id"' => 'int64',
-                    'google_place_id"' => 'int64',
+                    'google_place_id' => 'integer',
                     'name' => 'string|min:6',
                     'country' => 'required|string|min:1',
                     'latitude' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
@@ -346,7 +345,7 @@ class PlaceEvaluationController extends Controller
             $validate = Validator::make(
                 $request->all(),
                 [
-                    'google_place_id' => 'required_if:latitude,null|required_if:longitude,null|required_if:country,null|exists:place_evaluations,google_place_id|int64|exclude_with:latitude|exclude_with:longitude',
+                    'google_place_id' => 'required_if:latitude,null|required_if:longitude,null|required_if:country,null|exists:place_evaluations,google_place_id|integer|exclude_with:latitude|exclude_with:longitude',
                     'latitude' => ['required_if:google_place_id,null', 'required_if:country,null', 'exclude_with:google_place_id', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
                     'longitude' => ['required_if:google_place_id,null', 'exclude_with:google_place_id', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                     'geo_query_radius' => ['integer', 'min:1'],
