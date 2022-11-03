@@ -346,13 +346,13 @@ class PlaceEvaluationController extends Controller
             $validate = Validator::make(
                 $request->all(),
                 [
-                    'google_place_id' => 'required_if:latitude,null|required_if:longitude,null|exists:place_evaluations,google_place_id|int64|exclude_with:latitude|exclude_with:longitude',
-                    'latitude' => ['required_if:google_place_id,null', 'exclude_with:google_place_id', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
+                    'google_place_id' => 'required_if:latitude,null|required_if:longitude,null|required_if:country,null|exists:place_evaluations,google_place_id|int64|exclude_with:latitude|exclude_with:longitude',
+                    'latitude' => ['required_if:google_place_id,null', 'required_if:country,null', 'exclude_with:google_place_id', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
                     'longitude' => ['required_if:google_place_id,null', 'exclude_with:google_place_id', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                     'geo_query_radius' => ['integer', 'min:1'],
                     'asc_order_by' => ['string', 'in:name,country,thumb_direction,comment,created_at,updated_at'],
                     'desc_order_by' => ['string', 'in:name,country,thumb_direction,comment,created_at,updated_at', 'exclude_with:asc_order_by'],
-                    'country' => ['string', 'exists:place_evaluations,country'],
+                    'country' => ['required_if:google_place_id,null', 'required_if:latitude,null', 'required_if:longitude,null', 'string', 'exists:place_evaluations,country'],
                     'page' => ['integer', 'min:1'],
                     'per_page' => ['integer', 'min:1']
                 ]
@@ -371,7 +371,7 @@ class PlaceEvaluationController extends Controller
 
                 $placeEvaluation = PlaceEvaluation::where('google_place_id', '=', $request->google_place_id);
 
-            } else {
+            } elseif ($request->has('latitude') && $request->has('longitude')) {
 
                 $radius = $request->get('geo_query_radius', env('GEO_QUERY_RADIUS', 5));
 
@@ -388,11 +388,15 @@ class PlaceEvaluationController extends Controller
 
             }
 
-            if ($placeEvaluation) {
-
-                if ($request->has('country')) {
+            if ($request->has('country')) {
+                if ($placeEvaluation) {
                     $placeEvaluation->where('country', $request->country);
+                }else{
+                    $placeEvaluation = PlaceEvaluation::where('country', $request->country);
                 }
+            }
+
+            if ($placeEvaluation) {
 
                 if ($request->has('asc_order_by')) {
                     $placeEvaluation->orderBy($request->asc_order_by, 'asc');
