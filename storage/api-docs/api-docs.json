@@ -725,7 +725,7 @@
                     "asc_order_by": {
                         "title": "Order by :field ASC",
                         "description": "Order by :field ASC",
-                        "example": ""
+                        "example": "thumb_direction"
                     },
                     "desc_order_by": {
                         "title": "Order by :field DESC",
@@ -736,13 +736,13 @@
                         "title": "Page Number",
                         "description": "Page Number",
                         "format": "integer",
-                        "example": ""
+                        "example": "1"
                     },
                     "per_page": {
                         "title": "Per. Page",
                         "description": "Per. Page",
                         "format": "integer",
-                        "example": ""
+                        "example": "20"
                     }
                 },
                 "type": "object"
