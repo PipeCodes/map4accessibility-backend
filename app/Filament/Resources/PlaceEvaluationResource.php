@@ -2,14 +2,15 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\AppUserResource\Pages\EditAppUser;
 use App\Filament\Resources\PlaceEvaluationResource\Pages;
-use App\Filament\Resources\PlaceEvaluationResource\RelationManagers;
 use App\Models\PlaceEvaluation;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -40,6 +41,9 @@ class PlaceEvaluationResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('appUser.email')
+                    ->url(fn ($record) => 
+                        "app-users/{$record->appUser->id}/edit"),
                 Tables\Columns\TextColumn::make('google_place_id'),
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('country'),
@@ -54,6 +58,7 @@ class PlaceEvaluationResource extends Resource
                     ->dateTime(),
             ])
             ->filters([
+                SelectFilter::make('appUser')->relationship('appUser', 'email'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

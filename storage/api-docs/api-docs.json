@@ -438,6 +438,103 @@
             }
         },
         "/auth/place-evaluation": {
+            "get": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "Lists all place evaluations made by the app user that is currently logged in.",
+                "description": "Lists all place evaluations made by the app user that is currently logged in.",
+                "operationId": "placeEvaluationsByAppUser",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "example": "1"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Quantity of comments to return",
+                        "example": "10"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "title": "result",
+                                            "properties": {
+                                                "questions": {
+                                                    "title": "data",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/PlaceEvaluation"
+                                                    }
+                                                },
+                                                "result": {
+                                                    "title": "links",
+                                                    "properties": {
+                                                        "first": {
+                                                            "title": "First Page",
+                                                            "description": "First Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "last": {
+                                                            "title": "Last Page",
+                                                            "description": "Last Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "prev": {
+                                                            "title": "Previous Page",
+                                                            "description": "Previous Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "next": {
+                                                            "title": "Next Page",
+                                                            "description": "Next Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "PlaceEvaluation"
