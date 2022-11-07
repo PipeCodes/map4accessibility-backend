@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->bigInteger('app_user_id')->unsigned();
             $table->unsignedBigInteger('google_place_id')->nullable();
             $table->string('name')->nullable();
+            $table->string('place_type')->nullable();
             $table->string('country');
             $table->decimal('latitude', 11, 8);
             $table->decimal('longitude', 11, 8);

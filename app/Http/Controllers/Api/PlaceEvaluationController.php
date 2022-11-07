@@ -258,6 +258,18 @@ class PlaceEvaluationController extends Controller
      *          example="5"
      *     ),
      *     @OA\Property(
+     *          property="name",
+     *          description="Name",
+     *          title="Name",
+     *          example=""
+     *     ),
+     *     @OA\Property(
+     *          property="place_type",
+     *          description="Place Type",
+     *          title="Place Type",
+     *          example=""
+     *     ),
+     *     @OA\Property(
      *          property="country",
      *          description="Country",
      *          title="Country",
@@ -352,6 +364,8 @@ class PlaceEvaluationController extends Controller
                     'asc_order_by' => ['string', 'in:name,country,thumb_direction,comment,created_at,updated_at'],
                     'desc_order_by' => ['string', 'in:name,country,thumb_direction,comment,created_at,updated_at', 'exclude_with:asc_order_by'],
                     'country' => ['required_if:google_place_id,null', 'required_if:latitude,null', 'required_if:longitude,null', 'string', 'exists:place_evaluations,country'],
+                    'name' => ['string'],
+                    'place_type' => ['string'],
                     'page' => ['integer', 'min:1'],
                     'per_page' => ['integer', 'min:1']
                 ]
@@ -390,8 +404,24 @@ class PlaceEvaluationController extends Controller
             if ($request->has('country')) {
                 if ($placeEvaluation) {
                     $placeEvaluation->where('country', $request->country);
-                }else{
+                } else {
                     $placeEvaluation = PlaceEvaluation::where('country', $request->country);
+                }
+            }
+
+            if ($request->has('name')) {
+                if ($placeEvaluation) {
+                    $placeEvaluation->where('name', 'like', '%' . $request->name . '%');
+                } else {
+                    $placeEvaluation = PlaceEvaluation::where('name', 'like', '%' . $request->name . '%');
+                }
+            }
+
+            if ($request->has('place_type')) {
+                if ($placeEvaluation) {
+                    $placeEvaluation->where('place_type', 'like', '%' . $request->place_type . '%');
+                } else {
+                    $placeEvaluation = PlaceEvaluation::where('place_type', 'like', '%' . $request->place_type . '%');
                 }
             }
 
