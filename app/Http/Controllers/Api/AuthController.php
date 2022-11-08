@@ -9,6 +9,7 @@ use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
 use App\Models\AppUser;
 use App\Mail\EmailConfirmation;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
@@ -436,9 +437,21 @@ class AuthController extends Controller
                 return $this->respondError($validateUser->errors(), 401);
             }
 
+
             $existsUser = AppUser::where('email', $request->email)->first();
 
             if (isset($existsUser)) {
+                if ($request->has('auth_providers')) {
+                    $existsUser->auth_providers = $request->get(
+                        'auth_providers', 
+                        $existsUser->auth_providers
+                    );
+
+                    $existsUser->save();
+
+                    return $this->respondWithAppUserLoginToken($existsUser);
+                }
+
                 return $this->respondError(__('api.user_exists_error'), 409);
             }
 
@@ -456,17 +469,22 @@ class AuthController extends Controller
 
             Mail::to($user->email)->send(new EmailConfirmation($user));
 
-            return $this->respondWithResource(new AuthResource(
-                new AppUserResource($user),
-                [
-                    'token' => $user->createToken($request->email)->plainTextToken,
-                    'type' => 'Bearer',
-                ],
-            ), __('api.create_user_success'), 201);
+            return $this->respondWithAppUserLoginToken($user);
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
 
+    }
+
+    private function respondWithAppUserLoginToken(AppUser $user): JsonResponse
+    {
+        return $this->respondWithResource(new AuthResource(
+            new AppUserResource($user),
+            [
+                'token' => $user->createToken($user->email)->plainTextToken,
+                'type' => 'Bearer',
+            ],
+        ), __('api.create_user_success'), 201);
     }
 
     /**
