@@ -322,7 +322,49 @@
                 ]
             }
         },
-        "/auth/update": {
+        "/auth/profile": {
+            "get": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Get AppUser Data",
+                "description": "",
+                "operationId": "getAuthenticated",
+                "responses": {
+                    "200": {
+                        "description": "successful get data",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUser"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            },
             "patch": {
                 "tags": [
                     "appUser"
@@ -364,50 +406,6 @@
                             "application/json": {
                                 "schema": {
                                     "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid username/password supplied"
-                    },
-                    "400": {
-                        "description": "Internal error"
-                    }
-                }
-            }
-        },
-        "/auth/profile": {
-            "get": {
-                "tags": [
-                    "appUser"
-                ],
-                "summary": "Get AppUser Data",
-                "description": "",
-                "operationId": "getAuthenticated",
-                "responses": {
-                    "200": {
-                        "description": "successful get data",
-                        "headers": {
-                            "X-Rate-Limit": {
-                                "description": "calls per hour allowed by the user",
-                                "schema": {
-                                    "type": "integer",
-                                    "format": "int32"
-                                }
-                            },
-                            "X-Expires-After": {
-                                "description": "date in UTC when token expires",
-                                "schema": {
-                                    "type": "string",
-                                    "format": "datetime"
-                                }
-                            }
-                        },
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AppUser"
                                 }
                             }
                         }
