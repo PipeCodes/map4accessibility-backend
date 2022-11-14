@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\LegalTextController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/terms-conditions', [LegalTextController::class, 'terms']);
+Route::get('/privacy-policy', [LegalTextController::class, 'privacy']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');

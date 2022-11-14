@@ -52,4 +52,18 @@ class LegalText extends Model
         'description',
         'locale',
     ];
+
+    public static function terms(?string $locale = 'en')
+    {
+        return static::where('type', 'terms')
+            ->where('locale', $locale ? strtolower($locale) : 'en')
+            ->firstOrFail();
+    }
+
+    public static function privacy(?string $locale = 'en')
+    {
+        return static::where('type', 'privacy')
+            ->where('locale', $locale ? strtolower($locale) : 'en')
+            ->firstOrFail();
+    }
 }
