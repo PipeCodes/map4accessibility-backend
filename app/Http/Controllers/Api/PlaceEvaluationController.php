@@ -3,18 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AppUserResource;
-use App\Http\Resources\AuthResource;
 use App\Http\Resources\PlaceEvaluationCollection;
 use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
 use App\Models\AppUser;
 use App\Models\PlaceEvaluation;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 
 class PlaceEvaluationController extends Controller
@@ -22,6 +19,123 @@ class PlaceEvaluationController extends Controller
     use ApiResponseTrait;
     use UploadTrait;
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Validation\Validator
+     */
+    protected function validatorListPlacesRequest(Request $request)
+    {
+        return Validator::make(
+            $request->all(),
+            [
+                'google_place_id' => [
+                    'required_if:latitude,null',
+                    'required_if:longitude,null',
+                    'required_if:country,null',
+                    'exclude_with:latitude',
+                    'exclude_with:longitude',
+                    'exists:place_evaluations,google_place_id',
+                    'integer'
+                ],
+                'latitude' => [
+                    'exclude_with:google_place_id', 
+                    'required_if:google_place_id,null', 
+                    'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'
+                ],
+                'longitude' => [
+                    'exclude_with:google_place_id', 
+                    'required_if:google_place_id,null', 
+                    'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'
+                ],
+                'geo_query_radius' => ['integer', 'min:1'],
+                'asc_order_by' => [
+                    'string', 
+                    'in:name,country,thumb_direction,comment,created_at,updated_at'
+                ],
+                'desc_order_by' => [
+                    'exclude_with:asc_order_by',
+                    'string', 
+                    'in:name,country,thumb_direction,comment,created_at,updated_at'
+                ],
+                'country' => [
+                    'required_if:google_place_id,null', 
+                    'required_if:latitude,null', 
+                    'required_if:longitude,null', 
+                    'string', 
+                    'exists:place_evaluations,country'
+                ],
+                'name' => ['string'],
+                'place_type' => ['string'],
+                'page' => ['integer', 'min:1'],
+                'per_page' => ['integer', 'min:1']
+            ]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @param Request|null $request
+     * @return Builder
+     */
+    protected function queryListPlaces(Request $request, ?Builder $query = null)
+    {
+        /**
+         * @var Builder $query
+         */
+        $query = $query ?: PlaceEvaluation::query()->select('*');
+
+        if ($request->has('google_place_id')) {
+            $query->where(
+                'google_place_id', $request->google_place_id
+            );
+        } else if ($request->has('latitude') && $request->has('longitude')) {
+            $radius = $request->get(
+                'geo_query_radius', 
+                env('GEO_QUERY_RADIUS', 5)
+            );
+
+            /**
+             * replace 6371000 (for radius in meters) 
+             * with 6371 (for radius in kilometer)
+             * and 3956 (for radius in miles)
+             */
+            $query->selectRaw(
+                '
+                    ( 6371000 * acos( cos( radians(?) ) *
+                    cos( radians( latitude ) )
+                    * cos( radians( longitude ) - radians(?)
+                    ) + sin( radians(?) ) *
+                    sin( radians( latitude ) ) )
+                    ) AS distance
+                ',
+                [$request->latitude, $request->longitude, $request->latitude]
+            )->havingRaw("distance < ?", [$radius]);
+        }
+
+        if ($request->has('country')) {
+            $query->where('country', $request->country);
+        }
+
+        if ($request->has('name')) {
+            $query->where(
+                'name', 'like', '%' . $request->name . '%'
+            );
+        }
+
+        if ($request->has('place_type')) {
+            $query->where(
+                'place_type', 'like', '%' . $request->place_type . '%'
+            );
+        }
+
+        if ($request->has('asc_order_by')) {
+            $query->orderBy($request->asc_order_by, 'asc');
+        } else if ($request->has('desc_order_by')) {
+            $query->orderBy($request->desc_order_by, 'desc');
+        }
+
+        return $query;
+    }
 
     /**
      * @OA\Post(
@@ -350,98 +464,133 @@ class PlaceEvaluationController extends Controller
     public function placeEvaluations(Request $request)
     {
         try {
-
-            $validate = Validator::make(
-                $request->all(),
-                [
-                    'google_place_id' => 'required_if:latitude,null|required_if:longitude,null|required_if:country,null|exists:place_evaluations,google_place_id|integer|exclude_with:latitude|exclude_with:longitude',
-                    'latitude' => ['required_if:google_place_id,null', 'required_if:country,null', 'exclude_with:google_place_id', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
-                    'longitude' => ['required_if:google_place_id,null', 'exclude_with:google_place_id', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
-                    'geo_query_radius' => ['integer', 'min:1'],
-                    'asc_order_by' => ['string', 'in:name,country,thumb_direction,comment,created_at,updated_at'],
-                    'desc_order_by' => ['string', 'in:name,country,thumb_direction,comment,created_at,updated_at', 'exclude_with:asc_order_by'],
-                    'country' => ['required_if:google_place_id,null', 'required_if:latitude,null', 'required_if:longitude,null', 'string', 'exists:place_evaluations,country'],
-                    'name' => ['string'],
-                    'place_type' => ['string'],
-                    'page' => ['integer', 'min:1'],
-                    'per_page' => ['integer', 'min:1']
-                ]
-            );
+            $validate = $this->validatorListPlacesRequest($request);
 
             if ($validate->fails()) {
                 return $this->respondError($validate->errors(), 401);
             }
 
             /**
-             * @var PlaceEvaluation|null $placeEvaluation
+             * @var Builder
              */
-            $placeEvaluation = null;
+            $query = $this->queryListPlaces($request);
 
-            if ($request->has('google_place_id')) {
+            $countThumbDirection = collect([
+                'count_thumb_up' => 
+                    (clone $query)->where('thumb_direction', '=', 1)->count(),
+                'count_thumb_down' => 
+                    (clone $query)->where('thumb_direction', '=', 0)->count(),
+            ]);
 
-                $placeEvaluation = PlaceEvaluation::where('google_place_id', '=', $request->google_place_id);
-            } elseif ($request->has('latitude') && $request->has('longitude')) {
+            $result = $countThumbDirection->merge(
+                $query->paginate($request->get('per_page', 20))
+            );
 
-                $radius = $request->get('geo_query_radius', env('GEO_QUERY_RADIUS', 5));
+            return $this->respondWithResource(new JsonResource($result));
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
 
-                // replace 6371000 (for radius in meters) with 6371 (for radius in kilometer) and 3956 (for radius in miles)
-                $placeEvaluation = PlaceEvaluation::selectRaw(
-                    '*,
-                    ( 6371000 * acos( cos( radians(?) ) *
-                    cos( radians( latitude ) )
-                    * cos( radians( longitude ) - radians(?)
-                    ) + sin( radians(?) ) *
-                    sin( radians( latitude ) ) )
-                    ) AS distance',
-                    [$request->latitude, $request->longitude, $request->latitude]
-                )->havingRaw("distance < ?", [$radius]);
+    /**
+     * @OA\Post (
+     *     path="/places",
+     *     tags={"PlaceEvaluation"},
+     *     summary="filter for evaluations for the given google_place_id OR coords, place",
+     *     description="filter for evaluations for the given google_place_id OR coords, place",
+     *     operationId="places",
+     *     @OA\RequestBody(
+     *          @OA\JsonContent(
+     *             ref="#/components/schemas/requestPlaceEvaluationsObject"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function listPlaces(Request $request)
+    {
+        try {
+            $validate = $this->validatorListPlacesRequest($request);
+
+            if ($validate->fails()) {
+                return $this->respondError($validate->errors(), 401);
             }
 
-            if ($request->has('country')) {
-                if ($placeEvaluation) {
-                    $placeEvaluation->where('country', $request->country);
-                } else {
-                    $placeEvaluation = PlaceEvaluation::where('country', $request->country);
-                }
-            }
+            /**
+             * @var Builder
+             */
+            $query = $this->queryListPlaces(
+                $request,
+                PlaceEvaluation::query()->select('google_place_id')
+            );
 
-            if ($request->has('name')) {
-                if ($placeEvaluation) {
-                    $placeEvaluation->where('name', 'like', '%' . $request->name . '%');
-                } else {
-                    $placeEvaluation = PlaceEvaluation::where('name', 'like', '%' . $request->name . '%');
-                }
-            }
+            $query
+                ->addSelect(  
+                    DB::raw(
+                        "SUM(CASE WHEN thumb_direction = 1 THEN 1 ELSE 0 END) AS count_thumbs_up, 
+                        SUM(CASE WHEN thumb_direction = 0 THEN 1 ELSE 0 END) AS count_thumbs_down,
+                        MIN(name) as name,
+                        MIN(country) as country,
+                        MIN(place_type) as place_type,
+                        MIN(latitude) as latitude,
+                        MIN(longitude) as longitude"
+                    )
+                )
+                ->groupBy('google_place_id');
 
-            if ($request->has('place_type')) {
-                if ($placeEvaluation) {
-                    $placeEvaluation->where('place_type', 'like', '%' . $request->place_type . '%');
-                } else {
-                    $placeEvaluation = PlaceEvaluation::where('place_type', 'like', '%' . $request->place_type . '%');
-                }
-            }
+            /**
+             * WARNING: Temporary response!
+             */
+            return [
+                'query' => $query->getQuery()->toSql(),
+                'results' => $query->get()
+            ];
 
-            if ($placeEvaluation) {
 
-                if ($request->has('asc_order_by')) {
-                    $placeEvaluation->orderBy($request->asc_order_by, 'asc');
-                } elseif ($request->has('desc_order_by')) {
-                    $placeEvaluation->orderBy($request->desc_order_by, 'desc');
-                }
 
-                $countThumbDirection = collect(
-                    [
-                        'count_thumb_up' => (clone $placeEvaluation)->where('thumb_direction', '=', 1)->count(),
-                        'count_thumb_down' => (clone $placeEvaluation)->where('thumb_direction', '=', 0)->count(),
-                    ]
-                );
 
-                $placeEvaluation = $countThumbDirection->merge($placeEvaluation->paginate($request->get('per_page', 20)));
+            $countThumbDirection = collect([
+                'count_thumb_up' => 
+                    (clone $query)->where('thumb_direction', '=', 1)->count(),
+                'count_thumb_down' => 
+                    (clone $query)->where('thumb_direction', '=', 0)->count(),
+            ]);
 
-                return $this->respondWithResource(new JsonResource($placeEvaluation));
-            }
+            $result = $countThumbDirection->merge(
+                $query->paginate($request->get('per_page', 20))
+            );
 
-            return $this->respondNotFound();
+            return $this->respondWithResource(new JsonResource($result));
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
@@ -532,7 +681,7 @@ class PlaceEvaluationController extends Controller
         }
 
         $appUser = $request->user();
-        
+
         if (!$appUser) {
             return $this->respondNotFound();
         }

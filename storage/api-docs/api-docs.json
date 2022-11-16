@@ -764,6 +764,59 @@
                 ]
             }
         },
+        "/places": {
+            "post": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "filter for evaluations for the given google_place_id OR coords, place",
+                "description": "filter for evaluations for the given google_place_id OR coords, place",
+                "operationId": "places",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestPlaceEvaluationsObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
         "/auth/place-rate-settings": {
             "get": {
                 "tags": [
