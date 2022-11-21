@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\LegalTextController;
+use App\Http\Controllers\Api\PlaceController;
 use App\Http\Controllers\Api\PlaceEvaluationController;
 use App\Http\Controllers\Api\RateSettingsController;
 use Illuminate\Support\Facades\Route;
@@ -20,7 +21,6 @@ use Illuminate\Support\Facades\Route;
 
 // required ---> API_KEY in Header, security validation
 Route::prefix('v1')->group(function () {
-
     Route::post('/auth/check-email', [AuthController::class, 'checkEmail']);
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);
@@ -34,17 +34,16 @@ Route::prefix('v1')->group(function () {
         Route::get('/profile', [AuthController::class, 'getAuthenticated']);
         Route::patch('/profile', [AuthController::class, 'update']);
 
-        Route::get('/place-evaluation', [PlaceEvaluationController::class, 'listPlaceEvaluationsByAppUser']);
-        Route::post('/place-evaluation', [PlaceEvaluationController::class, 'placeEvaluationByAuthenticated']);
+        Route::get('/place-evaluations', [PlaceEvaluationController::class, 'listPlaceEvaluationsByAppUser']);
+        Route::post('/place-evaluations', [PlaceEvaluationController::class, 'createPlaceEvaluation']);
+
         Route::post('/place-evaluation/{placeEvaluationId}/media', [PlaceEvaluationController::class, 'attachMediaPlaceEvaluationByAuthenticated']);
 
         Route::get('/place-rate-settings', [RateSettingsController::class, 'getPlaceRateSettings']);
-        
-
     });
 
-    Route::post('/place-evaluations', [PlaceEvaluationController::class, 'placeEvaluations']);
-    Route::post('/places', [PlaceEvaluationController::class, 'listPlaces']);
+    Route::get('/places', [PlaceController::class, 'listPlaces']);
+    Route::get('/place-evaluations', [PlaceEvaluationController::class, 'listPlaceEvaluations']);
 
     Route::get('/legal-text/{type}', [LegalTextController::class, 'getLegalText']);
     Route::get('/faqs', [FaqController::class, 'getFaqs']);

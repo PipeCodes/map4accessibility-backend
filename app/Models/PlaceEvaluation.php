@@ -100,16 +100,11 @@ class PlaceEvaluation extends Model
      * @var array
      */
     protected $fillable = [
-        'google_place_id',
-        'name',
-        'place_type',
-        'country',
-        'latitude',
-        'longitude',
         'thumb_direction',
         'comment',
         'questions_answers',
-        'app_user_id'
+        'app_user_id',
+        'place_id'
     ];
 
     /**
@@ -134,6 +129,11 @@ class PlaceEvaluation extends Model
     public function appUser()
     {
         return $this->belongsTo(AppUser::class);
+    }
+
+    public function place()
+    {
+        return $this->belongsTo(Place::class);
     }
 
     /**

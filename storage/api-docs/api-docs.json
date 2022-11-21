@@ -365,7 +365,7 @@
                     }
                 }
             },
-            "patch": {
+            "post": {
                 "tags": [
                     "appUser"
                 ],
@@ -490,7 +490,131 @@
                 }
             }
         },
-        "/auth/place-evaluation": {
+        "/places": {
+            "get": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "filter for places for the given google_place_id OR coords",
+                "description": "filter for places for the given google_place_id OR coords",
+                "operationId": "listPlaces",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestPlacesObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/auth/place-evaluation/{placeEvaluationId}/media": {
+            "post": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
+                "description": "upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
+                "operationId": "attachMediaPlaceEvaluationByAuthenticated",
+                "parameters": [
+                    {
+                        "name": "placeEvaluationId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "media": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/auth/place-evaluations": {
             "get": {
                 "tags": [
                     "PlaceEvaluation"
@@ -640,74 +764,8 @@
                 }
             }
         },
-        "/auth/place-evaluation/{placeEvaluationId}/media": {
-            "post": {
-                "tags": [
-                    "PlaceEvaluation"
-                ],
-                "summary": "upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
-                "description": "upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
-                "operationId": "attachMediaPlaceEvaluationByAuthenticated",
-                "parameters": [
-                    {
-                        "name": "placeEvaluationId",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "requestBody": {
-                    "content": {
-                        "multipart/form-data": {
-                            "schema": {
-                                "properties": {
-                                    "media": {
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "headers": {
-                            "X-Rate-Limit": {
-                                "description": "calls per hour allowed by the user",
-                                "schema": {
-                                    "type": "integer",
-                                    "format": "int32"
-                                }
-                            },
-                            "X-Expires-After": {
-                                "description": "date in UTC when token expires",
-                                "schema": {
-                                    "type": "string",
-                                    "format": "datetime"
-                                }
-                            }
-                        },
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid username/password supplied"
-                    },
-                    "400": {
-                        "description": "Internal error"
-                    }
-                }
-            }
-        },
         "/place-evaluations": {
-            "post": {
+            "get": {
                 "tags": [
                     "PlaceEvaluation"
                 ],
@@ -762,59 +820,6 @@
                         "api_key_security": []
                     }
                 ]
-            }
-        },
-        "/places": {
-            "post": {
-                "tags": [
-                    "PlaceEvaluation"
-                ],
-                "summary": "filter for evaluations for the given google_place_id OR coords, place",
-                "description": "filter for evaluations for the given google_place_id OR coords, place",
-                "operationId": "places",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/requestPlaceEvaluationsObject"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "headers": {
-                            "X-Rate-Limit": {
-                                "description": "calls per hour allowed by the user",
-                                "schema": {
-                                    "type": "integer",
-                                    "format": "int32"
-                                }
-                            },
-                            "X-Expires-After": {
-                                "description": "date in UTC when token expires",
-                                "schema": {
-                                    "type": "string",
-                                    "format": "datetime"
-                                }
-                            }
-                        },
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid username/password supplied"
-                    },
-                    "400": {
-                        "description": "Internal error"
-                    }
-                }
             }
         },
         "/auth/place-rate-settings": {
@@ -918,6 +923,72 @@
                 },
                 "type": "object"
             },
+            "requestPlacesObject": {
+                "properties": {
+                    "google_place_id": {
+                        "title": "Google Place id",
+                        "description": "Google Place id",
+                        "format": "int64",
+                        "example": ""
+                    },
+                    "latitude": {
+                        "title": "Coord. Latitude",
+                        "description": "Coord. Latitude",
+                        "format": "decimal",
+                        "example": ""
+                    },
+                    "longitude": {
+                        "title": "Coord. Longitude",
+                        "description": "Coord. Longitude",
+                        "format": "decimal",
+                        "example": ""
+                    },
+                    "geo_query_radius": {
+                        "title": "GeoQuery Radius",
+                        "description": "GeoQuery Radius in Meters",
+                        "format": "integer",
+                        "example": "5"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "description": "Name",
+                        "example": ""
+                    },
+                    "place_type": {
+                        "title": "Place Type",
+                        "description": "Place Type",
+                        "example": ""
+                    },
+                    "country": {
+                        "title": "Country",
+                        "description": "Country",
+                        "example": ""
+                    },
+                    "asc_order_by": {
+                        "title": "Order by :field ASC",
+                        "description": "Order by :field ASC",
+                        "example": "thumb_direction"
+                    },
+                    "desc_order_by": {
+                        "title": "Order by :field DESC",
+                        "description": " Order by DESC",
+                        "example": ""
+                    },
+                    "page": {
+                        "title": "Page Number",
+                        "description": "Page Number",
+                        "format": "integer",
+                        "example": "1"
+                    },
+                    "size": {
+                        "title": "Number of results per page",
+                        "description": "Number of results per page",
+                        "format": "integer",
+                        "example": "20"
+                    }
+                },
+                "type": "object"
+            },
             "requestPlaceEvaluationsObject": {
                 "properties": {
                     "google_place_id": {
@@ -975,9 +1046,9 @@
                         "format": "integer",
                         "example": "1"
                     },
-                    "per_page": {
-                        "title": "Per. Page",
-                        "description": "Per. Page",
+                    "size": {
+                        "title": "Number of results per page",
+                        "description": "Number of results per page",
                         "format": "integer",
                         "example": "20"
                     }
