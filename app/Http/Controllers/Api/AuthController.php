@@ -505,8 +505,8 @@ class AuthController extends Controller
      *     )
      * )
      * 
-     * @OA\Patch(
-     *     path="/auth/profile",
+     * @OA\Post(
+     *     path="/auth/profile/update",
      *     tags={"appUser"},
      *     summary="Update AppUser",
      *     description="",
