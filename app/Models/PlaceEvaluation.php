@@ -26,42 +26,6 @@ use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
  *          title="ID",
  *      ),
  *      @OA\Property(
- *          property="google_place_id",
- *          format="int64",
- *          description="Google Place id",
- *          title="Google Place id",
- *          example=""
- *      ),
- *      @OA\Property(
- *          property="name",
- *          description="Name Place",
- *          title="Name"
- *      ),
- *      @OA\Property(
- *          property="place_type",
- *          description="Place Type",
- *          title="Place Type"
- *      ),
- *      @OA\Property(
- *          property="country",
- *          description="country",
- *          title="country"
- *       ),
- *       @OA\Property(
- *           property="latitude",
- *           format="decimal",
- *           description="Coord. Latitude",
- *           title="Coord. Latitude",
- *           example=""
- *       ),
- *       @OA\Property(
- *           property="longitude",
- *           format="decimal",
- *           description="Coord. Longitude",
- *           title="Coord. Longitude",
- *           example=""
- *       ),
- *      @OA\Property(
  *          property="thumb_direction",
  *          type="integer",
  *          minimum=0,
@@ -86,6 +50,22 @@ use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
  *          property="media_url",
  *          description="Media Url Cloudinary",
  *          title="Media Url Cloudinary"
+ *      ),
+ *      @OA\Property(
+ *          readOnly=1,
+ *          property="place",
+ *          description="Place",
+ *          title="Place",
+ *          type="object",
+ *          ref="#/components/schemas/Place"
+ *      ),
+ *      @OA\Property(
+ *          readOnly=1,
+ *          property="app_user",
+ *          description="App User",
+ *          title="App User",
+ *          type="object",
+ *          ref="#/components/schemas/AppUser"
  *      )
  *)
  *
@@ -124,7 +104,10 @@ class PlaceEvaluation extends Model
         'questions_answers' => 'array'
     ];
 
-    protected $hidden = [];
+    protected $hidden = [
+        'app_user_id',
+        'place_id'
+    ];
 
     public function appUser()
     {
@@ -147,5 +130,4 @@ class PlaceEvaluation extends Model
             get: fn() => $this->fetchLastMedia() ? $this->fetchLastMedia()->getSecurePath() : null,
         );
     }
-
 }

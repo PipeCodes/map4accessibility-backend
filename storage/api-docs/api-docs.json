@@ -365,7 +365,7 @@
                     }
                 }
             },
-            "post": {
+            "patch": {
                 "tags": [
                     "appUser"
                 ],
@@ -510,25 +510,66 @@
                 "responses": {
                     "200": {
                         "description": "successful operation",
-                        "headers": {
-                            "X-Rate-Limit": {
-                                "description": "calls per hour allowed by the user",
-                                "schema": {
-                                    "type": "integer",
-                                    "format": "int32"
-                                }
-                            },
-                            "X-Expires-After": {
-                                "description": "date in UTC when token expires",
-                                "schema": {
-                                    "type": "string",
-                                    "format": "datetime"
-                                }
-                            }
-                        },
                         "content": {
                             "application/json": {
                                 "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "title": "result",
+                                            "properties": {
+                                                "data": {
+                                                    "title": "data",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Place"
+                                                    }
+                                                },
+                                                "links": {
+                                                    "title": "links",
+                                                    "properties": {
+                                                        "first": {
+                                                            "title": "First Page",
+                                                            "description": "First Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "last": {
+                                                            "title": "Last Page",
+                                                            "description": "Last Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "prev": {
+                                                            "title": "Previous Page",
+                                                            "description": "Previous Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "next": {
+                                                            "title": "Next Page",
+                                                            "description": "Next Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
                                     "type": "object"
                                 }
                             }
@@ -548,7 +589,7 @@
                 ]
             }
         },
-        "/auth/place-evaluation/{placeEvaluationId}/media": {
+        "/auth/place-evaluations/{placeEvaluationId}/media": {
             "post": {
                 "tags": [
                     "PlaceEvaluation"
@@ -658,14 +699,14 @@
                                         "result": {
                                             "title": "result",
                                             "properties": {
-                                                "questions": {
+                                                "data": {
                                                     "title": "data",
                                                     "type": "array",
                                                     "items": {
                                                         "$ref": "#/components/schemas/PlaceEvaluation"
                                                     }
                                                 },
-                                                "result": {
+                                                "links": {
                                                     "title": "links",
                                                     "properties": {
                                                         "first": {
@@ -750,6 +791,23 @@
                         "content": {
                             "application/json": {
                                 "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "$ref": "#/components/schemas/PlaceEvaluation"
+                                        }
+                                    },
                                     "type": "object"
                                 }
                             }
@@ -784,25 +842,66 @@
                 "responses": {
                     "200": {
                         "description": "successful operation",
-                        "headers": {
-                            "X-Rate-Limit": {
-                                "description": "calls per hour allowed by the user",
-                                "schema": {
-                                    "type": "integer",
-                                    "format": "int32"
-                                }
-                            },
-                            "X-Expires-After": {
-                                "description": "date in UTC when token expires",
-                                "schema": {
-                                    "type": "string",
-                                    "format": "datetime"
-                                }
-                            }
-                        },
                         "content": {
                             "application/json": {
                                 "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "title": "result",
+                                            "properties": {
+                                                "data": {
+                                                    "title": "data",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/PlaceEvaluation"
+                                                    }
+                                                },
+                                                "links": {
+                                                    "title": "links",
+                                                    "properties": {
+                                                        "first": {
+                                                            "title": "First Page",
+                                                            "description": "First Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "last": {
+                                                            "title": "Last Page",
+                                                            "description": "Last Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "prev": {
+                                                            "title": "Previous Page",
+                                                            "description": "Previous Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "next": {
+                                                            "title": "Next Page",
+                                                            "description": "Next Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
                                     "type": "object"
                                 }
                             }
@@ -959,7 +1058,7 @@
                         "description": "Place Type",
                         "example": ""
                     },
-                    "country": {
+                    "country_code": {
                         "title": "Country",
                         "description": "Country",
                         "example": ""
@@ -1025,7 +1124,7 @@
                         "description": "Place Type",
                         "example": ""
                     },
-                    "country": {
+                    "country_code": {
                         "title": "Country",
                         "description": "Country",
                         "example": ""
@@ -1344,11 +1443,11 @@
                 },
                 "type": "object"
             },
-            "PlaceEvaluation": {
+            "Place": {
                 "properties": {
                     "id": {
                         "title": "ID",
-                        "description": "placeEvaluationId",
+                        "description": "Place ID",
                         "format": "int64",
                         "readOnly": 1
                     },
@@ -1366,9 +1465,9 @@
                         "title": "Place Type",
                         "description": "Place Type"
                     },
-                    "country": {
-                        "title": "country",
-                        "description": "country"
+                    "country_code": {
+                        "title": "country_code",
+                        "description": "Country Code"
                     },
                     "latitude": {
                         "title": "Coord. Latitude",
@@ -1381,6 +1480,17 @@
                         "description": "Coord. Longitude",
                         "format": "decimal",
                         "example": ""
+                    }
+                },
+                "type": "object"
+            },
+            "PlaceEvaluation": {
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "placeEvaluationId",
+                        "format": "int64",
+                        "readOnly": 1
                     },
                     "thumb_direction": {
                         "title": "Thumb Direction",
@@ -1403,6 +1513,12 @@
                         "title": "Media Url Cloudinary",
                         "description": "Media Url Cloudinary",
                         "readOnly": 1
+                    },
+                    "place": {
+                        "$ref": "#/components/schemas/Place"
+                    },
+                    "app_user": {
+                        "$ref": "#/components/schemas/AppUser"
                     }
                 },
                 "type": "object"

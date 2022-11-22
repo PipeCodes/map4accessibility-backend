@@ -37,7 +37,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/place-evaluations', [PlaceEvaluationController::class, 'listPlaceEvaluationsByAppUser']);
         Route::post('/place-evaluations', [PlaceEvaluationController::class, 'createPlaceEvaluation']);
 
-        Route::post('/place-evaluation/{placeEvaluationId}/media', [PlaceEvaluationController::class, 'attachMediaPlaceEvaluationByAuthenticated']);
+        Route::post('/place-evaluations/{placeEvaluationId}/media', [PlaceEvaluationController::class, 'attachMediaPlaceEvaluationByAuthenticated']);
 
         Route::get('/place-rate-settings', [RateSettingsController::class, 'getPlaceRateSettings']);
     });

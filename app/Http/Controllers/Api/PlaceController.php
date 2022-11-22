@@ -33,7 +33,7 @@ class PlaceController extends Controller
                     'required_if:country,null',
                     'exclude_with:latitude',
                     'exclude_with:longitude',
-                    'exists:place_evaluations,google_place_id',
+                    'exists:places,google_place_id',
                     'integer'
                 ],
                 'latitude' => [
@@ -56,12 +56,12 @@ class PlaceController extends Controller
                     'string', 
                     'in:name,country,thumb_direction,comment,created_at,updated_at'
                 ],
-                'country' => [
+                'country_code' => [
                     'required_if:google_place_id,null', 
                     'required_if:latitude,null', 
                     'required_if:longitude,null', 
                     'string', 
-                    'exists:place_evaluations,country'
+                    'exists:places,country_code'
                 ],
                 'name' => ['string'],
                 'place_type' => ['string'],
@@ -119,7 +119,7 @@ class PlaceController extends Controller
      *          example=""
      *     ),
      *     @OA\Property(
-     *          property="country",
+     *          property="country_code",
      *          description="Country",
      *          title="Country",
      *          example=""
@@ -169,24 +169,45 @@ class PlaceController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
-     *         @OA\Header(
-     *             header="X-Rate-Limit",
-     *             description="calls per hour allowed by the user",
-     *             @OA\Schema(
-     *                 type="integer",
-     *                 format="int32"
-     *             )
-     *         ),
-     *         @OA\Header(
-     *             header="X-Expires-After",
-     *             description="date in UTC when token expires",
-     *             @OA\Schema(
-     *                 type="string",
-     *                 format="datetime"
-     *             )
-     *         ),
      *         @OA\JsonContent(
-     *             type="object"
+     *             type="object",
+     *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
+     *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
+     *             @OA\Property(title="result",property="result",type="object",
+     *                 @OA\Property(title="data",property="data",type="array",
+     *                     @OA\Items(type="object",ref="#/components/schemas/Place")
+     *                 ),
+     *                 @OA\Property(title="links",property="links",type="object",
+     *                     @OA\Property(
+     *                         property="first",
+     *                         format="string",
+     *                         description="First Page",
+     *                         title="First Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="last",
+     *                         format="string",
+     *                         description="Last Page",
+     *                         title="Last Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="prev",
+     *                         format="string",
+     *                         description="Previous Page",
+     *                         title="Previous Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="next",
+     *                         format="string",
+     *                         description="Next Page",
+     *                         title="Next Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                 )
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -215,6 +236,9 @@ class PlaceController extends Controller
                 $request,
                 Place::query()
                     ->select('*')
+                    ->with('medias', function ($query) {
+                        $query->select('file_url', 'file_name');
+                    })
                     ->withCount([
                         'placeEvaluations as thumbs_up_count' => 
                             function ($query) {

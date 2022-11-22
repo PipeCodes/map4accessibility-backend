@@ -9,6 +9,9 @@ use App\Http\Traits\UploadTrait;
 use App\Models\AppUser;
 use App\Models\Place;
 use App\Models\PlaceEvaluation;
+use Cloudinary\Api\Admin\AdminApi;
+use Cloudinary\Cloudinary;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary as FacadesCloudinary;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -22,7 +25,7 @@ class PlaceEvaluationController extends Controller
 
     /**
      * @OA\Post (
-     *     path="/auth/place-evaluation/{placeEvaluationId}/media",
+     *     path="/auth/place-evaluations/{placeEvaluationId}/media",
      *     tags={"PlaceEvaluation"},
      *     summary="upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
      *     description="upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
@@ -126,9 +129,6 @@ class PlaceEvaluationController extends Controller
         }
     }
 
-
-
-
     /**
      * Returns the validator for the endpoint 
      * that is used to create a new Place Evaluation.
@@ -170,7 +170,7 @@ class PlaceEvaluationController extends Controller
                     'required_if:country,null',
                     'exclude_with:latitude',
                     'exclude_with:longitude',
-                    'exists:place_evaluations,google_place_id',
+                    'exists:places,google_place_id',
                     'integer'
                 ],
                 'latitude' => [
@@ -193,12 +193,12 @@ class PlaceEvaluationController extends Controller
                     'string', 
                     'in:name,country,thumb_direction,comment,created_at,updated_at'
                 ],
-                'country' => [
+                'country_code' => [
                     'required_if:google_place_id,null', 
                     'required_if:latitude,null', 
                     'required_if:longitude,null', 
                     'string', 
-                    'exists:place_evaluations,country'
+                    'exists:places,country_code'
                 ],
                 'name' => ['string'],
                 'place_type' => ['string'],
@@ -244,7 +244,10 @@ class PlaceEvaluationController extends Controller
      *             )
      *         ),
      *         @OA\JsonContent(
-     *             type="object"
+     *             type="object",
+     *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
+     *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
+     *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/PlaceEvaluation"), 
      *         )
      *     ),
      *     @OA\Response(
@@ -341,7 +344,7 @@ class PlaceEvaluationController extends Controller
      *          example=""
      *     ),
      *     @OA\Property(
-     *          property="country",
+     *          property="country_code",
      *          description="Country",
      *          title="Country",
      *          example=""
@@ -391,24 +394,45 @@ class PlaceEvaluationController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
-     *         @OA\Header(
-     *             header="X-Rate-Limit",
-     *             description="calls per hour allowed by the user",
-     *             @OA\Schema(
-     *                 type="integer",
-     *                 format="int32"
-     *             )
-     *         ),
-     *         @OA\Header(
-     *             header="X-Expires-After",
-     *             description="date in UTC when token expires",
-     *             @OA\Schema(
-     *                 type="string",
-     *                 format="datetime"
-     *             )
-     *         ),
      *         @OA\JsonContent(
-     *             type="object"
+     *             type="object",
+     *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
+     *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
+     *             @OA\Property(title="result",property="result",type="object",
+     *                 @OA\Property(title="data",property="data",type="array",
+     *                     @OA\Items(type="object",ref="#/components/schemas/PlaceEvaluation")
+     *                 ),
+     *                 @OA\Property(title="links",property="links",type="object",
+     *                     @OA\Property(
+     *                         property="first",
+     *                         format="string",
+     *                         description="First Page",
+     *                         title="First Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="last",
+     *                         format="string",
+     *                         description="Last Page",
+     *                         title="Last Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="prev",
+     *                         format="string",
+     *                         description="Previous Page",
+     *                         title="Previous Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="next",
+     *                         format="string",
+     *                         description="Next Page",
+     *                         title="Next Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                 )
+     *             )
      *         )
      *     ),
      *     @OA\Response(
@@ -432,30 +456,36 @@ class PlaceEvaluationController extends Controller
 
             $query = PlaceEvaluation::query()
                 ->select('*')
+                ->with('place', 'appUser')
                 ->whereHas('place', function ($query) use ($request) {
                     $this->queryListPlaceEvaluation($request, $query);
-                    // $query->where('google_place_id', 123456);
                 });
 
-            dd($query->getQuery()->toSql());
-
-            /**
-             * @var Builder
-             */
-            $query = $this->queryListPlaceEvaluation($request);
+            $query->paginate(
+                $request->get('size', 20),
+                ['*'],
+                'page'
+            )->withQueryString();
+            
 
             $countThumbDirection = collect([
-                'count_thumb_up' => 
+                'total_thumbs_up' => 
                     (clone $query)->where('thumb_direction', '=', 1)->count(),
-                'count_thumb_down' => 
+                'total_thumbs_down' => 
                     (clone $query)->where('thumb_direction', '=', 0)->count(),
             ]);
 
             $result = $countThumbDirection->merge(
-                $query->paginate($request->get('per_page', 20))
+                $query->paginate(
+                    $request->get('size', 20),
+                    ['*'],
+                    'page'
+                )->withQueryString()
             );
 
-            return $this->respondWithResource(new JsonResource($result));
+            return $this->respondWithResourceCollection(
+                new PlaceEvaluationCollection($result)
+            );
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
@@ -549,10 +579,10 @@ class PlaceEvaluationController extends Controller
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",
-     *                 @OA\Property(title="data",property="questions",type="array",
+     *                 @OA\Property(title="data",property="data",type="array",
      *                     @OA\Items(type="object",ref="#/components/schemas/PlaceEvaluation")
      *                 ),
-     *                 @OA\Property(title="links",property="result",type="object",
+     *                 @OA\Property(title="links",property="links",type="object",
      *                     @OA\Property(
      *                         property="first",
      *                         format="string",
