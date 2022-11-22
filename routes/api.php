@@ -32,11 +32,14 @@ Route::prefix('v1')->group(function () {
         // APP_USER Authenticated, use token to get user DATA
 
         Route::get('/profile', [AuthController::class, 'getAuthenticated']);
+        Route::post('/profile/update', [AuthController::class, 'update']);
 
+        Route::get('/place-evaluation', [PlaceEvaluationController::class, 'listPlaceEvaluationsByAppUser']);
         Route::post('/place-evaluation', [PlaceEvaluationController::class, 'placeEvaluationByAuthenticated']);
         Route::post('/place-evaluation/{placeEvaluationId}/media', [PlaceEvaluationController::class, 'attachMediaPlaceEvaluationByAuthenticated']);
 
         Route::get('/place-rate-settings', [RateSettingsController::class, 'getPlaceRateSettings']);
+        
 
     });
 

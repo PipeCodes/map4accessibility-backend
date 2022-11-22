@@ -38,6 +38,11 @@ use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
  *          title="Name"
  *      ),
  *      @OA\Property(
+ *          property="place_type",
+ *          description="Place Type",
+ *          title="Place Type"
+ *      ),
+ *      @OA\Property(
  *          property="country",
  *          description="country",
  *          title="country"
@@ -97,6 +102,7 @@ class PlaceEvaluation extends Model
     protected $fillable = [
         'google_place_id',
         'name',
+        'place_type',
         'country',
         'latitude',
         'longitude',

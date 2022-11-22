@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use App\Notifications\AppUserResetPasswordNotification;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -137,5 +138,10 @@ class AppUser extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $this->notify(new AppUserResetPasswordNotification($token));
+    }
+
+    protected function getFullNameAttribute(): string
+    {
+        return "{$this->name} {$this->surname}";
     }
 }

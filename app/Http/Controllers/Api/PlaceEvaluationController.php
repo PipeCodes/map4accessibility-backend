@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AppUserResource;
 use App\Http\Resources\AuthResource;
+use App\Http\Resources\PlaceEvaluationCollection;
 use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
 use App\Models\AppUser;
@@ -109,11 +110,9 @@ class PlaceEvaluationController extends Controller
             }
 
             return $this->respondNotFound();
-
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
-
     }
 
     /**
@@ -200,7 +199,8 @@ class PlaceEvaluationController extends Controller
                     // re-hydrate Models
                     $placeEvaluation->fresh()
                         // Cloudinary --> upload media and bind the image to the model record
-                        ->attachMedia($request->file('media'),
+                        ->attachMedia(
+                            $request->file('media'),
                             // options array for Cloudinary laravel sdk, see docs of library
                             [
                                 'resource_type' => $resourceType,
@@ -212,16 +212,13 @@ class PlaceEvaluationController extends Controller
                         );
 
                     return $this->respondWithResource(new JsonResource($placeEvaluation));
-
                 }
             }
 
             return $this->respondNotFound();
-
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
-
     }
 
     /**
@@ -256,6 +253,18 @@ class PlaceEvaluationController extends Controller
      *          description="GeoQuery Radius in Meters",
      *          title="GeoQuery Radius",
      *          example="5"
+     *     ),
+     *     @OA\Property(
+     *          property="name",
+     *          description="Name",
+     *          title="Name",
+     *          example=""
+     *     ),
+     *     @OA\Property(
+     *          property="place_type",
+     *          description="Place Type",
+     *          title="Place Type",
+     *          example=""
      *     ),
      *     @OA\Property(
      *          property="country",
@@ -352,6 +361,8 @@ class PlaceEvaluationController extends Controller
                     'asc_order_by' => ['string', 'in:name,country,thumb_direction,comment,created_at,updated_at'],
                     'desc_order_by' => ['string', 'in:name,country,thumb_direction,comment,created_at,updated_at', 'exclude_with:asc_order_by'],
                     'country' => ['required_if:google_place_id,null', 'required_if:latitude,null', 'required_if:longitude,null', 'string', 'exists:place_evaluations,country'],
+                    'name' => ['string'],
+                    'place_type' => ['string'],
                     'page' => ['integer', 'min:1'],
                     'per_page' => ['integer', 'min:1']
                 ]
@@ -369,13 +380,13 @@ class PlaceEvaluationController extends Controller
             if ($request->has('google_place_id')) {
 
                 $placeEvaluation = PlaceEvaluation::where('google_place_id', '=', $request->google_place_id);
-
             } elseif ($request->has('latitude') && $request->has('longitude')) {
 
                 $radius = $request->get('geo_query_radius', env('GEO_QUERY_RADIUS', 5));
 
                 // replace 6371000 (for radius in meters) with 6371 (for radius in kilometer) and 3956 (for radius in miles)
-                $placeEvaluation = PlaceEvaluation::selectRaw('*,
+                $placeEvaluation = PlaceEvaluation::selectRaw(
+                    '*,
                     ( 6371000 * acos( cos( radians(?) ) *
                     cos( radians( latitude ) )
                     * cos( radians( longitude ) - radians(?)
@@ -384,14 +395,29 @@ class PlaceEvaluationController extends Controller
                     ) AS distance',
                     [$request->latitude, $request->longitude, $request->latitude]
                 )->havingRaw("distance < ?", [$radius]);
-
             }
 
             if ($request->has('country')) {
                 if ($placeEvaluation) {
                     $placeEvaluation->where('country', $request->country);
-                }else{
+                } else {
                     $placeEvaluation = PlaceEvaluation::where('country', $request->country);
+                }
+            }
+
+            if ($request->has('name')) {
+                if ($placeEvaluation) {
+                    $placeEvaluation->where('name', 'like', '%' . $request->name . '%');
+                } else {
+                    $placeEvaluation = PlaceEvaluation::where('name', 'like', '%' . $request->name . '%');
+                }
+            }
+
+            if ($request->has('place_type')) {
+                if ($placeEvaluation) {
+                    $placeEvaluation->where('place_type', 'like', '%' . $request->place_type . '%');
+                } else {
+                    $placeEvaluation = PlaceEvaluation::where('place_type', 'like', '%' . $request->place_type . '%');
                 }
             }
 
@@ -413,15 +439,112 @@ class PlaceEvaluationController extends Controller
                 $placeEvaluation = $countThumbDirection->merge($placeEvaluation->paginate($request->get('per_page', 20)));
 
                 return $this->respondWithResource(new JsonResource($placeEvaluation));
-
             }
 
             return $this->respondNotFound();
-
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
-
     }
 
+    /**
+     * @OA\Get (
+     *     path="/auth/place-evaluation",
+     *     tags={"PlaceEvaluation"},
+     *     summary="Lists all place evaluations made by the app user that is currently logged in.",
+     *     description="Lists all place evaluations made by the app user that is currently logged in.",
+     *     operationId="placeEvaluationsByAppUser",
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="page",
+     *         description="Page",
+     *         example="1"
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="size",
+     *         description="Quantity of comments to return",
+     *         example="10"
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
+     *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
+     *             @OA\Property(title="result",property="result",type="object",
+     *                 @OA\Property(title="data",property="questions",type="array",
+     *                     @OA\Items(type="object",ref="#/components/schemas/PlaceEvaluation")
+     *                 ),
+     *                 @OA\Property(title="links",property="result",type="object",
+     *                     @OA\Property(
+     *                         property="first",
+     *                         format="string",
+     *                         description="First Page",
+     *                         title="First Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="last",
+     *                         format="string",
+     *                         description="Last Page",
+     *                         title="Last Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="prev",
+     *                         format="string",
+     *                         description="Previous Page",
+     *                         title="Previous Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                     @OA\Property(
+     *                         property="next",
+     *                         format="string",
+     *                         description="Next Page",
+     *                         title="Next Page",
+     *                         example="http://www.example.com?page=1&size=10"
+     *                     ),
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function listPlaceEvaluationsByAppUser(Request $request)
+    {
+        $validate = Validator::make($request->all(), [
+            'page' => ['integer', 'min:1'],
+            'size' => ['integer', 'min:1']
+        ]);
+
+        if ($validate->fails()) {
+            return $this->respondError($validate->errors(), 422);
+        }
+
+        $appUser = $request->user();
+        
+        if (!$appUser) {
+            return $this->respondNotFound();
+        }
+
+        return $this->respondWithResourceCollection(
+            new PlaceEvaluationCollection(
+                $appUser->placeEvaluations()->paginate(
+                    $request->query('size', 10),
+                    ['*'],
+                    'page'
+                )->withQueryString()
+            )
+        );
+    }
 }

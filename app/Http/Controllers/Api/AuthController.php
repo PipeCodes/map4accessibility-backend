@@ -9,6 +9,7 @@ use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
 use App\Models\AppUser;
 use App\Mail\EmailConfirmation;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
@@ -436,9 +437,21 @@ class AuthController extends Controller
                 return $this->respondError($validateUser->errors(), 401);
             }
 
+
             $existsUser = AppUser::where('email', $request->email)->first();
 
             if (isset($existsUser)) {
+                if ($request->has('auth_providers')) {
+                    $existsUser->auth_providers = $request->get(
+                        'auth_providers', 
+                        $existsUser->auth_providers
+                    );
+
+                    $existsUser->save();
+
+                    return $this->respondWithAppUserLoginToken($existsUser);
+                }
+
                 return $this->respondError(__('api.user_exists_error'), 409);
             }
 
@@ -456,17 +469,147 @@ class AuthController extends Controller
 
             Mail::to($user->email)->send(new EmailConfirmation($user));
 
-            return $this->respondWithResource(new AuthResource(
-                new AppUserResource($user),
-                [
-                    'token' => $user->createToken($request->email)->plainTextToken,
-                    'type' => 'Bearer',
-                ],
-            ), __('api.create_user_success'), 201);
+            return $this->respondWithAppUserLoginToken($user);
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
 
+    }
+
+    /**
+     * @OA\Schema(
+     *     schema="AppUserUpdateRequest",
+     *     type="object",
+     *     @OA\Property(
+     *         property="name",
+     *         description="Name",
+     *         title="Name"
+     *     ),
+     *     @OA\Property(
+     *         property="email",
+     *         format="email",
+     *         description="Email",
+     *         title="Email",
+     *         example="user@example.com"
+     *     ),
+     *     @OA\Property(
+     *         property="surname",
+     *         description="Surname",
+     *         title="Surname"
+     *     ),
+     *     @OA\Property(
+     *         property="birthdate",
+     *         description="Birthdate",
+     *         title="Birthdate",
+     *         format="date"
+     *     )
+     * )
+     * 
+     * @OA\Post(
+     *     path="/auth/profile/update",
+     *     tags={"appUser"},
+     *     summary="Update AppUser",
+     *     description="",
+     *     operationId="update",
+     *     @OA\RequestBody(
+     *         description="Update the AppUser's profile",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/AppUserUpdateRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function update(Request $request)
+    {
+        try {
+            $validateUser = Validator::make(
+                $request->all(),
+                [
+                    'name' => 'required|string|max:255',
+                    'surname' => 'required|string|max:255',
+                    'birthdate' => 'date|max:255',
+                    'email' => 'required|string|email|max:255|unique:users',
+                    'avatar' => 'image|mimes:jpg,jpeg,png|max:2048',
+                ]
+            );
+
+            if ($validateUser->fails()) {
+                return $this->respondError($validateUser->errors(), 422);
+            }
+
+            /** @var AppUser */
+            $appUser = AppUser::where('email', $request->email)->first();
+            if (!$appUser) {
+                return $this->respondNotFound();
+            }
+
+            if (auth()->user()->email !== $appUser->email) {
+                return $this->respondUnAuthorized();
+            }
+
+            $avatar = null;
+            if ($request->has('avatar')) {
+                $avatar = $this->upload($request, 'avatar', 'app-users');
+            }
+
+            $appUser->update([
+                'name' => $request->get('name', $appUser->name),
+                'surname' => $request->get('surname', $appUser->surname),
+                'email' => $request->get('email', $appUser->email),
+                'birthdate' => $request->get(
+                    'birthdate', 
+                    $appUser->birthdate
+                ),
+                'avatar' => $avatar ? $avatar : $appUser->avatar
+            ]);
+
+            return $this->respondWithResource(
+                new AppUserResource($appUser)
+            );
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
+
+    private function respondWithAppUserLoginToken(AppUser $user): JsonResponse
+    {
+        return $this->respondWithResource(new AuthResource(
+            new AppUserResource($user),
+            [
+                'token' => $user->createToken($user->email)->plainTextToken,
+                'type' => 'Bearer',
+            ],
+        ), __('api.create_user_success'), 201);
     }
 
     /**

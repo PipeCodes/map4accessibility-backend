@@ -322,6 +322,61 @@
                 ]
             }
         },
+        "/auth/profile/update": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Update AppUser",
+                "description": "",
+                "operationId": "update",
+                "requestBody": {
+                    "description": "Update the AppUser's profile",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppUserUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
         "/auth/profile": {
             "get": {
                 "tags": [
@@ -438,6 +493,103 @@
             }
         },
         "/auth/place-evaluation": {
+            "get": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "Lists all place evaluations made by the app user that is currently logged in.",
+                "description": "Lists all place evaluations made by the app user that is currently logged in.",
+                "operationId": "placeEvaluationsByAppUser",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "example": "1"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Quantity of comments to return",
+                        "example": "10"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "title": "result",
+                                            "properties": {
+                                                "questions": {
+                                                    "title": "data",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/PlaceEvaluation"
+                                                    }
+                                                },
+                                                "result": {
+                                                    "title": "links",
+                                                    "properties": {
+                                                        "first": {
+                                                            "title": "First Page",
+                                                            "description": "First Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "last": {
+                                                            "title": "Last Page",
+                                                            "description": "Last Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "prev": {
+                                                            "title": "Previous Page",
+                                                            "description": "Previous Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "next": {
+                                                            "title": "Next Page",
+                                                            "description": "Next Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            },
             "post": {
                 "tags": [
                     "PlaceEvaluation"
@@ -691,6 +843,30 @@
                 },
                 "type": "object"
             },
+            "AppUserUpdateRequest": {
+                "properties": {
+                    "name": {
+                        "title": "Name",
+                        "description": "Name"
+                    },
+                    "email": {
+                        "title": "Email",
+                        "description": "Email",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "surname": {
+                        "title": "Surname",
+                        "description": "Surname"
+                    },
+                    "birthdate": {
+                        "title": "Birthdate",
+                        "description": "Birthdate",
+                        "format": "date"
+                    }
+                },
+                "type": "object"
+            },
             "requestPlaceEvaluationsObject": {
                 "properties": {
                     "google_place_id": {
@@ -716,6 +892,16 @@
                         "description": "GeoQuery Radius in Meters",
                         "format": "integer",
                         "example": "5"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "description": "Name",
+                        "example": ""
+                    },
+                    "place_type": {
+                        "title": "Place Type",
+                        "description": "Place Type",
+                        "example": ""
                     },
                     "country": {
                         "title": "Country",
@@ -1053,6 +1239,10 @@
                     "name": {
                         "title": "Name",
                         "description": "Name Place"
+                    },
+                    "place_type": {
+                        "title": "Place Type",
+                        "description": "Place Type"
                     },
                     "country": {
                         "title": "country",
