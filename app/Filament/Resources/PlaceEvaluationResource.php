@@ -24,11 +24,10 @@ class PlaceEvaluationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('google_place_id'),
-                Forms\Components\TextInput::make('name'),
-                Forms\Components\TextInput::make('country')->required(),
-                Forms\Components\TextInput::make('latitude')->required(),
-                Forms\Components\TextInput::make('longitude')->required(),
+                Forms\Components\Select::make('app_user_id')
+                    ->relationship('appUser', 'email'),
+                    Forms\Components\Select::make('place_id')
+                    ->relationship('place', 'name'),
                 Forms\Components\Toggle::make('thumb_direction'),
                 Forms\Components\Textarea::make('comment')
                     ->maxLength(65535),
@@ -44,11 +43,7 @@ class PlaceEvaluationResource extends Resource
                 Tables\Columns\TextColumn::make('appUser.email')
                     ->url(fn ($record) => 
                         "app-users/{$record->appUser->id}/edit"),
-                Tables\Columns\TextColumn::make('google_place_id'),
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('country'),
-                Tables\Columns\TextColumn::make('latitude'),
-                Tables\Columns\TextColumn::make('longitude'),
+                Tables\Columns\TextColumn::make('place.name'),
                 Tables\Columns\BooleanColumn::make('thumb_direction'),
                 Tables\Columns\TextColumn::make('comment'),
                 Tables\Columns\TextColumn::make('questions_answers'),
@@ -59,6 +54,7 @@ class PlaceEvaluationResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('appUser')->relationship('appUser', 'email'),
+                SelectFilter::make('place')->relationship('place', 'name'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
