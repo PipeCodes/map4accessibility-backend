@@ -14,20 +14,12 @@ return new class extends Migration {
     {
         Schema::create('place_evaluations', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('app_user_id')->unsigned();
-            $table->unsignedBigInteger('google_place_id')->nullable();
-            $table->string('name')->nullable();
-            $table->string('place_type')->nullable();
-            $table->string('country');
-            $table->decimal('latitude', 11, 8);
-            $table->decimal('longitude', 11, 8);
+            $table->foreignId('place_id')->references('id')->on('places')->cascadeOnDelete();
+            $table->foreignId('app_user_id')->references('id')->on('app_users')->cascadeOnDelete();
             $table->boolean('thumb_direction')->nullable();
             $table->text('comment')->nullable();
             $table->json('questions_answers')->nullable();
             $table->timestamps();
-
-            $table->foreign('app_user_id')->references('id')->on('app_users');
-
         });
     }
 
