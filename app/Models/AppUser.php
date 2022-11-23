@@ -124,6 +124,11 @@ class AppUser extends Authenticatable
         return $this->forceFill(['account_status_id' => 2])->save();
     }
 
+    public function isEmailConfirmed()
+    {
+        return $this->account_status_id === 2;
+    }
+
     public function placeEvaluations()
     {
         return $this->hasMany(PlaceEvaluation::class);

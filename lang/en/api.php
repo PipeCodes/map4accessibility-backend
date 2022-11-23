@@ -14,6 +14,7 @@ return [
     */
 
     'api_key_mismatch' => 'Wrong API Key',
+    'email_not_confirmed' => 'Your email address is not yet confirmed. Please, check your inbox for an email to proceed to the confirmation.',
     'password_incorrect' => 'The provided password is incorrect.',
     'update_user_success' => 'User updated successfully',
     'user_exists_error' => 'User already exists',
