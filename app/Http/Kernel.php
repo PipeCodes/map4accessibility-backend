@@ -69,5 +69,6 @@ class Kernel extends HttpKernel
         'api.key' => \App\Http\Middleware\CheckApiKey::class,
         'abilities' => \Laravel\Sanctum\Http\Middleware\CheckAbilities::class,
         'ability' => \Laravel\Sanctum\Http\Middleware\CheckForAnyAbility::class,
+        'email-confirmed' => \App\Http\Middleware\AppUserEmailConfirmed::class,
     ];
 }

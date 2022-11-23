@@ -28,7 +28,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/password-recover', [AuthController::class, 'passwordRecover']);
 
     // required ---> Authorization Token Header in format (Bearer ) security validation, token return in login,loginByProvider,register function
-    Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
+    Route::prefix('auth')->middleware(['auth:sanctum', 'email-confirmed'])->group(function () {
         // APP_USER Authenticated, use token to get user DATA
 
         Route::get('/profile', [AuthController::class, 'getAuthenticated']);
