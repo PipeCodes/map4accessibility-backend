@@ -43,6 +43,8 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::get('/places', [PlaceController::class, 'listPlaces']);
+    Route::get('/places-by-radius', [PlaceController::class, 'listPlacesByRadius']);
+    Route::get('/places/google/{id}', [PlaceController::class, 'getPlaceByGooglePlaceId']);
     Route::get('/place-evaluations', [PlaceEvaluationController::class, 'listPlaceEvaluations']);
 
     Route::get('/legal-text/{type}', [LegalTextController::class, 'getLegalText']);
