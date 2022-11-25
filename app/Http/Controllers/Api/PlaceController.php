@@ -76,7 +76,11 @@ class PlaceController extends Controller
                     'required', 
                     'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'
                 ],
-                'geo_query_radius' => ['integer', 'min:1'],
+                'geo_query_radius' => [
+                    'required', 
+                    'integer', 
+                    'min:1'
+                ],
                 ...$this->validationRulesListPlaces()
             ]
         );
@@ -196,7 +200,7 @@ class PlaceController extends Controller
     public function listPlaces(Request $request)
     {
         try {
-            $validator = $this->validatorListPlacesByRadiusRequest($request);
+            $validator = $this->validatorListPlacesRequest($request);
 
             if ($validator->fails()) {
                 return $this->respondError($validator->errors(), 422);
