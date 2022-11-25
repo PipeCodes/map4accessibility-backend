@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class AppUser.
@@ -72,7 +72,7 @@ use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
  */
 class PlaceEvaluation extends Model
 {
-    use HasFactory, MediaAlly;
+    use HasFactory, MediaAlly, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

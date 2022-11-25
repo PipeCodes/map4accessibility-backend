@@ -5,6 +5,7 @@ namespace App\Models;
 use CloudinaryLabs\CloudinaryLaravel\Model\Media;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  *  @OA\Schema(
@@ -57,7 +58,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Place extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'latitude', 'longitude', 'google_place_id',
