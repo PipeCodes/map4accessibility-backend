@@ -9,6 +9,8 @@ use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
 use App\Models\AppUser;
 use App\Mail\EmailConfirmation;
+use App\Mail\PasswordReset;
+use Illuminate\Auth\Events\PasswordReset as PasswordResetEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
@@ -266,23 +268,136 @@ class AuthController extends Controller
      *     ),
      * )
      */
-    public function passwordRecover(Request $request)
+    public function sendResetPassword(Request $request)
     {
         try {
-            $validateUser = Validator::make(
-                $request->all(),
-                [
-                    'email' => 'required|string|email'
+            $validator = Validator::make(
+                $request->all(), [
+                    'email' => 'required|string|email|exists:app_users,email'
                 ]
             );
 
-            if ($validateUser->fails()) {
-                return $this->respondError($validateUser->errors(), 401);
+            if ($validator->fails()) {
+                return $this->respondError($validator->errors(), 422);
             }
 
-            $status = Password::broker('app_users')->sendResetLink($request->only('email'));
+            Password::broker('app_users')->sendResetLink(
+                $request->only('email'),
+                fn ($user, $token) => Mail::to($request->only('email'))
+                    ->send(new PasswordReset($user, $token))
+            );
 
             return $this->respondSuccess('success');
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
+
+    /**
+     *
+     *
+     * @OA\Schema(
+     *     schema="resetPasswordRequest",
+     *     type="object",
+     *     @OA\Property(property="token"),
+     *     @OA\Property(property="email", format="email"),
+     *     @OA\Property(property="password"),
+     *     @OA\Property(property="password_confirmation"),
+     * )
+     *
+     * @OA\Post(
+     *     path="/auth/reset-password",
+     *     tags={"appUser"},
+     *     summary="Reset the App User's password",
+     *     description="",
+     *     operationId="resetPassword",
+     *     security={
+     *          {"api_key_security": {}}
+     *      },
+     *     @OA\RequestBody(
+     *         description=" object",
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/resetPasswordRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid API KEY supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function resetPassword(Request $request)
+    {
+        try {
+            $validator = Validator::make(
+                $request->all(), [
+                    'token' => ['required'],
+                    'email' => [
+                        'required', 
+                        'email', 
+                        'exists:app_users,email'
+                    ],
+                    'password' => [
+                        'required',
+                        'string',
+                        'min:8',
+                        'confirmed',
+                        'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*\"^~\'+\/=`-|\[\](){}_:;<>ç,.?]{8,}$/',
+                    ],
+                ]
+            );
+
+            if ($validator->fails()) {
+                return $this->respondError($validator->errors(), 422);
+            }
+
+            $status = Password::broker('app_users')->reset(
+                $request->only(
+                    'email', 
+                    'password', 
+                    'password_confirmation', 
+                    'token'
+                ),
+                function ($user) use ($request) {
+                    $user->forceFill([
+                        'password' => Hash::make($request->password)
+                    ])->save();
+    
+                    event(new PasswordResetEvent($user));
+                }
+            );
+
+            if ($status !== Password::PASSWORD_RESET) {
+                $this->respondError('Failed to reset password: ' . $status);
+            }
+
+            return $this->respondSuccess('Password changed successfully');
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
@@ -426,7 +541,12 @@ class AuthController extends Controller
                     'surname' => 'required|string|max:255',
                     'birthdate' => 'date|max:255',
                     'email' => 'required|string|email|max:255|unique:users',
-                    'password' => 'required_without:auth_providers|string|min:6',
+                    'password' => [
+                        'required_without:auth_providers',
+                        'string',
+                        'min:8',
+                        'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*\"^~\'+\/=`-|\[\](){}_:;<>ç,.?]{8,}$/'
+                    ],
                     'disabilities' => 'array',
                     'avatar' => 'image|mimes:jpg,jpeg,png|max:2048',
                     'terms_accepted' => 'required',
