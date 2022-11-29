@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Auth\AppUserPasswordResetLinkController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
@@ -33,6 +34,8 @@ Route::middleware('guest')->group(function () {
 
 Route::get('email-confirmation/{tokenEmailConfirmation}', [VerifyEmailAppUserController::class, 'changeStatus'])
         ->name('emailConfirmation');
+Route::get('email-confirmation/resend/{email}', [VerifyEmailAppUserController::class, 'emailConfirmationResend'])
+    ->name('email-confirmation.resend');
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', [EmailVerificationPromptController::class, '__invoke'])

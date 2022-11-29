@@ -199,6 +199,66 @@
                 ]
             }
         },
+        "/auth/reset-password": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Reset the App User's password",
+                "description": "",
+                "operationId": "resetPassword",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/resetPasswordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid API KEY supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
         "/auth/check-email": {
             "post": {
                 "tags": [
@@ -1292,6 +1352,17 @@
                     "email": {
                         "format": "email"
                     }
+                },
+                "type": "object"
+            },
+            "resetPasswordRequest": {
+                "properties": {
+                    "token": {},
+                    "email": {
+                        "format": "email"
+                    },
+                    "password": {},
+                    "password_confirmation": {}
                 },
                 "type": "object"
             },
