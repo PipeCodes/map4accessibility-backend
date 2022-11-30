@@ -265,6 +265,15 @@ img {
     text-align: center;
 }
 
+.button-map4accessibility-secondary {
+    background: transparent;
+    border: 1px solid #EFA02C;
+    color: #EFA02C;
+    border-radius: 20px;
+    padding: 10px 36px;
+    text-align: center;
+}
+
 /* Panels */
 
 .panel {

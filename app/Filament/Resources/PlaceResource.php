@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\AppUserResource\Pages\EditAppUser;
-use App\Filament\Resources\PlaceEvaluationResource\Pages;
-use App\Models\PlaceEvaluation;
+use App\Filament\Resources\PlaceResource\Pages;
+use App\Helper\Country;
+use App\Models\Place;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
@@ -14,47 +14,52 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PlaceEvaluationResource extends Resource
+class PlaceResource extends Resource
 {
-    protected static ?string $model = PlaceEvaluation::class;
+    protected static ?string $model = Place::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-collection';
+    protected static ?string $navigationIcon = 'heroicon-o-location-marker';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('app_user_id')
-                    ->relationship('appUser', 'email'),
-                    Forms\Components\Select::make('place_id')
-                    ->relationship('place', 'name'),
-                Forms\Components\Toggle::make('thumb_direction'),
-                Forms\Components\Textarea::make('comment')
-                    ->maxLength(65535),
-                Forms\Components\TextInput::make('questions_answers'),
-                Forms\Components\TextInput::make('media_url'),
+                Forms\Components\TextInput::make('google_place_id'),
+                Forms\Components\TextInput::make('name'),
+                Forms\Components\TextInput::make('place_type'),
+                Forms\Components\TextInput::make('country_code')->required(),
+                Forms\Components\TextInput::make('latitude')->required(),
+                Forms\Components\TextInput::make('longitude')->required(),
             ]);
     }
 
     public static function table(Table $table): Table
     {
+        $countryCases = Country::cases();
+        $countries = array_combine(
+            keys: array_column($countryCases, 'value'),
+            values: array_map(fn ($c) => $c->getLabel(), $countryCases)
+        );
+
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('appUser.email')
-                    ->url(fn ($record) => 
-                        "app-users/{$record->appUser->id}/edit"),
-                Tables\Columns\TextColumn::make('place.name'),
-                Tables\Columns\BooleanColumn::make('thumb_direction'),
-                Tables\Columns\TextColumn::make('comment'),
-                Tables\Columns\TextColumn::make('questions_answers'),
+                Tables\Columns\TextColumn::make('google_place_id'),
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('country_code')
+                    ->formatStateUsing(
+                        fn (string $state): ?string => 
+                            Country::tryFrom($state)?->getLabel() ?? null
+                    ),
+                Tables\Columns\TextColumn::make('place_type'),
+                Tables\Columns\TextColumn::make('latitude'),
+                Tables\Columns\TextColumn::make('longitude'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->dateTime(),
             ])
             ->filters([
-                SelectFilter::make('appUser')->relationship('appUser', 'email'),
-                SelectFilter::make('place')->relationship('place', 'name'),
+                SelectFilter::make('country_code')->options($countries),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -79,8 +84,7 @@ class PlaceEvaluationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPlaceEvaluations::route('/'),
-            'view' => Pages\ViewPlaceEvaluation::route('/{record}'),
+            'index' => Pages\ListPlaces::route('/'),
         ];
     }
 

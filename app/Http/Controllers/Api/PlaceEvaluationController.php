@@ -76,8 +76,10 @@ class PlaceEvaluationController extends Controller
      *     ),
      * )
      */
-    public function attachMediaPlaceEvaluationByAuthenticated(Request $request, $placeEvaluationId)
-    {
+    public function attachMediaPlaceEvaluationByAuthenticated(
+        Request $request, 
+        $placeEvaluationId
+    ) {
         try {
 
             $validate = Validator::make(
@@ -159,49 +161,36 @@ class PlaceEvaluationController extends Controller
      * @param Request $request
      * @return \Illuminate\Validation\Validator
      */
-    protected function validatorListPlaceEvaluationsRequest(Request $request)
-    {
+    protected function validatorListPlaceEvaluationsByRadiusRequest(
+        Request $request
+    ) {
         return Validator::make(
             $request->all(),
             [
-                'google_place_id' => [
-                    'required_if:latitude,null',
-                    'required_if:longitude,null',
-                    'required_if:country,null',
-                    'exclude_with:latitude',
-                    'exclude_with:longitude',
-                    'exists:places,google_place_id',
-                    'integer'
-                ],
                 'latitude' => [
-                    'exclude_with:google_place_id', 
-                    'required_if:google_place_id,null', 
+                    'required', 
                     'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'
                 ],
                 'longitude' => [
-                    'exclude_with:google_place_id', 
-                    'required_if:google_place_id,null', 
+                    'required', 
                     'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'
                 ],
-                'geo_query_radius' => ['integer', 'min:1'],
-                'asc_order_by' => [
-                    'string', 
-                    'in:name,country,thumb_direction,comment,created_at,updated_at'
-                ],
-                'desc_order_by' => [
-                    'exclude_with:asc_order_by',
-                    'string', 
-                    'in:name,country,thumb_direction,comment,created_at,updated_at'
-                ],
+                'geo_query_radius' => ['required', 'integer', 'min:1'],
                 'country_code' => [
-                    'required_if:google_place_id,null', 
-                    'required_if:latitude,null', 
-                    'required_if:longitude,null', 
                     'string', 
                     'exists:places,country_code'
                 ],
                 'name' => ['string'],
                 'place_type' => ['string'],
+                'asc_order_by' => [
+                    'string', 
+                    'in:thumb_direction,comment,created_at,updated_at'
+                ],
+                'desc_order_by' => [
+                    'exclude_with:asc_order_by',
+                    'string', 
+                    'in:thumb_direction,comment,created_at,updated_at'
+                ],
                 'page' => ['integer', 'min:1'],
                 'size' => ['integer', 'min:1']
             ]
@@ -300,83 +289,6 @@ class PlaceEvaluationController extends Controller
     }
 
     /**
-     * @OA\Schema(
-     *     schema="requestPlaceEvaluationsObject",
-     *     type="object",
-     *     @OA\Property(
-     *          property="google_place_id",
-     *          format="int64",
-     *          description="Google Place id",
-     *          title="Google Place id",
-     *          example=""
-     *     ),
-     *     @OA\Property(
-     *          property="latitude",
-     *          format="decimal",
-     *          description="Coord. Latitude",
-     *          title="Coord. Latitude",
-     *          example=""
-     *     ),
-     *     @OA\Property(
-     *          property="longitude",
-     *          format="decimal",
-     *          description="Coord. Longitude",
-     *          title="Coord. Longitude",
-     *          example=""
-     *     ),
-     *     @OA\Property(
-     *          property="geo_query_radius",
-     *          format="integer",
-     *          description="GeoQuery Radius in Meters",
-     *          title="GeoQuery Radius",
-     *          example="5"
-     *     ),
-     *     @OA\Property(
-     *          property="name",
-     *          description="Name",
-     *          title="Name",
-     *          example=""
-     *     ),
-     *     @OA\Property(
-     *          property="place_type",
-     *          description="Place Type",
-     *          title="Place Type",
-     *          example=""
-     *     ),
-     *     @OA\Property(
-     *          property="country_code",
-     *          description="Country",
-     *          title="Country",
-     *          example=""
-     *     ),
-     *     @OA\Property(
-     *          property="asc_order_by",
-     *          description="Order by :field ASC",
-     *          title="Order by :field ASC",
-     *          example="thumb_direction"
-     *     ),
-     *     @OA\Property(
-     *          property="desc_order_by",
-     *          description=" Order by DESC",
-     *          title="Order by :field DESC",
-     *          example=""
-     *     ),
-     *     @OA\Property(
-     *          property="page",
-     *          format="integer",
-     *          description="Page Number",
-     *          title="Page Number",
-     *          example="1"
-     *     ),
-     *     @OA\Property(
-     *          property="size",
-     *          format="integer",
-     *          description="Number of results per page",
-     *          title="Number of results per page",
-     *          example="20"
-     *     )
-     * )
-     *
      * @OA\Get (
      *     path="/place-evaluations",
      *     tags={"PlaceEvaluation"},
@@ -386,10 +298,65 @@ class PlaceEvaluationController extends Controller
      *     summary="filter for evaluations for the given google_place_id OR coords, place",
      *     description="filter for evaluations for the given google_place_id OR coords, place",
      *     operationId="placeEvaluations",
-     *     @OA\RequestBody(
-     *          @OA\JsonContent(
-     *             ref="#/components/schemas/requestPlaceEvaluationsObject"
-     *         )
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="latitude",
+     *         description="Latitude",
+     *         example=""
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="longitude",
+     *         description="Longitude",
+     *         example=""
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="geo_query_radius",
+     *         description="Radius (in meters) to search across",
+     *         example="2000"
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="name",
+     *         description="Name of a Place",
+     *         example=""
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="country_code",
+     *         description="Country Code of a country",
+     *         example="PT"
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="place_type",
+     *         description="Place Type",
+     *         example=""
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="asc_order_by",
+     *         description="Parameter to sort by ASC",
+     *         example="thumb_direction"
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="desc_order_by",
+     *         description="Parameter to sort by DESC",
+     *         example="thumb_direction"
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="page",
+     *         description="Page",
+     *         example="1"
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="size",
+     *         description="Quantity of comments to return",
+     *         example="10"
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -448,7 +415,8 @@ class PlaceEvaluationController extends Controller
     public function listPlaceEvaluations(Request $request)
     {
         try {
-            $validator = $this->validatorListPlaceEvaluationsRequest($request);
+            $validator = 
+                $this->validatorListPlaceEvaluationsByRadiusRequest($request);
 
             if ($validator->fails()) {
                 return $this->respondError($validator->errors(), 401);
@@ -460,6 +428,12 @@ class PlaceEvaluationController extends Controller
                 ->whereHas('place', function ($query) use ($request) {
                     $this->queryListPlaceEvaluation($request, $query);
                 });
+                
+            if ($request->has('asc_order_by')) {
+                $query->orderBy($request->asc_order_by, 'asc');
+            } else if ($request->has('desc_order_by')) {
+                $query->orderBy($request->desc_order_by, 'desc');
+            }
 
             $query->paginate(
                 $request->get('size', 20),
@@ -502,14 +476,9 @@ class PlaceEvaluationController extends Controller
     ) {
         $query = $query ?: PlaceEvaluation::query()->select('*');
 
-        if ($request->has('google_place_id')) {
-            $query->where(
-                'google_place_id', 
-                $request->get('google_place_id')
-            );
-        } else if (
-            $request->has('latitude') && 
-            $request->has('longitude')
+        if (
+            $request->has('latitude') && $request->get('latitude') !== "" &&
+            $request->has('longitude') && $request->get('longitude') !== ""
         ) {
             $radius = $request->get(
                 'geo_query_radius', 
@@ -527,26 +496,36 @@ class PlaceEvaluationController extends Controller
             )->havingRaw("distance < ?", [$radius]);
         }
 
-        if ($request->has('country_code')) {
+        if ($request->has('google_place_id')) {
+            $query->where(
+                'google_place_id', 
+                $request->get('google_place_id')
+            );
+        }
+
+        if (
+            $request->has('country_code') && 
+            $request->get('country_code') !== ""
+        ) {
             $query->where('country_code', $request->get('country_code'));
         }
 
-        if ($request->has('name')) {
+        if (
+            $request->has('name') && 
+            $request->get('name') !== ""
+        ) {
             $query->where(
                 'name', 'like', '%' . $request->get('name') . '%'
             );
         }
 
-        if ($request->has('place_type')) {
+        if (
+            $request->has('place_type') && 
+            $request->get('place_type') !== ""
+        ) {
             $query->where(
                 'place_type', 'like', '%' . $request->get('place_type') . '%'
             );
-        }
-
-        if ($request->has('asc_order_by')) {
-            $query->orderBy($request->asc_order_by, 'asc');
-        } else if ($request->has('desc_order_by')) {
-            $query->orderBy($request->desc_order_by, 'desc');
         }
 
         return $query;

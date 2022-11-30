@@ -25,10 +25,11 @@ Route::prefix('v1')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register']);
     Route::post('/auth/login', [AuthController::class, 'login']);
     Route::post('/auth/login-by-provider', [AuthController::class, 'loginByProvider']);
-    Route::post('/auth/password-recover', [AuthController::class, 'passwordRecover']);
+    Route::post('/auth/password-recover', [AuthController::class, 'sendResetPassword']);
+    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
 
     // required ---> Authorization Token Header in format (Bearer ) security validation, token return in login,loginByProvider,register function
-    Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
+    Route::prefix('auth')->middleware(['auth:sanctum', 'email-confirmed'])->group(function () {
         // APP_USER Authenticated, use token to get user DATA
 
         Route::get('/profile', [AuthController::class, 'getAuthenticated']);
@@ -43,6 +44,8 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::get('/places', [PlaceController::class, 'listPlaces']);
+    Route::get('/places-by-radius', [PlaceController::class, 'listPlacesByRadius']);
+    Route::get('/places/google/{id}', [PlaceController::class, 'getPlaceByGooglePlaceId']);
     Route::get('/place-evaluations', [PlaceEvaluationController::class, 'listPlaceEvaluations']);
 
     Route::get('/legal-text/{type}', [LegalTextController::class, 'getLegalText']);
