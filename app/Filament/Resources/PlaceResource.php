@@ -27,7 +27,12 @@ class PlaceResource extends Resource
                 Forms\Components\TextInput::make('google_place_id'),
                 Forms\Components\TextInput::make('name'),
                 Forms\Components\TextInput::make('place_type'),
-                Forms\Components\TextInput::make('country_code')->required(),
+                Forms\Components\TextInput::make('country_code'),
+                Forms\Components\TextInput::make('city'),
+                Forms\Components\TextInput::make('address'),
+                Forms\Components\TextInput::make('phone'),
+                Forms\Components\TextInput::make('email'),
+                Forms\Components\TextInput::make('schedule'),
                 Forms\Components\TextInput::make('latitude')->required(),
                 Forms\Components\TextInput::make('longitude')->required(),
             ]);
@@ -51,6 +56,12 @@ class PlaceResource extends Resource
                             Country::tryFrom($state)?->getLabel() ?? null
                     ),
                 Tables\Columns\TextColumn::make('place_type'),
+                Tables\Columns\TextColumn::make('city'),
+                Tables\Columns\TextColumn::make('address'),
+                Tables\Columns\TextColumn::make('phone'),
+                Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\TextColumn::make('website'),
+                Tables\Columns\TextColumn::make('schedule'),
                 Tables\Columns\TextColumn::make('latitude'),
                 Tables\Columns\TextColumn::make('longitude'),
                 Tables\Columns\TextColumn::make('created_at')
