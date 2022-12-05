@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
 use CloudinaryLabs\CloudinaryLaravel\Model\Media;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -23,7 +25,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          format="int64",
  *          description="Google Place id",
  *          title="Google Place id",
- *          example=""
+ *          example="",
+ *          type="integer"
  *      ),
  *      @OA\Property(
  *          property="name",
@@ -40,6 +43,43 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          description="Country Code",
  *          title="country_code"
  *       ),
+ *      @OA\Property(
+ *          property="city",
+ *          description="Place City",
+ *          title="Place City",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="address",
+ *          description="Place Address",
+ *          title="Place Address",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="phone",
+ *          description="Place Phone",
+ *          title="Place Phone",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="email",
+ *          description="Place Email",
+ *          title="Place Email",
+ *          format="email",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="website",
+ *          description="Place Website",
+ *          title="Place Website",
+ *          type="string",
+ *      ),
+ *      @OA\Property(
+ *          property="schedule",
+ *          description="Place Schedule",
+ *          title="Place Schedule",
+ *          type="string",
+ *      ),
  *       @OA\Property(
  *           property="latitude",
  *           format="decimal",
@@ -58,11 +98,28 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Place extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, MediaAlly;
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['media'];
 
     protected $fillable = [
-        'latitude', 'longitude', 'google_place_id',
-        'name', 'country_code', 'place_type'
+        'latitude', 
+        'longitude', 
+        'google_place_id',
+        'name', 
+        'country_code', 
+        'place_type',
+        'city',
+        'address',
+        'phone',
+        'email',
+        'website',
+        'schedule',
     ];
 
     public function placeEvaluations()
@@ -70,7 +127,19 @@ class Place extends Model
         return $this->hasMany(PlaceEvaluation::class);
     }
 
-    public function medias()
+    /**
+     * Get the media from cloud.
+     *
+     * @return Attribute
+     */
+    protected function media(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->fetchLastMedia() ? $this->fetchLastMedia()->getSecurePath() : null,
+        );
+    }
+
+    public function mediaEvaluations()
     {
         return $this->hasManyThrough(
             Media::class, 

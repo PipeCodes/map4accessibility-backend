@@ -19,35 +19,55 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// required ---> API_KEY in Header, security validation
+/**
+ * To be able to use following routes, it is
+ * necessary to provide the Header API_KEY in
+ * the request.
+ */
 Route::prefix('v1')->group(function () {
-    Route::post('/auth/check-email', [AuthController::class, 'checkEmail']);
-    Route::post('/auth/register', [AuthController::class, 'register']);
-    Route::post('/auth/login', [AuthController::class, 'login']);
-    Route::post('/auth/login-by-provider', [AuthController::class, 'loginByProvider']);
-    Route::post('/auth/password-recover', [AuthController::class, 'sendResetPassword']);
-    Route::post('/auth/reset-password', [AuthController::class, 'resetPassword']);
+    Route::get('/legal-text/{type}', [LegalTextController::class, 'getLegalText']);
+    Route::get('/faqs', [FaqController::class, 'getFaqs']);
 
-    // required ---> Authorization Token Header in format (Bearer ) security validation, token return in login,loginByProvider,register function
-    Route::prefix('auth')->middleware(['auth:sanctum', 'email-confirmed'])->group(function () {
-        // APP_USER Authenticated, use token to get user DATA
+    Route::prefix('auth')->group(function () {
+        Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/login-by-provider', [AuthController::class, 'loginByProvider']);
+        Route::post('/register', [AuthController::class, 'register']);
+        Route::post('/check-email', [AuthController::class, 'checkEmail']);
+        Route::post('/password-recover', [AuthController::class, 'sendResetPassword']);
+        Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    });
 
-        Route::get('/profile', [AuthController::class, 'getAuthenticated']);
-        Route::post('/profile/update', [AuthController::class, 'update']);
+    /**
+     * The following routes require the Authorization Header Token,
+     * in the "Bearer " format. This token is returned in the
+     * response of the endpoints "/auth/login", "/auth/login-by-provider"
+     * and "/auth/register".
+     */
+    Route::middleware(['auth:sanctum', 'email-confirmed'])->group(function () {        
+        Route::prefix('profile')->group(function () {
+            Route::get('/', [AuthController::class, 'getAuthenticated']);
+            Route::post('/update', [AuthController::class, 'update']);
+        });
 
-        Route::get('/place-evaluations', [PlaceEvaluationController::class, 'listPlaceEvaluationsByAppUser']);
-        Route::post('/place-evaluations', [PlaceEvaluationController::class, 'createPlaceEvaluation']);
+        Route::prefix('places')->group(function () {
+            Route::get('/', [PlaceController::class, 'listPlaces']);
+            Route::get('/radius', [PlaceController::class, 'listPlacesByRadius']);
+            Route::post('/', [PlaceController::class, 'createPlace']);
+            Route::post('/{placeId}/media', [PlaceController::class, 'attachMediaToPlace']);
+            Route::get('/{id}', [PlaceController::class, 'getPlaceById']);
+            Route::get('/google/{id}', [PlaceController::class, 'getPlaceByGooglePlaceId']);
+        });
 
-        Route::post('/place-evaluations/{placeEvaluationId}/media', [PlaceEvaluationController::class, 'attachMediaPlaceEvaluationByAuthenticated']);
+        Route::prefix('place-evaluations')->group(function () {
+            Route::get('/', [PlaceEvaluationController::class, 'listPlaceEvaluations']);
+            Route::post('/', [PlaceEvaluationController::class, 'createPlaceEvaluation']);
+            Route::post('/{placeEvaluationId}/media', [PlaceEvaluationController::class, 'attachMediaPlaceEvaluationByAuthenticated']);
+        });
+
+        Route::prefix('auth')->group(function () {
+            Route::get('/place-evaluations', [PlaceEvaluationController::class, 'listPlaceEvaluationsByAppUser']); 
+        });
 
         Route::get('/place-rate-settings', [RateSettingsController::class, 'getPlaceRateSettings']);
     });
-
-    Route::get('/places', [PlaceController::class, 'listPlaces']);
-    Route::get('/places-by-radius', [PlaceController::class, 'listPlacesByRadius']);
-    Route::get('/places/google/{id}', [PlaceController::class, 'getPlaceByGooglePlaceId']);
-    Route::get('/place-evaluations', [PlaceEvaluationController::class, 'listPlaceEvaluations']);
-
-    Route::get('/legal-text/{type}', [LegalTextController::class, 'getLegalText']);
-    Route::get('/faqs', [FaqController::class, 'getFaqs']);
 });
