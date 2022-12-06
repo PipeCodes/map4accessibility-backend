@@ -539,7 +539,7 @@ class AuthController extends Controller
                 [
                     'name' => 'required|string|max:255',
                     'surname' => 'required|string|max:255',
-                    'birthdate' => 'date|max:255',
+                    'birthdate' => 'date|max:255|older_than:16|younger_than:100',
                     'email' => 'required|string|email|max:255|unique:users',
                     'password' => [
                         'required_without:auth_providers',
@@ -554,7 +554,7 @@ class AuthController extends Controller
             );
 
             if ($validateUser->fails()) {
-                return $this->respondError($validateUser->errors(), 401);
+                return $this->respondError($validateUser->errors(), 422);
             }
 
 
@@ -677,7 +677,7 @@ class AuthController extends Controller
                 [
                     'name' => 'required|string|max:255',
                     'surname' => 'required|string|max:255',
-                    'birthdate' => 'date|max:255',
+                    'birthdate' => 'date|max:255|older_than:16|younger_than:100',
                     'email' => 'required|string|email|max:255|unique:users',
                     'avatar' => 'image|mimes:jpg,jpeg,png|max:2048',
                 ]
