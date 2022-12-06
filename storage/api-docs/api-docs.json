@@ -1483,7 +1483,7 @@
                 }
             }
         },
-        "/auth/place-rate-settings": {
+        "/place-rate-settings": {
             "get": {
                 "tags": [
                     "Settings"
