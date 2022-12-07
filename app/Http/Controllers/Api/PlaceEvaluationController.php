@@ -371,10 +371,16 @@ class PlaceEvaluationController extends Controller
                 return $this->respondNotFound();
             }
 
+            $latitude = number_format($request->get('latitude'), 8);
+            $longitude = number_format($request->get('longitude'), 8);
+
             $place = Place::query()
-                ->where('latitude', $request->get('latitude'))
-                ->where('longitude', $request->get('longitude'))
-                ->firstOrCreate($request->only([
+                ->where('latitude', $latitude)
+                ->where('longitude', $longitude)
+                ->first();
+
+            if (!$place) {
+                $place = Place::create($request->only([
                     'latitude', 
                     'longitude', 
                     'google_place_id',
@@ -388,6 +394,7 @@ class PlaceEvaluationController extends Controller
                     'website',
                     'schedule'
                 ]));
+            }
 
             $placeEvaluation = PlaceEvaluation::create([
                 ...$request->only([
