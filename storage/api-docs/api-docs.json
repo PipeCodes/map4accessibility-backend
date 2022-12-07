@@ -684,9 +684,77 @@
                         "api_key_security": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "Create a new Place",
+                "description": "Create a new Place",
+                "operationId": "createPlace",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Place"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "$ref": "#/components/schemas/Place"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
             }
         },
-        "/places-by-radius": {
+        "/places/radius": {
             "get": {
                 "tags": [
                     "Places"
@@ -838,6 +906,69 @@
                 ]
             }
         },
+        "/places/{id}": {
+            "get": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "Get Place by its ID",
+                "description": "Get Place its ID",
+                "operationId": "getPlaceById",
+                "parameters": [
+                    {
+                        "parameter": "Place--id",
+                        "name": "id",
+                        "in": "path",
+                        "description": "Place ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "1"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "$ref": "#/components/schemas/Place"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
         "/places/google/{id}": {
             "get": {
                 "tags": [
@@ -845,7 +976,7 @@
                 ],
                 "summary": "Get Place by a Google Place ID",
                 "description": "Get Place by a Google Place ID",
-                "operationId": "getPlaceByPlaceId",
+                "operationId": "getPlaceByGooglePlaceId",
                 "parameters": [
                     {
                         "parameter": "Place--google_place_id",
@@ -901,17 +1032,17 @@
                 ]
             }
         },
-        "/auth/place-evaluations/{placeEvaluationId}/media": {
+        "/places/{placeId}/media": {
             "post": {
                 "tags": [
-                    "PlaceEvaluation"
+                    "Places"
                 ],
-                "summary": "upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
-                "description": "upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
-                "operationId": "attachMediaPlaceEvaluationByAuthenticated",
+                "summary": "upload a media file for Place ID by AppUser AUTH TOKEN",
+                "description": "upload a media file for Place ID by AppUser AUTH TOKEN",
+                "operationId": "attachMediaToPlaces",
                 "parameters": [
                     {
-                        "name": "placeEvaluationId",
+                        "name": "placeId",
                         "in": "path",
                         "required": true
                     }
@@ -967,116 +1098,32 @@
                 }
             }
         },
-        "/auth/place-evaluations": {
-            "get": {
-                "tags": [
-                    "PlaceEvaluation"
-                ],
-                "summary": "Lists all place evaluations made by the app user that is currently logged in.",
-                "description": "Lists all place evaluations made by the app user that is currently logged in.",
-                "operationId": "placeEvaluationsByAppUser",
-                "parameters": [
-                    {
-                        "name": "page",
-                        "in": "query",
-                        "description": "Page",
-                        "example": "1"
-                    },
-                    {
-                        "name": "size",
-                        "in": "query",
-                        "description": "Quantity of comments to return",
-                        "example": "10"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful operation",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "title": "success",
-                                            "type": "boolean",
-                                            "readOnly": "true",
-                                            "example": "true"
-                                        },
-                                        "message": {
-                                            "title": "message",
-                                            "type": "string",
-                                            "readOnly": "true",
-                                            "example": "null"
-                                        },
-                                        "result": {
-                                            "title": "result",
-                                            "properties": {
-                                                "data": {
-                                                    "title": "data",
-                                                    "type": "array",
-                                                    "items": {
-                                                        "$ref": "#/components/schemas/PlaceEvaluation"
-                                                    }
-                                                },
-                                                "links": {
-                                                    "title": "links",
-                                                    "properties": {
-                                                        "first": {
-                                                            "title": "First Page",
-                                                            "description": "First Page",
-                                                            "format": "string",
-                                                            "example": "http://www.example.com?page=1&size=10"
-                                                        },
-                                                        "last": {
-                                                            "title": "Last Page",
-                                                            "description": "Last Page",
-                                                            "format": "string",
-                                                            "example": "http://www.example.com?page=1&size=10"
-                                                        },
-                                                        "prev": {
-                                                            "title": "Previous Page",
-                                                            "description": "Previous Page",
-                                                            "format": "string",
-                                                            "example": "http://www.example.com?page=1&size=10"
-                                                        },
-                                                        "next": {
-                                                            "title": "Next Page",
-                                                            "description": "Next Page",
-                                                            "format": "string",
-                                                            "example": "http://www.example.com?page=1&size=10"
-                                                        }
-                                                    },
-                                                    "type": "object"
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Invalid username/password supplied"
-                    },
-                    "400": {
-                        "description": "Internal error"
-                    }
-                }
-            },
+        "/place-evaluations/{placeEvaluationId}/media": {
             "post": {
                 "tags": [
                     "PlaceEvaluation"
                 ],
-                "summary": "Create Place Evaluation by AppUser AUTH TOKEN",
-                "description": "Create Place Evaluation by AppUser AUTH TOKEN",
-                "operationId": "placeEvaluationByAuthenticated",
+                "summary": "upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
+                "description": "upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
+                "operationId": "attachMediaPlaceEvaluationByAuthenticated",
+                "parameters": [
+                    {
+                        "name": "placeEvaluationId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "requestBody": {
                     "content": {
-                        "application/json": {
+                        "multipart/form-data": {
                             "schema": {
-                                "$ref": "#/components/schemas/PlaceEvaluation"
+                                "properties": {
+                                    "media": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
                             }
                         }
                     }
@@ -1103,23 +1150,6 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "title": "success",
-                                            "type": "boolean",
-                                            "readOnly": "true",
-                                            "example": "true"
-                                        },
-                                        "message": {
-                                            "title": "message",
-                                            "type": "string",
-                                            "readOnly": "true",
-                                            "example": "null"
-                                        },
-                                        "result": {
-                                            "$ref": "#/components/schemas/PlaceEvaluation"
-                                        }
-                                    },
                                     "type": "object"
                                 }
                             }
@@ -1284,9 +1314,176 @@
                         "api_key_security": []
                     }
                 ]
+            },
+            "post": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "Create Place Evaluation by AppUser AUTH TOKEN",
+                "description": "Create Place Evaluation by AppUser AUTH TOKEN",
+                "operationId": "placeEvaluationByAuthenticated",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePlaceEvaluationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "$ref": "#/components/schemas/PlaceEvaluation"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
             }
         },
-        "/auth/place-rate-settings": {
+        "/auth/place-evaluations": {
+            "get": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "Lists all place evaluations made by the app user that is currently logged in.",
+                "description": "Lists all place evaluations made by the app user that is currently logged in.",
+                "operationId": "placeEvaluationsByAppUser",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "example": "1"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Quantity of comments to return",
+                        "example": "10"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "title": "result",
+                                            "properties": {
+                                                "data": {
+                                                    "title": "data",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/PlaceEvaluation"
+                                                    }
+                                                },
+                                                "links": {
+                                                    "title": "links",
+                                                    "properties": {
+                                                        "first": {
+                                                            "title": "First Page",
+                                                            "description": "First Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "last": {
+                                                            "title": "Last Page",
+                                                            "description": "Last Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "prev": {
+                                                            "title": "Previous Page",
+                                                            "description": "Previous Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "next": {
+                                                            "title": "Next Page",
+                                                            "description": "Next Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/place-rate-settings": {
             "get": {
                 "tags": [
                     "Settings"
@@ -1394,6 +1591,95 @@
                         "title": "Birthdate",
                         "description": "Birthdate",
                         "format": "date"
+                    }
+                },
+                "type": "object"
+            },
+            "CreatePlaceEvaluationRequest": {
+                "required": [
+                    "latitude",
+                    "longitude",
+                    "thumb_direction"
+                ],
+                "properties": {
+                    "latitude": {
+                        "title": "Latitude",
+                        "description": "Latitude",
+                        "format": "decimal"
+                    },
+                    "longitude": {
+                        "title": "Longitude",
+                        "description": "Longitude",
+                        "format": "decimal"
+                    },
+                    "google_place_id": {
+                        "title": "Google Place ID",
+                        "description": "Google Place ID",
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "title": "Place name",
+                        "description": "Place Name",
+                        "type": "string"
+                    },
+                    "place_type": {
+                        "title": "Place Type",
+                        "description": "Place Type",
+                        "type": "string"
+                    },
+                    "country_code": {
+                        "title": "Country Code",
+                        "description": "Country Code",
+                        "type": "string"
+                    },
+                    "city": {
+                        "title": "Place City",
+                        "description": "Place City",
+                        "type": "string"
+                    },
+                    "address": {
+                        "title": "Place Address",
+                        "description": "Place Address",
+                        "type": "string"
+                    },
+                    "phone": {
+                        "title": "Place Phone",
+                        "description": "Place Phone",
+                        "type": "string"
+                    },
+                    "email": {
+                        "title": "Place Email",
+                        "description": "Place Email",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "website": {
+                        "title": "Place Website",
+                        "description": "Place Website",
+                        "type": "string"
+                    },
+                    "schedule": {
+                        "title": "Place Schedule",
+                        "description": "Place Schedule",
+                        "type": "string"
+                    },
+                    "thumb_direction": {
+                        "title": "Thumb Direction",
+                        "description": "Thumb Direction (0 = Thumbs Down, 1 = Thumbs Up)",
+                        "type": "integer",
+                        "maximum": 1,
+                        "minimum": 0
+                    },
+                    "comment": {
+                        "title": "Comment",
+                        "description": "Comment"
+                    },
+                    "questions_answers": {
+                        "title": "Questions Answers JSON",
+                        "description": "Questions Answers JSON",
+                        "type": "object",
+                        "example": []
                     }
                 },
                 "type": "object"
@@ -1698,6 +1984,7 @@
                     "google_place_id": {
                         "title": "Google Place id",
                         "description": "Google Place id",
+                        "type": "integer",
                         "format": "int64",
                         "example": ""
                     },
@@ -1712,6 +1999,37 @@
                     "country_code": {
                         "title": "country_code",
                         "description": "Country Code"
+                    },
+                    "city": {
+                        "title": "Place City",
+                        "description": "Place City",
+                        "type": "string"
+                    },
+                    "address": {
+                        "title": "Place Address",
+                        "description": "Place Address",
+                        "type": "string"
+                    },
+                    "phone": {
+                        "title": "Place Phone",
+                        "description": "Place Phone",
+                        "type": "string"
+                    },
+                    "email": {
+                        "title": "Place Email",
+                        "description": "Place Email",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "website": {
+                        "title": "Place Website",
+                        "description": "Place Website",
+                        "type": "string"
+                    },
+                    "schedule": {
+                        "title": "Place Schedule",
+                        "description": "Place Schedule",
+                        "type": "string"
                     },
                     "latitude": {
                         "title": "Coord. Latitude",

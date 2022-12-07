@@ -19,7 +19,7 @@ class RateSettingsController extends Controller
 
     /**
      * @OA\Get(
-     *  path="/auth/place-rate-settings",
+     *  path="/place-rate-settings",
      *  operationId="getPlaceRateSettings",
      *  tags={"Settings"},
      *  summary="Get the settings for the place rating",

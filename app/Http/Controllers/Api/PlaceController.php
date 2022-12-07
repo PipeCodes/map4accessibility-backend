@@ -44,6 +44,37 @@ class PlaceController extends Controller
     }
 
     /**
+     * Returns the validator for the endpoint 
+     * that is used to create a new Place.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Validation\Validator
+     */
+    protected function validatorCreatePlace(Request $request)
+    {
+        return Validator::make($request->all(), [
+            'latitude' => [
+                'required', 
+                'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'
+            ],
+            'longitude' => [
+                'required', 
+                'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'
+            ],
+            'google_place_id' => 'integer|nullable',
+            'name' => 'string|min:3|nullable',
+            'place_type' => 'string|nullable',
+            'country_code' => 'string|min:2|nullable',
+            'city' => 'string|nullable',
+            'address' => 'string|nullable',
+            'phone' => 'string|nullable',
+            'email' => 'string|email|nullable',
+            'website' => 'string|url|nullable',
+            'schedule' => 'string|nullable',
+        ]);
+    }
+
+    /**
      * Returns the validator for the endpoint
      * that lists places.
      * 
@@ -210,7 +241,7 @@ class PlaceController extends Controller
                 $request,
                 Place::query()
                     ->select('*')
-                    ->with('medias', function ($query) {
+                    ->with('mediaEvaluations', function ($query) {
                         $query->select('file_url', 'file_name');
                     })
                     ->withCount([
@@ -250,7 +281,7 @@ class PlaceController extends Controller
      * given a center coordinates or a google_place_id.
      *
      * @OA\Get (
-     *     path="/places-by-radius",
+     *     path="/places/radius",
      *     tags={"Places"},
      *     security={
      *          {"api_key_security": {}}
@@ -388,7 +419,7 @@ class PlaceController extends Controller
                 $request,
                 Place::query()
                     ->select('*')
-                    ->with('medias', function ($query) {
+                    ->with('mediaEvaluations', function ($query) {
                         $query->select('file_url', 'file_name');
                     })
                     ->withCount([
@@ -511,6 +542,94 @@ class PlaceController extends Controller
 
     /**
      * @OA\Get (
+     *     path="/places/{id}",
+     *     tags={"Places"},
+     *     security={
+     *          {"api_key_security": {}}
+     *      },
+     *     summary="Get Place by its ID",
+     *     description="Get Place its ID",
+     *     operationId="getPlaceById",
+     *     @OA\Parameter(
+     *         parameter="Place--id",
+     *         in="path",
+     *         name="id",
+     *         required=true,
+     *         description="Place ID",
+     *         @OA\Schema(
+     *             type="string",
+     *             example="1",
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
+     *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
+     *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/Place"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     * 
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getPlaceById(Request $request, string $id)
+    {
+        try {
+            $validator = Validator::make(
+                $request->all(), [
+                    'id' => [
+                        'exists:places,id',
+                        'integer'
+                    ]
+                ]
+            );
+
+            if ($validator->fails()) {
+                return $this->respondError($validator->errors(), 422);
+            }
+
+            $place = Place::query()
+                ->select('*')
+                ->where('id', $id)
+                ->with('mediaEvaluations', function ($query) {
+                    $query->select('file_url', 'file_name');
+                })
+                ->withCount([
+                    'placeEvaluations as thumbs_up_count' => 
+                        function ($query) {
+                            $query->where('thumb_direction', 1);
+                        },
+                    'placeEvaluations as thumbs_down_count' => 
+                        function ($query) {
+                            $query->where('thumb_direction', 0);
+                        }
+                ])
+                ->first();
+
+            if (!$place) {
+                return $this->respondNotFound();
+            }
+            
+            return $this->respondWithResource(new JsonResource($place));
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
+
+    /**
+     * @OA\Get (
      *     path="/places/google/{id}",
      *     tags={"Places"},
      *     security={
@@ -518,7 +637,7 @@ class PlaceController extends Controller
      *      },
      *     summary="Get Place by a Google Place ID",
      *     description="Get Place by a Google Place ID",
-     *     operationId="getPlaceByPlaceId",
+     *     operationId="getPlaceByGooglePlaceId",
      *     @OA\Parameter(
      *         parameter="Place--google_place_id",
      *         in="path",
@@ -572,7 +691,7 @@ class PlaceController extends Controller
             $place = Place::query()
                 ->select('*')
                 ->where('google_place_id', $id)
-                ->with('medias', function ($query) {
+                ->with('mediaEvaluations', function ($query) {
                     $query->select('file_url', 'file_name');
                 })
                 ->withCount([
@@ -591,6 +710,203 @@ class PlaceController extends Controller
                 return $this->respondNotFound();
             }
             
+            return $this->respondWithResource(new JsonResource($place));
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
+
+    /**
+     * Creates a new PlaceEvaluation and also a
+     * new Place, in case it does not exist yet
+     * in the database.
+     * 
+     * @OA\Post(
+     *     path="/places",
+     *     tags={"Places"},
+     *     summary="Create a new Place",
+     *     description="Create a new Place",
+     *     operationId="createPlace",
+     *     @OA\RequestBody(
+     *          @OA\JsonContent(
+     *             ref="#/components/schemas/Place"
+     *         )
+     *     ),
+     *      @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
+     *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
+     *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/Place"), 
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function createPlace(Request $request)
+    {
+        try {
+            $validator = $this->validatorCreatePlace($request);
+
+            if ($validator->fails()) {
+                return $this->respondError($validator->errors(), 422);
+            }
+
+            $latitude = number_format($request->get('latitude'), 8);
+            $longitude = number_format($request->get('longitude'), 8);
+
+            $exists = Place::query()
+                ->where('latitude', $latitude)
+                ->where('longitude', $longitude)
+                ->exists();
+
+            if ($exists) {
+                return $this->respondError(
+                    'Place with given coords already exists',
+                    409
+                );
+            }
+
+            $place = Place::create($request->only([
+                'latitude', 
+                'longitude', 
+                'google_place_id',
+                'name', 
+                'place_type', 
+                'country_code', 
+                'city',
+                'address',
+                'phone',
+                'email',
+                'website',
+                'schedule'
+            ]));
+
+            return $this->respondWithResource(new JsonResource($place));
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
+
+    /**
+     * @OA\Post (
+     *     path="/places/{placeId}/media",
+     *     tags={"Places"},
+     *     summary="upload a media file for Place ID by AppUser AUTH TOKEN",
+     *     description="upload a media file for Place ID by AppUser AUTH TOKEN",
+     *     operationId="attachMediaToPlaces",
+     *     @OA\Parameter(in="path", name="placeId", required=true),
+     *     @OA\RequestBody(
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                  @OA\Property(
+     *                      property="media",
+     *                      type="string",
+     *                      format="binary"
+     *                  )
+     *             )
+     *         )
+     *     ),
+     *      @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     */
+    public function attachMediaToPlace(
+        Request $request, 
+        $placeId
+    ) {
+        try {            
+            $validator = Validator::make([
+                ...$request->all(),
+                'placeId' => $placeId
+            ], [
+                'placeId' => 'required|string|exists:places,id',
+                'media' => 'required|file|mimetypes:image/jpg,image/png,image/jpeg,video/mp4'
+            ]);
+
+            if ($validator->fails()) {
+                return $this->respondError($validator->errors(), 422);
+            }
+
+            /** @var Place $place */
+            $place = Place::find($placeId);
+
+            $place->detachMedia();
+            $resourceType = str_contains(
+                haystack: $request->file('media')->getMimeType(),
+                needle: 'video/'
+            ) ? 'video' : 'image';
+
+            $place->fresh()
+                ->attachMedia(
+                    file: $request->file('media'),
+                    options: [
+                        'resource_type' => $resourceType,
+                        'transformation' => [
+                            'quality' => 'auto',
+                            'fetch_format' => 'auto'
+                        ]
+                    ]
+                );
+
             return $this->respondWithResource(new JsonResource($place));
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());

@@ -9,9 +9,6 @@ use App\Http\Traits\UploadTrait;
 use App\Models\AppUser;
 use App\Models\Place;
 use App\Models\PlaceEvaluation;
-use Cloudinary\Api\Admin\AdminApi;
-use Cloudinary\Cloudinary;
-use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary as FacadesCloudinary;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
@@ -25,7 +22,7 @@ class PlaceEvaluationController extends Controller
 
     /**
      * @OA\Post (
-     *     path="/auth/place-evaluations/{placeEvaluationId}/media",
+     *     path="/place-evaluations/{placeEvaluationId}/media",
      *     tags={"PlaceEvaluation"},
      *     summary="upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
      *     description="upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
@@ -143,13 +140,21 @@ class PlaceEvaluationController extends Controller
         return Validator::make(
             $request->all(),
             [
-                'google_place_id' => 'integer',
-                'name' => 'string|min:6',
-                'country_code' => 'required|string|min:1',
                 'latitude' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
                 'longitude' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
-                'comment' => 'string|min:6',
+                'google_place_id' => 'integer|nullable',
+                'name' => 'string|min:3|nullable',
+                'place_type' => 'string|nullable',
+                'country_code' => 'string|min:2|nullable',
+                'city' => 'string|nullable',
+                'address' => 'string|nullable',
+                'phone' => 'string|nullable',
+                'email' => 'string|email|nullable',
+                'website' => 'string|url|nullable',
+                'schedule' => 'string|nullable',
                 'thumb_direction' => 'required|boolean',
+                'comment' => 'string|min:6|nullable',
+                'question_answers' => 'nullable'
             ]
         );
     }
@@ -202,15 +207,115 @@ class PlaceEvaluationController extends Controller
      * new Place, in case it does not exist yet
      * in the database.
      * 
+     * @OA\Schema(
+     *      schema="CreatePlaceEvaluationRequest",
+     *      type="object",
+     *      required={"latitude", "longitude", "thumb_direction"},
+     *      @OA\Property(
+     *          property="latitude",
+     *          format="decimal",
+     *          description="Latitude",
+     *          title="Latitude",
+     *      ),
+     *      @OA\Property(
+     *          property="longitude",
+     *          format="decimal",
+     *          description="Longitude",
+     *          title="Longitude",
+     *      ),
+     *      @OA\Property(
+     *          property="google_place_id",
+     *          description="Google Place ID",
+     *          title="Google Place ID",
+     *          format="int64",
+     *          type="integer"
+     *      ),
+     *      @OA\Property(
+     *          property="name",
+     *          description="Place Name",
+     *          title="Place name",
+     *          type="string",
+     *      ),
+     *      @OA\Property(
+     *          property="place_type",
+     *          description="Place Type",
+     *          title="Place Type",
+     *          type="string",
+     *      ),
+     *      @OA\Property(
+     *          property="country_code",
+     *          description="Country Code",
+     *          title="Country Code",
+     *          type="string",
+     *      ),
+     *      @OA\Property(
+     *          property="city",
+     *          description="Place City",
+     *          title="Place City",
+     *          type="string",
+     *      ),
+     *      @OA\Property(
+     *          property="address",
+     *          description="Place Address",
+     *          title="Place Address",
+     *          type="string",
+     *      ),
+     *      @OA\Property(
+     *          property="phone",
+     *          description="Place Phone",
+     *          title="Place Phone",
+     *          type="string",
+     *      ),
+     *      @OA\Property(
+     *          property="email",
+     *          description="Place Email",
+     *          title="Place Email",
+     *          format="email",
+     *          type="string",
+     *      ),
+     *      @OA\Property(
+     *          property="website",
+     *          description="Place Website",
+     *          title="Place Website",
+     *          type="string",
+     *      ),
+     *      @OA\Property(
+     *          property="schedule",
+     *          description="Place Schedule",
+     *          title="Place Schedule",
+     *          type="string",
+     *      ),
+     *      @OA\Property(
+     *          property="thumb_direction",
+     *          type="integer",
+     *          minimum=0,
+     *          maximum=1,
+     *          description="Thumb Direction (0 = Thumbs Down, 1 = Thumbs Up)",
+     *          title="Thumb Direction",
+     *      ),
+     *      @OA\Property(
+     *          property="comment",
+     *          description="Comment",
+     *          title="Comment"
+     *      ),
+     *      @OA\Property(
+     *          property="questions_answers",
+     *          type="object",
+     *          description="Questions Answers JSON",
+     *          title="Questions Answers JSON",
+     *          example={}
+     *      ),
+     *)
+     * 
      * @OA\Post(
-     *     path="/auth/place-evaluations",
+     *     path="/place-evaluations",
      *     tags={"PlaceEvaluation"},
      *     summary="Create Place Evaluation by AppUser AUTH TOKEN",
      *     description="Create Place Evaluation by AppUser AUTH TOKEN",
      *     operationId="placeEvaluationByAuthenticated",
      *     @OA\RequestBody(
      *          @OA\JsonContent(
-     *             ref="#/components/schemas/PlaceEvaluation"
+     *             ref="#/components/schemas/CreatePlaceEvaluationRequest"
      *         )
      *     ),
      *      @OA\Response(
@@ -266,13 +371,30 @@ class PlaceEvaluationController extends Controller
                 return $this->respondNotFound();
             }
 
+            $latitude = number_format($request->get('latitude'), 8);
+            $longitude = number_format($request->get('longitude'), 8);
+
             $place = Place::query()
-                ->where('latitude', $request->get('latitude'))
-                ->where('longitude', $request->get('longitude'))
-                ->firstOrCreate($request->only([
-                    'latitude', 'longitude', 'google_place_id',
-                    'name', 'country_code', 'place_type'
+                ->where('latitude', $latitude)
+                ->where('longitude', $longitude)
+                ->first();
+
+            if (!$place) {
+                $place = Place::create($request->only([
+                    'latitude', 
+                    'longitude', 
+                    'google_place_id',
+                    'name', 
+                    'place_type', 
+                    'country_code', 
+                    'city',
+                    'address',
+                    'phone',
+                    'email',
+                    'website',
+                    'schedule'
                 ]));
+            }
 
             $placeEvaluation = PlaceEvaluation::create([
                 ...$request->only([
