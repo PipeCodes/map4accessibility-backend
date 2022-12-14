@@ -382,7 +382,7 @@
                 ]
             }
         },
-        "/auth/profile/update": {
+        "/profile/update": {
             "post": {
                 "tags": [
                     "appUser"
@@ -437,7 +437,7 @@
                 }
             }
         },
-        "/auth/profile": {
+        "/profile": {
             "get": {
                 "tags": [
                     "appUser"
