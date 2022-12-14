@@ -626,7 +626,7 @@ class AuthController extends Controller
      * )
      * 
      * @OA\Post(
-     *     path="/auth/profile/update",
+     *     path="/profile/update",
      *     tags={"appUser"},
      *     summary="Update AppUser",
      *     description="",
@@ -734,7 +734,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Get (
-     *     path="/auth/profile",
+     *     path="/profile",
      *     tags={"appUser"},
      *     summary="Get AppUser Data",
      *     description="",

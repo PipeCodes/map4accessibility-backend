@@ -131,7 +131,7 @@ class AppUser extends Authenticatable
 
     public function placeEvaluations()
     {
-        return $this->hasMany(PlaceEvaluation::class);
+        return $this->hasMany(PlaceEvaluation::class)->latest();
     }
 
     public function placeEvaluation($placeEvaluationId)

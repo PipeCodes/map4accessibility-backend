@@ -603,8 +603,9 @@ class PlaceController extends Controller
             $place = Place::query()
                 ->select('*')
                 ->where('id', $id)
+                ->with('placeEvaluations')
                 ->with('mediaEvaluations', function ($query) {
-                    $query->select('file_url', 'file_name');
+                    $query->select('file_url', 'file_type');
                 })
                 ->withCount([
                     'placeEvaluations as thumbs_up_count' => 
