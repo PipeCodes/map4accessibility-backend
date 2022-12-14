@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helper\PlaceEvaluationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaceEvaluationCollection;
 use App\Http\Traits\ApiResponseTrait;
@@ -743,13 +744,38 @@ class PlaceEvaluationController extends Controller
             return $this->respondNotFound();
         }
 
-        return $this->respondWithResourceCollection(
+        $query = PlaceEvaluation::where('app_user_id', $appUser->id)
+            ->latest()
+            ->with(['place' => function ($query) {
+                $query->with(['mediaEvaluations' => function ($query) {
+                    $query->select('file_url', 'file_type');
+                }]);
+            }]);
+
+        $counts = collect([
+            'total_thumbs_up' => 
+                (clone $query)->where('thumb_direction', 1)->count(),
+            'total_thumbs_down' => 
+                (clone $query)->where('thumb_direction', 0)->count(),
+            'total_accepted' => 
+                (clone $query)->where('status', PlaceEvaluationStatus::Accepted->value)->count(),
+            'total_rejected' => 
+                (clone $query)->where('status', PlaceEvaluationStatus::Rejected->value)->count(),
+            'total_pending' => 
+                (clone $query)->where('status', PlaceEvaluationStatus::Pending->value)->count(),
+        ]);
+
+        $result = $counts->merge(
+            $query->paginate(
+                $request->get('size', 20),
+                ['*'],
+                'page'
+            )->withQueryString()
+        );
+        
+        return $this->respondWithResource(
             new PlaceEvaluationCollection(
-                $appUser->placeEvaluations()->paginate(
-                    $request->query('size', 10),
-                    ['*'],
-                    'page'
-                )->withQueryString()
+                $result
             )
         );
     }
