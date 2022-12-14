@@ -738,6 +738,7 @@ class PlaceEvaluationController extends Controller
         }
 
         $query = PlaceEvaluation::where('app_user_id', $appUser->id)
+            ->latest()
             ->with(['place' => function ($query) {
                 $query->with(['mediaEvaluations' => function ($query) {
                     $query->select('file_url', 'file_type');
