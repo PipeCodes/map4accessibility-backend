@@ -1599,6 +1599,7 @@
                 "required": [
                     "latitude",
                     "longitude",
+                    "name",
                     "thumb_direction"
                 ],
                 "properties": {

@@ -211,7 +211,7 @@ class PlaceEvaluationController extends Controller
      * @OA\Schema(
      *      schema="CreatePlaceEvaluationRequest",
      *      type="object",
-     *      required={"latitude", "longitude", "thumb_direction"},
+     *      required={"latitude", "longitude", "name", "thumb_direction"},
      *      @OA\Property(
      *          property="latitude",
      *          format="decimal",
