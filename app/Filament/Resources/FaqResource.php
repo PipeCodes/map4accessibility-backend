@@ -34,6 +34,7 @@ class FaqResource extends Resource
                     ->required()
                     ->maxLength(65535),
                 Forms\Components\TextInput::make('order')
+                    ->numeric()
                     ->required(),
                 AppLocales::SelectLocales(),
             ]);
