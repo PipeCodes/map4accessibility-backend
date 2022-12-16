@@ -144,7 +144,7 @@ class PlaceEvaluationController extends Controller
                 'latitude' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
                 'longitude' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
                 'google_place_id' => 'integer|nullable',
-                'name' => 'string|min:3|nullable',
+                'name' => 'string|min:3|required',
                 'place_type' => 'string|nullable',
                 'country_code' => 'string|min:2|nullable',
                 'city' => 'string|nullable',
@@ -211,7 +211,7 @@ class PlaceEvaluationController extends Controller
      * @OA\Schema(
      *      schema="CreatePlaceEvaluationRequest",
      *      type="object",
-     *      required={"latitude", "longitude", "thumb_direction"},
+     *      required={"latitude", "longitude", "name", "thumb_direction"},
      *      @OA\Property(
      *          property="latitude",
      *          format="decimal",
