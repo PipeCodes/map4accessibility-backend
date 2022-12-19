@@ -3,10 +3,10 @@
 namespace App\Providers;
 
 use Carbon\Carbon;
-use Illuminate\Support\ServiceProvider;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Vite;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -38,34 +38,30 @@ class AppServiceProvider extends ServiceProvider
          * Defines the "Older than..." validation rule.
          */
         Validator::extend(
-            rule: 'older_than', 
-            extension: fn ($attribute, $value, $parameters) => 
-                Carbon::now()
+            rule: 'older_than',
+            extension: fn ($attribute, $value, $parameters) => Carbon::now()
                     ->diff(new Carbon($value))
                     ->y >= (int) $parameters[0],
         );
 
         Validator::replacer(
-            rule: 'older_than', 
-            replacer: fn ($message, $attribute, $rule, $parameters) => 
-                str_replace(':value', $parameters[0], $message)
+            rule: 'older_than',
+            replacer: fn ($message, $attribute, $rule, $parameters) => str_replace(':value', $parameters[0], $message)
         );
 
         /**
          * Defines the "Younger than..." validation rule.
          */
         Validator::extend(
-            rule: 'younger_than', 
-            extension: fn ($attribute, $value, $parameters) => 
-                Carbon::now()
+            rule: 'younger_than',
+            extension: fn ($attribute, $value, $parameters) => Carbon::now()
                     ->diff(new Carbon($value))
                     ->y < (int) $parameters[0],
         );
 
         Validator::replacer(
-            rule: 'younger_than', 
-            replacer: fn ($message, $attribute, $rule, $parameters) => 
-                str_replace(':value', $parameters[0], $message)
+            rule: 'younger_than',
+            replacer: fn ($message, $attribute, $rule, $parameters) => str_replace(':value', $parameters[0], $message)
         );
     }
 }

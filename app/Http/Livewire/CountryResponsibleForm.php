@@ -19,7 +19,9 @@ class CountryResponsibleForm extends Component implements HasForms
     use InteractsWithForms;
 
     public $countries = [];
+
     public $original = [];
+
     protected $listeners = ['repeater::deleteItem' => 'incrementPostCount'];
 
     public function mount(): void
@@ -28,7 +30,7 @@ class CountryResponsibleForm extends Component implements HasForms
 
         $this->original = $countries;
         $this->fill([
-            'countries' => $countries
+            'countries' => $countries,
         ]);
     }
 
@@ -58,7 +60,7 @@ class CountryResponsibleForm extends Component implements HasForms
                 ])
                 ->disableItemMovement()
                 ->itemLabel(fn (array $state): ?string => Country::tryFrom($state['country_iso'])?->getLabel() ?? null)
-                ->collapsible()
+                ->collapsible(),
         ];
     }
 
@@ -71,7 +73,7 @@ class CountryResponsibleForm extends Component implements HasForms
          */
         $idsToDelete = collect($this->original)
             ->whereNotIn(
-                'country_iso', 
+                'country_iso',
                 collect($current)->pluck('country_iso')
             )
             ->pluck('id')
@@ -84,9 +86,9 @@ class CountryResponsibleForm extends Component implements HasForms
          */
         $countries = collect($current)
             ->map(fn ($item) => [
-                'country_iso' => $item['country_iso'], 
-                'email' => $item['email'], 
-                'updated_at' => Carbon::now()
+                'country_iso' => $item['country_iso'],
+                'email' => $item['email'],
+                'updated_at' => Carbon::now(),
             ])
             ->toArray();
 
@@ -94,11 +96,11 @@ class CountryResponsibleForm extends Component implements HasForms
             $countries,
             ['country_iso']
         );
-    
-        Notification::make() 
+
+        Notification::make()
             ->title('Saved successfully')
             ->success()
-            ->send(); 
+            ->send();
     }
 
     public function render()

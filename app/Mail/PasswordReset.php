@@ -4,9 +4,9 @@ namespace App\Mail;
 
 use App\Models\AppUser;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class PasswordReset extends Mailable implements ShouldQueue
 {
@@ -39,13 +39,13 @@ class PasswordReset extends Mailable implements ShouldQueue
     }
 
     /**
-    * Build the message.
-    *
-    * @return $this
-    */
+     * Build the message.
+     *
+     * @return $this
+     */
     public function build()
     {
-        $url = env('APP_FRONTEND_URL') . 
+        $url = env('APP_FRONTEND_URL').
             "/change-password/?email={$this->user->email}&token={$this->token}";
 
         return $this->markdown('emails.appUsers.password-reset')

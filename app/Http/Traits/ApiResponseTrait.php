@@ -15,10 +15,10 @@ use Illuminate\Validation\ValidationException;
 trait ApiResponseTrait
 {
     /**
-     * @param JsonResource $resource
-     * @param null $message
-     * @param int $statusCode
-     * @param array $headers
+     * @param  JsonResource  $resource
+     * @param  null  $message
+     * @param  int  $statusCode
+     * @param  array  $headers
      * @return JsonResponse
      */
     protected function respondWithResource(JsonResource $resource, $message = null, $statusCode = 200, $headers = [])
@@ -37,9 +37,9 @@ trait ApiResponseTrait
     }
 
     /**
-     * @param array $data
-     * @param int $statusCode
-     * @param array $headers
+     * @param  array  $data
+     * @param  int  $statusCode
+     * @param  array  $headers
      * @return array
      */
     public function parseGivenData($data = [], $statusCode = 200, $headers = [])
@@ -91,8 +91,8 @@ trait ApiResponseTrait
      * Return generic json response with the given data.
      *
      * @param    $data
-     * @param int $statusCode
-     * @param array $headers
+     * @param  int  $statusCode
+     * @param  array  $headers
      * @return JsonResponse
      */
     protected function apiResponse($data = [], $statusCode = 200, $headers = [])
@@ -114,10 +114,10 @@ trait ApiResponseTrait
      */
 
     /**
-     * @param ResourceCollection $resourceCollection
-     * @param null $message
-     * @param int $statusCode
-     * @param array $headers
+     * @param  ResourceCollection  $resourceCollection
+     * @param  null  $message
+     * @param  int  $statusCode
+     * @param  array  $headers
      * @return JsonResponse
      */
     protected function respondWithResourceCollection(ResourceCollection $resourceCollection, $message = null, $statusCode = 200, $headers = [])
@@ -137,7 +137,7 @@ trait ApiResponseTrait
     /**
      * Respond with success.
      *
-     * @param string $message
+     * @param  string  $message
      * @return JsonResponse
      */
     protected function respondSuccess($message = '')
@@ -159,7 +159,7 @@ trait ApiResponseTrait
     /**
      * Respond with no content.
      *
-     * @param string $message
+     * @param  string  $message
      * @return JsonResponse
      */
     protected function respondNoContent($message = 'No Content Found')
@@ -170,7 +170,7 @@ trait ApiResponseTrait
     /**
      * Respond with no content.
      *
-     * @param string $message
+     * @param  string  $message
      * @return JsonResponse
      */
     protected function respondNoContentResource($message = 'No Content Found')
@@ -181,7 +181,7 @@ trait ApiResponseTrait
     /**
      * Respond with no content.
      *
-     * @param string $message
+     * @param  string  $message
      * @return JsonResponse
      */
     protected function respondNoContentResourceCollection($message = 'No Content Found')
@@ -192,7 +192,7 @@ trait ApiResponseTrait
     /**
      * Respond with unauthorized.
      *
-     * @param string $message
+     * @param  string  $message
      * @return JsonResponse
      */
     protected function respondUnAuthorized($message = 'Unauthorized')
@@ -204,9 +204,9 @@ trait ApiResponseTrait
      * Respond with error.
      *
      * @param $message
-     * @param int $statusCode
-     * @param Exception|null $exception
-     * @param bool|null $error_code
+     * @param  int  $statusCode
+     * @param  Exception|null  $exception
+     * @param  bool|null  $error_code
      * @return JsonResponse
      */
     protected function respondError($message, int $statusCode = 400, Exception $exception = null, int $error_code = 1)
@@ -225,7 +225,7 @@ trait ApiResponseTrait
     /**
      * Respond with forbidden.
      *
-     * @param string $message
+     * @param  string  $message
      * @return JsonResponse
      */
     protected function respondForbidden($message = 'Forbidden')
@@ -236,7 +236,7 @@ trait ApiResponseTrait
     /**
      * Respond with not found.
      *
-     * @param string $message
+     * @param  string  $message
      * @return JsonResponse
      */
     protected function respondNotFound($message = 'Not Found')
@@ -247,7 +247,7 @@ trait ApiResponseTrait
     /**
      * Respond with Duplicate record
      *
-     * @param string $message
+     * @param  string  $message
      * @return JsonResponse
      */
     protected function respondErrorDuplicate($message = 'Duplicate record')
@@ -258,7 +258,7 @@ trait ApiResponseTrait
     /**
      * Respond with internal error.
      *
-     * @param string $message
+     * @param  string  $message
      * @return JsonResponse
      */
     protected function respondInternalError($message = 'Internal Error')

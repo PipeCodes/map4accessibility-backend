@@ -3,13 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\LegalTextResource\Pages;
+use App\Helper\AppLocales;
 use App\Models\LegalText;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use App\Helper\AppLocales;
 
 class LegalTextResource extends Resource
 {

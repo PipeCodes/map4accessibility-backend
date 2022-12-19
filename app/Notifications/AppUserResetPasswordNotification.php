@@ -2,8 +2,8 @@
 
 namespace App\Notifications;
 
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Lang;
 
 class AppUserResetPasswordNotification extends Notification
@@ -15,7 +15,7 @@ class AppUserResetPasswordNotification extends Notification
      *
      * @return void
      */
-public function __construct($token)
+    public function __construct($token)
     {
         $this->token = $token;
     }

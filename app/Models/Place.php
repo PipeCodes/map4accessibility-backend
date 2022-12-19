@@ -108,11 +108,11 @@ class Place extends Model
     protected $appends = ['media'];
 
     protected $fillable = [
-        'latitude', 
-        'longitude', 
+        'latitude',
+        'longitude',
         'google_place_id',
-        'name', 
-        'country_code', 
+        'name',
+        'country_code',
         'place_type',
         'city',
         'address',
@@ -135,14 +135,14 @@ class Place extends Model
     protected function media(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->fetchLastMedia() ? $this->fetchLastMedia()->getSecurePath() : null,
+            get: fn () => $this->fetchLastMedia() ? $this->fetchLastMedia()->getSecurePath() : null,
         );
     }
 
     public function mediaEvaluations()
     {
         return $this->hasManyThrough(
-            Media::class, 
+            Media::class,
             PlaceEvaluation::class,
             'place_id',
             'medially_id',

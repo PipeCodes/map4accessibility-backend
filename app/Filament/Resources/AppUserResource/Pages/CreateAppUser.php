@@ -3,10 +3,9 @@
 namespace App\Filament\Resources\AppUserResource\Pages;
 
 use App\Filament\Resources\AppUserResource;
+use App\Mail\EmailConfirmation;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\EmailConfirmation;
-use Filament\Pages\Actions;
 
 class CreateAppUser extends CreateRecord
 {

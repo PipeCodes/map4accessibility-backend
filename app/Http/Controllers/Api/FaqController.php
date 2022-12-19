@@ -9,6 +9,7 @@ use App\Models\Faq;
 
 /**
  * Class FaqControllerController
+ *
  * @package  App\Http\Controllers\Api
  */
 class FaqController extends Controller
@@ -38,6 +39,7 @@ class FaqController extends Controller
      * )
      *
      * Display a listing of FAQ.
+     *
      * @return JsonResponse
      */
     public function getFaqs()

@@ -43,7 +43,7 @@ Route::prefix('v1')->group(function () {
      * response of the endpoints "/auth/login", "/auth/login-by-provider"
      * and "/auth/register".
      */
-    Route::middleware(['auth:sanctum', 'email-confirmed'])->group(function () {        
+    Route::middleware(['auth:sanctum', 'email-confirmed'])->group(function () {
         Route::prefix('profile')->group(function () {
             Route::get('/', [AuthController::class, 'getAuthenticated']);
             Route::post('/update', [AuthController::class, 'update']);
@@ -65,7 +65,7 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::prefix('auth')->group(function () {
-            Route::get('/place-evaluations', [PlaceEvaluationController::class, 'listPlaceEvaluationsByAppUser']); 
+            Route::get('/place-evaluations', [PlaceEvaluationController::class, 'listPlaceEvaluationsByAppUser']);
         });
 
         Route::get('/place-rate-settings', [RateSettingsController::class, 'getPlaceRateSettings']);

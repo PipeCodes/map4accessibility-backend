@@ -3,7 +3,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "pint": "./vendor/bin/pint"
+        "lint": "./vendor/bin/pint --test",
+        "prepare": "husky install"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.3",
@@ -16,6 +17,7 @@
         "postcss": "^8.4.6",
         "tailwindcss": "^3.1.8",
         "tippy.js": "^6.3.7",
-        "vite": "^3.1.8"
+        "vite": "^3.1.8",
+        "husky": "^8.0.0"
     }
 }

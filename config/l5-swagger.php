@@ -218,11 +218,11 @@ return [
                 [
                     'api_key_security' => [
                         'read',
-                        'write'
+                        'write',
                     ],
                     'sanctum' => [
                         'read',
-                        'write'
+                        'write',
                     ],
                     /*
                     'oauth2_security_example' => [

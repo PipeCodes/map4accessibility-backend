@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\AppUserResource\Pages\EditAppUser;
 use App\Filament\Resources\PlaceEvaluationResource\Pages;
 use App\Models\PlaceEvaluation;
 use Filament\Forms;
@@ -26,8 +25,8 @@ class PlaceEvaluationResource extends Resource
             ->schema([
                 Forms\Components\Select::make('app_user_id')
                     ->relationship('appUser', 'email'),
-                    Forms\Components\Select::make('place_id')
-                    ->relationship('place', 'name'),
+                Forms\Components\Select::make('place_id')
+                ->relationship('place', 'name'),
                 Forms\Components\Toggle::make('thumb_direction'),
                 Forms\Components\Textarea::make('comment')
                     ->maxLength(65535),
@@ -41,8 +40,7 @@ class PlaceEvaluationResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('appUser.email')
-                    ->url(fn ($record) => 
-                        "app-users/{$record->appUser->id}/edit"),
+                    ->url(fn ($record) => "app-users/{$record->appUser->id}/edit"),
                 Tables\Columns\TextColumn::make('place.name'),
                 Tables\Columns\BooleanColumn::make('thumb_direction'),
                 Tables\Columns\TextColumn::make('comment'),

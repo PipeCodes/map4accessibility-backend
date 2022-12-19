@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
+use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -67,7 +67,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          ref="#/components/schemas/AppUser"
  *      )
  *)
- *
  */
 class PlaceEvaluation extends Model
 {
@@ -83,7 +82,7 @@ class PlaceEvaluation extends Model
         'comment',
         'questions_answers',
         'app_user_id',
-        'place_id'
+        'place_id',
     ];
 
     /**
@@ -100,12 +99,12 @@ class PlaceEvaluation extends Model
      */
     protected $casts = [
         'thumb_direction' => 'boolean',
-        'questions_answers' => 'array'
+        'questions_answers' => 'array',
     ];
 
     protected $hidden = [
         'app_user_id',
-        'place_id'
+        'place_id',
     ];
 
     public function appUser()
@@ -126,7 +125,7 @@ class PlaceEvaluation extends Model
     protected function mediaUrl(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->fetchLastMedia() ? $this->fetchLastMedia()->getSecurePath() : null,
+            get: fn () => $this->fetchLastMedia() ? $this->fetchLastMedia()->getSecurePath() : null,
         );
     }
 }
