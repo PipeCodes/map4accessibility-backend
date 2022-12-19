@@ -10,8 +10,8 @@ use App\Http\Traits\UploadTrait;
 use App\Models\AppUser;
 use App\Models\Place;
 use App\Models\PlaceEvaluation;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Validator;
@@ -75,11 +75,10 @@ class PlaceEvaluationController extends Controller
      * )
      */
     public function attachMediaPlaceEvaluationByAuthenticated(
-        Request $request, 
+        Request $request,
         $placeEvaluationId
     ) {
         try {
-
             $validate = Validator::make(
                 array_merge($request->all(), ['placeEvaluationId' => $placeEvaluationId]),
                 [
@@ -114,8 +113,8 @@ class PlaceEvaluationController extends Controller
                                 'resource_type' => $resourceType,
                                 'transformation' => [
                                     'quality' => 'auto',
-                                    'fetch_format' => 'auto'
-                                ]
+                                    'fetch_format' => 'auto',
+                                ],
                             ]
                         );
 
@@ -130,10 +129,10 @@ class PlaceEvaluationController extends Controller
     }
 
     /**
-     * Returns the validator for the endpoint 
+     * Returns the validator for the endpoint
      * that is used to create a new Place Evaluation.
-     * 
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorCreatePlaceEvaluation(Request $request)
@@ -155,7 +154,7 @@ class PlaceEvaluationController extends Controller
                 'schedule' => 'string|nullable',
                 'thumb_direction' => 'required|boolean',
                 'comment' => 'string|min:6|nullable',
-                'question_answers' => 'nullable'
+                'question_answers' => 'nullable',
             ]
         );
     }
@@ -163,8 +162,8 @@ class PlaceEvaluationController extends Controller
     /**
      * Returns the validator for the endpoint
      * that lists place evaluations.
-     * 
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorListPlaceEvaluationsByRadiusRequest(
@@ -174,31 +173,31 @@ class PlaceEvaluationController extends Controller
             $request->all(),
             [
                 'latitude' => [
-                    'required', 
-                    'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'
+                    'required',
+                    'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/',
                 ],
                 'longitude' => [
-                    'required', 
-                    'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'
+                    'required',
+                    'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/',
                 ],
                 'geo_query_radius' => ['required', 'integer', 'min:1'],
                 'country_code' => [
-                    'string', 
-                    'exists:places,country_code'
+                    'string',
+                    'exists:places,country_code',
                 ],
                 'name' => ['string'],
                 'place_type' => ['string'],
                 'asc_order_by' => [
-                    'string', 
-                    'in:thumb_direction,comment,created_at,updated_at'
+                    'string',
+                    'in:thumb_direction,comment,created_at,updated_at',
                 ],
                 'desc_order_by' => [
                     'exclude_with:asc_order_by',
-                    'string', 
-                    'in:thumb_direction,comment,created_at,updated_at'
+                    'string',
+                    'in:thumb_direction,comment,created_at,updated_at',
                 ],
                 'page' => ['integer', 'min:1'],
-                'size' => ['integer', 'min:1']
+                'size' => ['integer', 'min:1'],
             ]
         );
     }
@@ -207,7 +206,7 @@ class PlaceEvaluationController extends Controller
      * Creates a new PlaceEvaluation and also a
      * new Place, in case it does not exist yet
      * in the database.
-     * 
+     *
      * @OA\Schema(
      *      schema="CreatePlaceEvaluationRequest",
      *      type="object",
@@ -307,7 +306,7 @@ class PlaceEvaluationController extends Controller
      *          example={}
      *      ),
      *)
-     * 
+     *
      * @OA\Post(
      *     path="/place-evaluations",
      *     tags={"PlaceEvaluation"},
@@ -342,7 +341,7 @@ class PlaceEvaluationController extends Controller
      *             type="object",
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
-     *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/PlaceEvaluation"), 
+     *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/PlaceEvaluation"),
      *         )
      *     ),
      *     @OA\Response(
@@ -355,7 +354,7 @@ class PlaceEvaluationController extends Controller
      *     ),
      * )
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function createPlaceEvaluation(Request $request)
@@ -368,7 +367,7 @@ class PlaceEvaluationController extends Controller
             }
 
             $appUser = auth()->user();
-            if (!$appUser) {
+            if (! $appUser) {
                 return $this->respondNotFound();
             }
 
@@ -380,29 +379,29 @@ class PlaceEvaluationController extends Controller
                 ->where('longitude', $longitude)
                 ->first();
 
-            if (!$place) {
+            if (! $place) {
                 $place = Place::create($request->only([
-                    'latitude', 
-                    'longitude', 
+                    'latitude',
+                    'longitude',
                     'google_place_id',
-                    'name', 
-                    'place_type', 
-                    'country_code', 
+                    'name',
+                    'place_type',
+                    'country_code',
                     'city',
                     'address',
                     'phone',
                     'email',
                     'website',
-                    'schedule'
+                    'schedule',
                 ]));
             }
 
             $placeEvaluation = PlaceEvaluation::create([
                 ...$request->only([
-                    'thumb_direction', 'comment', 'question_answers'
+                    'thumb_direction', 'comment', 'question_answers',
                 ]),
                 'app_user_id' => $appUser->id,
-                'place_id' => $place->id
+                'place_id' => $place->id,
             ]);
 
             return $this->respondWithResource(new JsonResource($placeEvaluation));
@@ -538,7 +537,7 @@ class PlaceEvaluationController extends Controller
     public function listPlaceEvaluations(Request $request)
     {
         try {
-            $validator = 
+            $validator =
                 $this->validatorListPlaceEvaluationsByRadiusRequest($request);
 
             if ($validator->fails()) {
@@ -551,10 +550,10 @@ class PlaceEvaluationController extends Controller
                 ->whereHas('place', function ($query) use ($request) {
                     $this->queryListPlaceEvaluation($request, $query);
                 });
-                
+
             if ($request->has('asc_order_by')) {
                 $query->orderBy($request->asc_order_by, 'asc');
-            } else if ($request->has('desc_order_by')) {
+            } elseif ($request->has('desc_order_by')) {
                 $query->orderBy($request->desc_order_by, 'desc');
             }
 
@@ -563,13 +562,10 @@ class PlaceEvaluationController extends Controller
                 ['*'],
                 'page'
             )->withQueryString();
-            
 
             $countThumbDirection = collect([
-                'total_thumbs_up' => 
-                    (clone $query)->where('thumb_direction', '=', 1)->count(),
-                'total_thumbs_down' => 
-                    (clone $query)->where('thumb_direction', '=', 0)->count(),
+                'total_thumbs_up' => (clone $query)->where('thumb_direction', '=', 1)->count(),
+                'total_thumbs_down' => (clone $query)->where('thumb_direction', '=', 0)->count(),
             ]);
 
             $result = $countThumbDirection->merge(
@@ -589,22 +585,22 @@ class PlaceEvaluationController extends Controller
     }
 
     /**
-     * @param Request $request
-     * @param Request|null $request
+     * @param  Request  $request
+     * @param  Request|null  $request
      * @return Builder
      */
     protected function queryListPlaceEvaluation(
-        Request $request, 
+        Request $request,
         ?Builder $query = null
     ) {
         $query = $query ?: PlaceEvaluation::query()->select('*');
 
         if (
-            $request->has('latitude') && $request->get('latitude') !== "" &&
-            $request->has('longitude') && $request->get('longitude') !== ""
+            $request->has('latitude') && $request->get('latitude') !== '' &&
+            $request->has('longitude') && $request->get('longitude') !== ''
         ) {
             $radius = $request->get(
-                'geo_query_radius', 
+                'geo_query_radius',
                 env('GEO_QUERY_RADIUS', 5)
             );
 
@@ -612,42 +608,42 @@ class PlaceEvaluationController extends Controller
                 '(6371000 * ACOS(COS(RADIANS(?)) * COS(RADIANS(latitude)) *
                 COS(RADIANS(longitude) - RADIANS(?)) + SIN(RADIANS(?)) *
                 SIN(RADIANS(latitude)))) AS distance', [
-                    $request->latitude, 
-                    $request->longitude, 
-                    $request->latitude
+                    $request->latitude,
+                    $request->longitude,
+                    $request->latitude,
                 ]
-            )->havingRaw("distance < ?", [$radius]);
+            )->havingRaw('distance < ?', [$radius]);
         }
 
         if ($request->has('google_place_id')) {
             $query->where(
-                'google_place_id', 
+                'google_place_id',
                 $request->get('google_place_id')
             );
         }
 
         if (
-            $request->has('country_code') && 
-            $request->get('country_code') !== ""
+            $request->has('country_code') &&
+            $request->get('country_code') !== ''
         ) {
             $query->where('country_code', $request->get('country_code'));
         }
 
         if (
-            $request->has('name') && 
-            $request->get('name') !== ""
+            $request->has('name') &&
+            $request->get('name') !== ''
         ) {
             $query->where(
-                'name', 'like', '%' . $request->get('name') . '%'
+                'name', 'like', '%'.$request->get('name').'%'
             );
         }
 
         if (
-            $request->has('place_type') && 
-            $request->get('place_type') !== ""
+            $request->has('place_type') &&
+            $request->get('place_type') !== ''
         ) {
             $query->where(
-                'place_type', 'like', '%' . $request->get('place_type') . '%'
+                'place_type', 'like', '%'.$request->get('place_type').'%'
             );
         }
 
@@ -731,7 +727,7 @@ class PlaceEvaluationController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'page' => ['integer', 'min:1'],
-            'size' => ['integer', 'min:1']
+            'size' => ['integer', 'min:1'],
         ]);
 
         if ($validate->fails()) {
@@ -740,7 +736,7 @@ class PlaceEvaluationController extends Controller
 
         $appUser = $request->user();
 
-        if (!$appUser) {
+        if (! $appUser) {
             return $this->respondNotFound();
         }
 
@@ -753,16 +749,11 @@ class PlaceEvaluationController extends Controller
             }]);
 
         $counts = collect([
-            'total_thumbs_up' => 
-                (clone $query)->where('thumb_direction', 1)->count(),
-            'total_thumbs_down' => 
-                (clone $query)->where('thumb_direction', 0)->count(),
-            'total_accepted' => 
-                (clone $query)->where('status', PlaceEvaluationStatus::Accepted->value)->count(),
-            'total_rejected' => 
-                (clone $query)->where('status', PlaceEvaluationStatus::Rejected->value)->count(),
-            'total_pending' => 
-                (clone $query)->where('status', PlaceEvaluationStatus::Pending->value)->count(),
+            'total_thumbs_up' => (clone $query)->where('thumb_direction', 1)->count(),
+            'total_thumbs_down' => (clone $query)->where('thumb_direction', 0)->count(),
+            'total_accepted' => (clone $query)->where('status', PlaceEvaluationStatus::Accepted->value)->count(),
+            'total_rejected' => (clone $query)->where('status', PlaceEvaluationStatus::Rejected->value)->count(),
+            'total_pending' => (clone $query)->where('status', PlaceEvaluationStatus::Pending->value)->count(),
         ]);
 
         $result = $counts->merge(
@@ -772,7 +763,7 @@ class PlaceEvaluationController extends Controller
                 'page'
             )->withQueryString()
         );
-        
+
         return $this->respondWithResource(
             new PlaceEvaluationCollection(
                 $result

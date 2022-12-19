@@ -7,14 +7,14 @@ use App\Http\Resources\AppUserResource;
 use App\Http\Resources\AuthResource;
 use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
-use App\Models\AppUser;
 use App\Mail\EmailConfirmation;
 use App\Mail\PasswordReset;
+use App\Models\AppUser;
 use Illuminate\Auth\Events\PasswordReset as PasswordResetEvent;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 
@@ -24,8 +24,6 @@ class AuthController extends Controller
     use UploadTrait;
 
     /**
-     *
-     *
      * @OA\Schema(
      *     schema="requestLoginObject",
      *     type="object",
@@ -97,9 +95,9 @@ class AuthController extends Controller
 
             $user = AppUser::with('accountStatus')->where('email', $request->email)->first();
 
-            if (!$user || !Hash::check($request->password, $user->password)) {
+            if (! $user || ! Hash::check($request->password, $user->password)) {
                 return $this->respondUnAuthorized();
-            } elseif (!$user->accountStatus || 'active' !== $user->accountStatus->slug) {
+            } elseif (! $user->accountStatus || 'active' !== $user->accountStatus->slug) {
                 // Only AppUsers with confirmed email can login
                 return $this->respondUnAuthorized(__('validation.appusers_confirmed_email'));
             }
@@ -117,7 +115,6 @@ class AuthController extends Controller
     }
 
     /**
-     *
      * @OA\Schema(
      *     schema="requestLoginByProviderObject",
      *     type="object",
@@ -193,9 +190,9 @@ class AuthController extends Controller
                 ->where('email', $request->email)->where("auth_providers->$request->auth_type", $request->auth_code)
                 ->first();
 
-            if (!$user) {
+            if (! $user) {
                 return $this->respondUnAuthorized();
-            } elseif (!$user->accountStatus || 'active' !== $user->accountStatus->slug) {
+            } elseif (! $user->accountStatus || 'active' !== $user->accountStatus->slug) {
                 // Only AppUsers with confirmed email can login
                 return $this->respondUnAuthorized(__('validation.appusers_confirmed_email'));
             }
@@ -213,8 +210,6 @@ class AuthController extends Controller
     }
 
     /**
-     *
-     *
      * @OA\Schema(
      *     schema="requestpasswordRecoverObject",
      *     type="object",
@@ -273,7 +268,7 @@ class AuthController extends Controller
         try {
             $validator = Validator::make(
                 $request->all(), [
-                    'email' => 'required|string|email|exists:app_users,email'
+                    'email' => 'required|string|email|exists:app_users,email',
                 ]
             );
 
@@ -294,8 +289,6 @@ class AuthController extends Controller
     }
 
     /**
-     *
-     *
      * @OA\Schema(
      *     schema="resetPasswordRequest",
      *     type="object",
@@ -359,9 +352,9 @@ class AuthController extends Controller
                 $request->all(), [
                     'token' => ['required'],
                     'email' => [
-                        'required', 
-                        'email', 
-                        'exists:app_users,email'
+                        'required',
+                        'email',
+                        'exists:app_users,email',
                     ],
                     'password' => [
                         'required',
@@ -379,22 +372,22 @@ class AuthController extends Controller
 
             $status = Password::broker('app_users')->reset(
                 $request->only(
-                    'email', 
-                    'password', 
-                    'password_confirmation', 
+                    'email',
+                    'password',
+                    'password_confirmation',
                     'token'
                 ),
                 function ($user) use ($request) {
                     $user->forceFill([
-                        'password' => Hash::make($request->password)
+                        'password' => Hash::make($request->password),
                     ])->save();
-    
+
                     event(new PasswordResetEvent($user));
                 }
             );
 
             if ($status !== Password::PASSWORD_RESET) {
-                $this->respondError('Failed to reset password: ' . $status);
+                $this->respondError('Failed to reset password: '.$status);
             }
 
             return $this->respondSuccess('Password changed successfully');
@@ -404,8 +397,6 @@ class AuthController extends Controller
     }
 
     /**
-     *
-     *
      * @OA\Schema(
      *     schema="requestCheckEmailObject",
      *     type="object",
@@ -451,7 +442,7 @@ class AuthController extends Controller
      *     ),
      *     @OA\Response(
      *          response=409,
-    *          description="Duplicate content"
+     *          description="Duplicate content"
      *     ),
      *     @OA\Response(
      *          response=401,
@@ -469,7 +460,7 @@ class AuthController extends Controller
             $validateUser = Validator::make(
                 $request->all(),
                 [
-                    'email' => 'required|email|unique:app_users,email'
+                    'email' => 'required|email|unique:app_users,email',
                 ]
             );
 
@@ -545,7 +536,7 @@ class AuthController extends Controller
                         'required_without:auth_providers',
                         'string',
                         'min:8',
-                        'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*\"^~\'+\/=`-|\[\](){}_:;<>ç,.?]{8,}$/'
+                        'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*\"^~\'+\/=`-|\[\](){}_:;<>ç,.?]{8,}$/',
                     ],
                     'disabilities' => 'array',
                     'avatar' => 'image|mimes:jpg,jpeg,png|max:2048',
@@ -557,13 +548,12 @@ class AuthController extends Controller
                 return $this->respondError($validateUser->errors(), 422);
             }
 
-
             $existsUser = AppUser::where('email', $request->email)->first();
 
             if (isset($existsUser)) {
                 if ($request->has('auth_providers')) {
                     $existsUser->auth_providers = $request->get(
-                        'auth_providers', 
+                        'auth_providers',
                         $existsUser->auth_providers
                     );
 
@@ -579,7 +569,7 @@ class AuthController extends Controller
                 array_merge(
                     $request->all(),
                     [
-                        'password' => Hash::make($request->password)
+                        'password' => Hash::make($request->password),
                     ]
                 )
             );
@@ -593,7 +583,6 @@ class AuthController extends Controller
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
-
     }
 
     /**
@@ -624,7 +613,7 @@ class AuthController extends Controller
      *         format="date"
      *     )
      * )
-     * 
+     *
      * @OA\Post(
      *     path="/profile/update",
      *     tags={"appUser"},
@@ -689,7 +678,7 @@ class AuthController extends Controller
 
             /** @var AppUser */
             $appUser = AppUser::where('email', $request->email)->first();
-            if (!$appUser) {
+            if (! $appUser) {
                 return $this->respondNotFound();
             }
 
@@ -707,10 +696,10 @@ class AuthController extends Controller
                 'surname' => $request->get('surname', $appUser->surname),
                 'email' => $request->get('email', $appUser->email),
                 'birthdate' => $request->get(
-                    'birthdate', 
+                    'birthdate',
                     $appUser->birthdate
                 ),
-                'avatar' => $avatar ? $avatar : $appUser->avatar
+                'avatar' => $avatar ? $avatar : $appUser->avatar,
             ]);
 
             return $this->respondWithResource(

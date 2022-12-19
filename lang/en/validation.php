@@ -139,7 +139,6 @@ return [
     'uuid' => 'The :attribute must be a valid UUID.',
     'younger_than' => 'The user must be younger than :value years old.',
 
-
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines

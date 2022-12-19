@@ -6,11 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaceRateSettingsResource;
 use App\Http\Traits\ApiResponseTrait;
 use App\Models\CountryResponsible;
-use App\Models\Faq;
 use App\Models\RateQuestion;
 
 /**
  * Class RateSettingsController
+ *
  * @package  App\Http\Controllers\Api
  */
 class RateSettingsController extends Controller
@@ -53,8 +53,9 @@ class RateSettingsController extends Controller
      *      ),
      *   )
      * )
-     * 
+     *
      * Returns the place rate settings
+     *
      * @return JsonResponse
      */
     public function getPlaceRateSettings()
@@ -67,7 +68,7 @@ class RateSettingsController extends Controller
                 new PlaceRateSettingsResource(
                     collect([
                         'questions' => $questions,
-                        'country_responsibles' => $countryResponsibles
+                        'country_responsibles' => $countryResponsibles,
                     ])
                 )
             );

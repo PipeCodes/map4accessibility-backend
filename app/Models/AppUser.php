@@ -2,12 +2,11 @@
 
 namespace App\Models;
 
+use App\Notifications\AppUserResetPasswordNotification;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Notifications\AppUserResetPasswordNotification;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Class AppUser.
@@ -76,7 +75,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
  *     title="Auth Providers"
  * )
  * )
- *
  */
 class AppUser extends Authenticatable
 {
@@ -111,7 +109,7 @@ class AppUser extends Authenticatable
     ];
 
     protected $hidden = [
-        'password'
+        'password',
     ];
 
     public function accountStatus()
@@ -138,7 +136,6 @@ class AppUser extends Authenticatable
     {
         return $this->hasMany(PlaceEvaluation::class)->find($placeEvaluationId);
     }
-
 
     public function sendPasswordResetNotification($token)
     {

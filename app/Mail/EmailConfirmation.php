@@ -4,9 +4,9 @@ namespace App\Mail;
 
 use App\Models\appUser;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Queue\ShouldQueue;
 
 class EmailConfirmation extends Mailable implements ShouldQueue
 {
@@ -31,15 +31,15 @@ class EmailConfirmation extends Mailable implements ShouldQueue
     }
 
     /**
-    * Build the message.
-    *
-    * @return $this
-    */
+     * Build the message.
+     *
+     * @return $this
+     */
     public function build()
     {
         $token = $this->user->createToken($this->user->email, ['email-confirmation'])->plainTextToken;
         $url = route('emailConfirmation', ['tokenEmailConfirmation' => $token]);
-        $emailConfirmationResendUrl = 
+        $emailConfirmationResendUrl =
             route('email-confirmation.resend', ['email' => $this->user->email]);
 
         return $this->markdown('emails.appUsers.confirmation')
@@ -47,7 +47,7 @@ class EmailConfirmation extends Mailable implements ShouldQueue
             ->with(
                 [
                     'url' => $url,
-                    'resendUrl' => $emailConfirmationResendUrl
+                    'resendUrl' => $emailConfirmationResendUrl,
                 ]
             );
     }
