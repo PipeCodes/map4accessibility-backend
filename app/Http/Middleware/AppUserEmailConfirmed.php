@@ -15,7 +15,7 @@ class AppUserEmailConfirmed
         /** @var \App\Model\AppUser $user */
         $user = auth()->user();
 
-        if (!$user->isEmailConfirmed()) {
+        if (! $user->isEmailConfirmed()) {
             return $this->respondUnAuthorized(__('api.email_not_confirmed'));
         }
 

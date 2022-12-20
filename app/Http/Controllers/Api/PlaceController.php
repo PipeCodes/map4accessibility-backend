@@ -7,8 +7,8 @@ use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
 use App\Models\Place;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Validator;
 
 class PlaceController extends Controller
 {
@@ -24,42 +24,42 @@ class PlaceController extends Controller
     {
         return [
             'asc_order_by' => [
-                'string', 
-                'in:thumbs_up_count,thumbs_down_count,name,country_code,place_type,created_at,updated_at'
+                'string',
+                'in:thumbs_up_count,thumbs_down_count,name,country_code,place_type,created_at,updated_at',
             ],
             'desc_order_by' => [
                 'exclude_with:asc_order_by',
-                'string', 
-                'in:thumbs_up_count,thumbs_down_count,name,country_code,place_type,created_at,updated_at'
+                'string',
+                'in:thumbs_up_count,thumbs_down_count,name,country_code,place_type,created_at,updated_at',
             ],
             'country_code' => [
-                'string', 
-                'exists:places,country_code'
+                'string',
+                'exists:places,country_code',
             ],
             'name' => ['string'],
             'place_type' => ['string'],
             'page' => ['integer', 'min:1'],
-            'size' => ['integer', 'min:1']
+            'size' => ['integer', 'min:1'],
         ];
     }
 
     /**
-     * Returns the validator for the endpoint 
+     * Returns the validator for the endpoint
      * that is used to create a new Place.
-     * 
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorCreatePlace(Request $request)
     {
         return Validator::make($request->all(), [
             'latitude' => [
-                'required', 
-                'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'
+                'required',
+                'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/',
             ],
             'longitude' => [
-                'required', 
-                'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'
+                'required',
+                'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/',
             ],
             'google_place_id' => 'integer|nullable',
             'name' => 'string|min:3|nullable',
@@ -77,8 +77,8 @@ class PlaceController extends Controller
     /**
      * Returns the validator for the endpoint
      * that lists places.
-     * 
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorListPlacesRequest(Request $request)
@@ -91,8 +91,8 @@ class PlaceController extends Controller
     /**
      * Returns the validator for the endpoint
      * that lists places.
-     * 
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorListPlacesByRadiusRequest(Request $request)
@@ -100,19 +100,19 @@ class PlaceController extends Controller
         return Validator::make(
             $request->all(), [
                 'latitude' => [
-                    'required', 
-                    'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'
+                    'required',
+                    'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/',
                 ],
                 'longitude' => [
-                    'required', 
-                    'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'
+                    'required',
+                    'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/',
                 ],
                 'geo_query_radius' => [
-                    'required', 
-                    'integer', 
-                    'min:1'
+                    'required',
+                    'integer',
+                    'min:1',
                 ],
-                ...$this->validationRulesListPlaces()
+                ...$this->validationRulesListPlaces(),
             ]
         );
     }
@@ -224,8 +224,8 @@ class PlaceController extends Controller
      *          description="Internal error"
      *     ),
      * )
-     * 
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function listPlaces(Request $request)
@@ -245,14 +245,12 @@ class PlaceController extends Controller
                         $query->select('file_url', 'file_name');
                     })
                     ->withCount([
-                        'placeEvaluations as thumbs_up_count' => 
-                            function ($query) {
+                        'placeEvaluations as thumbs_up_count' => function ($query) {
                                 $query->where('thumb_direction', 1);
                             },
-                        'placeEvaluations as thumbs_down_count' => 
-                            function ($query) {
+                        'placeEvaluations as thumbs_down_count' => function ($query) {
                                 $query->where('thumb_direction', 0);
-                            }
+                            },
                     ])
             );
 
@@ -261,15 +259,15 @@ class PlaceController extends Controller
                 ['*'],
                 'page'
             )->withQueryString();
-            
-            list($totalThumbsUp, $totalThumbsDown) = 
+
+            [$totalThumbsUp, $totalThumbsDown] =
                 $this->totalEvaluationsListPlaces($places->items());
 
             $result = collect([
                 'total_thumbs_up' => $totalThumbsUp,
                 'total_thumbs_down' => $totalThumbsDown,
             ])->merge($places);
-            
+
             return $this->respondWithResource(new JsonResource($result));
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
@@ -402,8 +400,8 @@ class PlaceController extends Controller
      *          description="Internal error"
      *     ),
      * )
-     * 
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function listPlacesByRadius(Request $request)
@@ -423,14 +421,12 @@ class PlaceController extends Controller
                         $query->select('file_url', 'file_name');
                     })
                     ->withCount([
-                        'placeEvaluations as thumbs_up_count' => 
-                            function ($query) {
+                        'placeEvaluations as thumbs_up_count' => function ($query) {
                                 $query->where('thumb_direction', 1);
                             },
-                        'placeEvaluations as thumbs_down_count' => 
-                            function ($query) {
+                        'placeEvaluations as thumbs_down_count' => function ($query) {
                                 $query->where('thumb_direction', 0);
-                            }
+                            },
                     ])
             );
 
@@ -439,15 +435,15 @@ class PlaceController extends Controller
                 ['*'],
                 'page'
             )->withQueryString();
-            
-            list($totalThumbsUp, $totalThumbsDown) = 
+
+            [$totalThumbsUp, $totalThumbsDown] =
                 $this->totalEvaluationsListPlaces($places->items());
 
             $result = collect([
                 'total_thumbs_up' => $totalThumbsUp,
                 'total_thumbs_down' => $totalThumbsDown,
             ])->merge($places);
-            
+
             return $this->respondWithResource(new JsonResource($result));
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
@@ -464,11 +460,11 @@ class PlaceController extends Controller
         $query = $query ?: Place::query()->select('*');
 
         if (
-            $request->has('latitude') && $request->get('latitude') !== "" &&
+            $request->has('latitude') && $request->get('latitude') !== '' &&
             $request->has('longitude') && $request->get('longitude')
         ) {
             $radius = $request->get(
-                'geo_query_radius', 
+                'geo_query_radius',
                 env('GEO_QUERY_RADIUS', 5)
             );
 
@@ -476,41 +472,41 @@ class PlaceController extends Controller
                 '(6371000 * ACOS(COS(RADIANS(?)) * COS(RADIANS(latitude)) *
                 COS(RADIANS(longitude) - RADIANS(?)) + SIN(RADIANS(?)) *
                 SIN(RADIANS(latitude)))) AS distance', [
-                    $request->latitude, 
-                    $request->longitude, 
-                    $request->latitude
+                    $request->latitude,
+                    $request->longitude,
+                    $request->latitude,
                 ]
-            )->havingRaw("distance < ?", [$radius]);
+            )->havingRaw('distance < ?', [$radius]);
         }
 
         if (
-            $request->has('country_code') && 
-            $request->get('country_code') !== ""
+            $request->has('country_code') &&
+            $request->get('country_code') !== ''
         ) {
             $query->where('country_code', $request->get('country_code'));
         }
 
         if (
             $request->has('name') &&
-            $request->get('name') !== ""
+            $request->get('name') !== ''
         ) {
             $query->where(
-                'name', 'like', '%' . $request->get('name') . '%'
+                'name', 'like', '%'.$request->get('name').'%'
             );
         }
 
         if (
             $request->has('place_type') &&
-            $request->get('place_type') !== ""
+            $request->get('place_type') !== ''
         ) {
             $query->where(
-                'place_type', 'like', '%' . $request->get('place_type') . '%'
+                'place_type', 'like', '%'.$request->get('place_type').'%'
             );
         }
 
         if ($request->has('asc_order_by')) {
             $query->orderBy($request->asc_order_by, 'asc');
-        } else if ($request->has('desc_order_by')) {
+        } elseif ($request->has('desc_order_by')) {
             $query->orderBy($request->desc_order_by, 'desc');
         }
 
@@ -521,22 +517,22 @@ class PlaceController extends Controller
      * Calculates the total of thumbs up and thumbs down
      * evaluations that a list of places has.
      *
-     * @param array $places
+     * @param  array  $places
      * @return array
      */
     protected function totalEvaluationsListPlaces(array $places)
     {
         $totalThumbsUp = $totalThumbsDown = 0;
-        
+
         collect($places)
             ->each(function (Place $place) use (
-                &$totalThumbsUp, 
+                &$totalThumbsUp,
                 &$totalThumbsDown
             ) {
                 $totalThumbsUp += $place->thumbs_up_count;
                 $totalThumbsDown += $place->thumbs_down_count;
             });
-        
+
         return [$totalThumbsUp, $totalThumbsDown];
     }
 
@@ -580,8 +576,8 @@ class PlaceController extends Controller
      *          description="Internal error"
      *     ),
      * )
-     * 
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function getPlaceById(Request $request, string $id)
@@ -591,8 +587,8 @@ class PlaceController extends Controller
                 $request->all(), [
                     'id' => [
                         'exists:places,id',
-                        'integer'
-                    ]
+                        'integer',
+                    ],
                 ]
             );
 
@@ -608,21 +604,19 @@ class PlaceController extends Controller
                     $query->select('file_url', 'file_type');
                 })
                 ->withCount([
-                    'placeEvaluations as thumbs_up_count' => 
-                        function ($query) {
+                    'placeEvaluations as thumbs_up_count' => function ($query) {
                             $query->where('thumb_direction', 1);
                         },
-                    'placeEvaluations as thumbs_down_count' => 
-                        function ($query) {
+                    'placeEvaluations as thumbs_down_count' => function ($query) {
                             $query->where('thumb_direction', 0);
-                        }
+                        },
                 ])
                 ->first();
 
-            if (!$place) {
+            if (! $place) {
                 return $this->respondNotFound();
             }
-            
+
             return $this->respondWithResource(new JsonResource($place));
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
@@ -669,8 +663,8 @@ class PlaceController extends Controller
      *          description="Internal error"
      *     ),
      * )
-     * 
-     * @param Request $request
+     *
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function getPlaceByGooglePlaceId(Request $request, string $id)
@@ -680,8 +674,8 @@ class PlaceController extends Controller
                 $request->all(), [
                     'id' => [
                         'exists:places,google_place_id',
-                        'integer'
-                    ]
+                        'integer',
+                    ],
                 ]
             );
 
@@ -696,21 +690,19 @@ class PlaceController extends Controller
                     $query->select('file_url', 'file_name');
                 })
                 ->withCount([
-                    'placeEvaluations as thumbs_up_count' => 
-                        function ($query) {
+                    'placeEvaluations as thumbs_up_count' => function ($query) {
                             $query->where('thumb_direction', 1);
                         },
-                    'placeEvaluations as thumbs_down_count' => 
-                        function ($query) {
+                    'placeEvaluations as thumbs_down_count' => function ($query) {
                             $query->where('thumb_direction', 0);
-                        }
+                        },
                 ])
                 ->first();
 
-            if (!$place) {
+            if (! $place) {
                 return $this->respondNotFound();
             }
-            
+
             return $this->respondWithResource(new JsonResource($place));
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
@@ -721,7 +713,7 @@ class PlaceController extends Controller
      * Creates a new PlaceEvaluation and also a
      * new Place, in case it does not exist yet
      * in the database.
-     * 
+     *
      * @OA\Post(
      *     path="/places",
      *     tags={"Places"},
@@ -756,7 +748,7 @@ class PlaceController extends Controller
      *             type="object",
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
-     *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/Place"), 
+     *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/Place"),
      *         )
      *     ),
      *     @OA\Response(
@@ -769,7 +761,7 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return JsonResponse
      */
     public function createPlace(Request $request)
@@ -797,18 +789,18 @@ class PlaceController extends Controller
             }
 
             $place = Place::create($request->only([
-                'latitude', 
-                'longitude', 
+                'latitude',
+                'longitude',
                 'google_place_id',
-                'name', 
-                'place_type', 
-                'country_code', 
+                'name',
+                'place_type',
+                'country_code',
                 'city',
                 'address',
                 'phone',
                 'email',
                 'website',
-                'schedule'
+                'schedule',
             ]));
 
             return $this->respondWithResource(new JsonResource($place));
@@ -871,16 +863,16 @@ class PlaceController extends Controller
      * )
      */
     public function attachMediaToPlace(
-        Request $request, 
+        Request $request,
         $placeId
     ) {
-        try {            
+        try {
             $validator = Validator::make([
                 ...$request->all(),
-                'placeId' => $placeId
+                'placeId' => $placeId,
             ], [
                 'placeId' => 'required|string|exists:places,id',
-                'media' => 'required|file|mimetypes:image/jpg,image/png,image/jpeg,video/mp4'
+                'media' => 'required|file|mimetypes:image/jpg,image/png,image/jpeg,video/mp4',
             ]);
 
             if ($validator->fails()) {
@@ -903,8 +895,8 @@ class PlaceController extends Controller
                         'resource_type' => $resourceType,
                         'transformation' => [
                             'quality' => 'auto',
-                            'fetch_format' => 'auto'
-                        ]
+                            'fetch_format' => 'auto',
+                        ],
                     ]
                 );
 

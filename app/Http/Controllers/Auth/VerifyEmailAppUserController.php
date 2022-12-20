@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Mail\EmailConfirmation;
 use App\Models\AppUser;
@@ -35,7 +34,7 @@ class VerifyEmailAppUserController extends Controller
         try {
             $user = AppUser::where('email', $email)->first();
 
-            if (!$user) {
+            if (! $user) {
                 return $this->respondNotFound();
             }
 
@@ -46,5 +45,4 @@ class VerifyEmailAppUserController extends Controller
             return $this->respondInternalError($th->getMessage());
         }
     }
-
 }

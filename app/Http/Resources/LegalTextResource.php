@@ -14,7 +14,7 @@ class LegalTextResource extends JsonResource
      */
     public function toArray($request)
     {
-        if(isset($this->id)) {
+        if (isset($this->id)) {
             return [
                 'id' => $this->id,
                 'type' => $this->type,
@@ -24,6 +24,7 @@ class LegalTextResource extends JsonResource
                 'updated_at' => $this->updated_at,
             ];
         }
+
         return [];
     }
 }

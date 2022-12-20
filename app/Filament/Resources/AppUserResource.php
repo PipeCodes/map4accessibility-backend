@@ -40,13 +40,13 @@ class AppUserResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->password()->label('New password')->reactive()->rules(['confirmed'])
-                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                    ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(string $context): bool => $context === 'create'),
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->required(fn (string $context): bool => $context === 'create'),
                 Forms\Components\TextInput::make('password_confirmation')
-                    ->password()->dehydrateStateUsing(fn($state) => Hash::make($state))
-                    ->required(fn(string $context): bool => $context === 'create')
-                    ->hidden(fn(Closure $get) => $get('password') == null),
+                    ->password()->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->required(fn (string $context): bool => $context === 'create')
+                    ->hidden(fn (Closure $get) => $get('password') == null),
                 Forms\Components\Select::make('disabilities')
                     ->multiple()->searchable()->disablePlaceholderSelection()
                     ->options(__('validation.disabilities')),

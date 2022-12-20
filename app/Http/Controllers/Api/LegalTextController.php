@@ -9,6 +9,7 @@ use App\Models\LegalText;
 
 /**
  * Class LegalTextController
+ *
  * @package  App\Http\Controllers\Api
  */
 class LegalTextController extends Controller
@@ -39,6 +40,7 @@ class LegalTextController extends Controller
      * )
      *
      * Display a legal text.
+     *
      * @return JsonResponse
      */
     public function getLegalText($type)

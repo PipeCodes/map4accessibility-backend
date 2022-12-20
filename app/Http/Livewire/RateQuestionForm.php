@@ -20,6 +20,7 @@ class RateQuestionForm extends Component implements HasForms
     use InteractsWithForms;
 
     public $original = [];
+
     public $questions = [];
 
     public function initialize()
@@ -28,7 +29,7 @@ class RateQuestionForm extends Component implements HasForms
 
         $this->original = $questions;
         $this->fill([
-            'questions' =>  $questions
+            'questions' => $questions,
         ]);
     }
 
@@ -80,29 +81,29 @@ class RateQuestionForm extends Component implements HasForms
                                 })
                                 ->required(),
                             TextInput::make('slug')
-                                ->disabled()
+                                ->disabled(),
                         ])
                         ->columns(3)
                         ->maxItems(4)
                         ->disableItemMovement()
-                        ->itemLabel(fn (array $state): ?string => $state['body'] ?? null)
+                        ->itemLabel(fn (array $state): ?string => $state['body'] ?? null),
 
                 ])
                 ->disableItemMovement()
                 ->itemLabel(fn (array $state): ?string => $state['title'] ?? null)
-                ->collapsible()
+                ->collapsible(),
         ];
     }
 
-    protected function deleteQuestions($state) 
+    protected function deleteQuestions($state)
     {
         $questionsToDelete = collect($this->original)
             ->whereNotIn(
-                'id', 
+                'id',
                 collect($state)->pluck('id')
             )
             ->pluck('id');
-        
+
         if (count($questionsToDelete) > 0) {
             RateQuestion::destroy($questionsToDelete->toArray());
         }
@@ -113,9 +114,9 @@ class RateQuestionForm extends Component implements HasForms
         $current = $this->form->getState()['questions'];
 
         $this->deleteQuestions($current);
-        
+
         $answersToDelete = collect();
-        
+
         foreach ($current as $question) {
             /**
              * Update Question
@@ -127,7 +128,7 @@ class RateQuestionForm extends Component implements HasForms
                 $answersToDelete = $answersToDelete->merge(
                     collect($original['answers'])
                         ->whereNotIn(
-                            'id', 
+                            'id',
                             collect($question['answers'])->pluck('id')
                         )
                         ->pluck('id')
@@ -150,7 +151,7 @@ class RateQuestionForm extends Component implements HasForms
                          */
                         RateAnswer::create([
                             ...$answer,
-                            'rate_question_id' => $question['id']
+                            'rate_question_id' => $question['id'],
                         ]);
                     }
                 }
@@ -182,11 +183,11 @@ class RateQuestionForm extends Component implements HasForms
         if (count($answersToDelete) > 0) {
             RateAnswer::destroy($answersToDelete->toArray());
         }
-    
-        Notification::make() 
+
+        Notification::make()
             ->title('Saved successfully')
             ->success()
-            ->send(); 
+            ->send();
 
         $this->initialize();
     }

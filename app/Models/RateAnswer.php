@@ -25,6 +25,6 @@ class RateAnswer extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id', 'order', 'body', 'slug', 'rate_question_id'
+        'id', 'order', 'body', 'slug', 'rate_question_id',
     ];
 }

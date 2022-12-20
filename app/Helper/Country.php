@@ -4,7 +4,7 @@ namespace App\Helper;
 
 enum Country: string
 {
-	case AFGHANISTAN = 'AF';
+    case AFGHANISTAN = 'AF';
     case AALAND_ISLANDS = 'AX';
     case ALBANIA = 'AL';
     case ALGERIA = 'DZ';
@@ -254,11 +254,11 @@ enum Country: string
     case ZAMBIA = 'ZM';
     case ZIMBABWE = 'ZW';
 
-	public function getLabel()
+    public function getLabel()
     {
         return ucwords(
             strtolower(
-                str_replace("_", " ", $this->name)
+                str_replace('_', ' ', $this->name)
             )
         );
     }

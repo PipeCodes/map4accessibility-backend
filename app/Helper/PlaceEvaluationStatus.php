@@ -2,7 +2,7 @@
 
 namespace App\Helper;
 
-enum PlaceEvaluationStatus: string 
+enum PlaceEvaluationStatus: string
 {
     case Accepted = 'accepted';
     case Rejected = 'rejected';

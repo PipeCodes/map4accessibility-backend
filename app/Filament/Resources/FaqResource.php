@@ -3,13 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\FaqResource\Pages;
+use App\Helper\AppLocales;
 use App\Models\Faq;
 use Filament\Forms;
 use Filament\Resources\Form;
 use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use Filament\Tables;
-use App\Helper\AppLocales;
 
 class FaqResource extends Resource
 {

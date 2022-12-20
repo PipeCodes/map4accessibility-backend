@@ -15,11 +15,11 @@ class PlaceRateSettingsResource extends JsonResource
     public function toArray($request)
     {
         return [
-			'questions' => $this->resource->get('questions', []),
-			'country_responsibles' => $this->resource->get(
-				'country_responsibles', 
-				[]
-			)
-		];
+            'questions' => $this->resource->get('questions', []),
+            'country_responsibles' => $this->resource->get(
+                'country_responsibles',
+                []
+            ),
+        ];
     }
 }
