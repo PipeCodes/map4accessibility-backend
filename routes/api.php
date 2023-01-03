@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\LegalTextController;
 use App\Http\Controllers\Api\PlaceController;
+use App\Http\Controllers\Api\PlaceDeletionController;
 use App\Http\Controllers\Api\PlaceEvaluationController;
 use App\Http\Controllers\Api\RateSettingsController;
 use Illuminate\Support\Facades\Route;
@@ -56,6 +57,10 @@ Route::prefix('v1')->group(function () {
             Route::post('/{placeId}/media', [PlaceController::class, 'attachMediaToPlace']);
             Route::get('/{id}', [PlaceController::class, 'getPlaceById']);
             Route::get('/google/{id}', [PlaceController::class, 'getPlaceByGooglePlaceId']);
+
+            Route::prefix('/delete')->group(function () {
+                Route::post('/', [PlaceDeletionController::class, 'handle']);
+            });
         });
 
         Route::prefix('place-evaluations')->group(function () {
