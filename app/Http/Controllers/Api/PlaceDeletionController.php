@@ -32,6 +32,67 @@ class PlaceDeletionController extends Controller
     /**
      * Handles the incoming request and redirects it to the proper action.
      *
+     * @OA\Post(
+     *     path="/places/delete",
+     *     tags={"Places"},
+     *     summary="Creates a deletion for a Place",
+     *     description="Creates a deletion for a Place",
+     *     operationId="deletePlace",
+     *     @OA\RequestBody(
+     *          @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                  property="place_id",
+     *                  description="Place id",
+     *                  title="Place id",
+     *                  example="",
+     *                  type="integer"
+     *             ),
+     *             @OA\Property(
+     *                  property="app_user_id",
+     *                  description="App User id",
+     *                  title="App User id",
+     *                  example="",
+     *                  type="integer"
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
+     *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
+     *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/PlaceDeletion"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     *
      * @param  Request  $request
      * @return \Illuminate\Http\JsonResponse
      */

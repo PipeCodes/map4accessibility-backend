@@ -9,6 +9,46 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Place Deletion model.
  *
+ *  *  @OA\Schema(
+ *      schema="PlaceDeletion",
+ *      type="object",
+ *      @OA\Property(
+ *          property="place_id",
+ *          description="Place id",
+ *          title="Place id",
+ *          example="",
+ *          type="integer"
+ *      ),
+ *      @OA\Property(
+ *          property="app_user_id",
+ *          description="App User id",
+ *          title="App User id",
+ *          example="",
+ *          type="integer"
+ *      ),
+ *      @OA\Property(
+ *          property="status",
+ *          description="Current status",
+ *          title="Current status",
+ *          example="",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="created_at",
+ *          description="Deletion creation timestamp",
+ *          title="Deletion creation timestamp",
+ *          example="",
+ *          type="string"
+ *      ),
+ *      @OA\Property(
+ *          property="updated_at",
+ *          description="Last update timestamp",
+ *          title="Last update timestamp",
+ *          example="",
+ *          type="string"
+ *      ),
+ *  )
+ *
  * @property int $id
  * @property-read \App\Models\Place $place
  * @property int $place_id
