@@ -25,12 +25,12 @@ class PlaceController extends Controller
         return [
             'asc_order_by' => [
                 'string',
-                'in:thumbs_up_count,thumbs_down_count,name,country_code,place_type,created_at,updated_at',
+                'in:thumbs_up_count,thumbs_down_count,ratio_up_down,ratio_down_up,name,country_code,place_type,created_at,updated_at',
             ],
             'desc_order_by' => [
                 'exclude_with:asc_order_by',
                 'string',
-                'in:thumbs_up_count,thumbs_down_count,name,country_code,place_type,created_at,updated_at',
+                'in:thumbs_up_count,thumbs_down_count,ratio_up_down,ratio_down_up,name,country_code,place_type,created_at,updated_at',
             ],
             'country_code' => [
                 'string',
@@ -241,16 +241,18 @@ class PlaceController extends Controller
                 $request,
                 Place::query()
                     ->select('*')
+                    ->selectRaw('(select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?) / (select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?) as `ratio_up_down`', [1, 0])
+                    ->selectRaw('(select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?) / (select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?) as `ratio_down_up`', [0, 1])
                     ->with('mediaEvaluations', function ($query) {
                         $query->select('file_url', 'file_name');
                     })
                     ->withCount([
                         'placeEvaluations as thumbs_up_count' => function ($query) {
-                                $query->where('thumb_direction', 1);
-                            },
+                            $query->where('thumb_direction', 1);
+                        },
                         'placeEvaluations as thumbs_down_count' => function ($query) {
-                                $query->where('thumb_direction', 0);
-                            },
+                            $query->where('thumb_direction', 0);
+                        },
                     ])
             );
 
@@ -417,16 +419,18 @@ class PlaceController extends Controller
                 $request,
                 Place::query()
                     ->select('*')
+                    ->selectRaw('(select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?) / (select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?) as `ratio_up_down`', [1, 0])
+                    ->selectRaw('(select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?) / (select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?) as `ratio_down_up`', [0, 1])
                     ->with('mediaEvaluations', function ($query) {
                         $query->select('file_url', 'file_name');
                     })
                     ->withCount([
                         'placeEvaluations as thumbs_up_count' => function ($query) {
-                                $query->where('thumb_direction', 1);
-                            },
+                            $query->where('thumb_direction', 1);
+                        },
                         'placeEvaluations as thumbs_down_count' => function ($query) {
-                                $query->where('thumb_direction', 0);
-                            },
+                            $query->where('thumb_direction', 0);
+                        },
                     ])
             );
 
@@ -605,11 +609,11 @@ class PlaceController extends Controller
                 })
                 ->withCount([
                     'placeEvaluations as thumbs_up_count' => function ($query) {
-                            $query->where('thumb_direction', 1);
-                        },
+                        $query->where('thumb_direction', 1);
+                    },
                     'placeEvaluations as thumbs_down_count' => function ($query) {
-                            $query->where('thumb_direction', 0);
-                        },
+                        $query->where('thumb_direction', 0);
+                    },
                 ])
                 ->first();
 
@@ -691,11 +695,11 @@ class PlaceController extends Controller
                 })
                 ->withCount([
                     'placeEvaluations as thumbs_up_count' => function ($query) {
-                            $query->where('thumb_direction', 1);
-                        },
+                        $query->where('thumb_direction', 1);
+                    },
                     'placeEvaluations as thumbs_down_count' => function ($query) {
-                            $query->where('thumb_direction', 0);
-                        },
+                        $query->where('thumb_direction', 0);
+                    },
                 ])
                 ->first();
 
