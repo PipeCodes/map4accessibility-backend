@@ -361,7 +361,7 @@ class AuthController extends Controller
                         'string',
                         'min:8',
                         'confirmed',
-                        'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*\"^~\'+\/=`-|\[\](){}_:;<>ç,.?]{8,}$/',
+                        'regex:'.config('auth.app_user_password_validation'),
                     ],
                 ]
             );
@@ -536,7 +536,7 @@ class AuthController extends Controller
                         'required_without:auth_providers',
                         'string',
                         'min:8',
-                        'regex:/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*\"^~\'+\/=`-|\[\](){}_:;<>ç,.?]{8,}$/',
+                        'regex:'.config('auth.app_user_password_validation'),
                     ],
                     'disabilities' => 'array',
                     'avatar' => 'image|mimes:jpg,jpeg,png|max:2048',

@@ -1098,6 +1098,90 @@
                 }
             }
         },
+        "/places/delete": {
+            "post": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "Creates a deletion for a Place",
+                "description": "Creates a deletion for a Place",
+                "operationId": "deletePlace",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "place_id": {
+                                        "title": "Place id",
+                                        "description": "Place id",
+                                        "type": "integer",
+                                        "example": ""
+                                    },
+                                    "app_user_id": {
+                                        "title": "App User id",
+                                        "description": "App User id",
+                                        "type": "integer",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "$ref": "#/components/schemas/PlaceDeletion"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
         "/place-evaluations/{placeEvaluationId}/media": {
             "post": {
                 "tags": [
@@ -2042,6 +2126,41 @@
                         "title": "Coord. Longitude",
                         "description": "Coord. Longitude",
                         "format": "decimal",
+                        "example": ""
+                    }
+                },
+                "type": "object"
+            },
+            "PlaceDeletion": {
+                "properties": {
+                    "place_id": {
+                        "title": "Place id",
+                        "description": "Place id",
+                        "type": "integer",
+                        "example": ""
+                    },
+                    "app_user_id": {
+                        "title": "App User id",
+                        "description": "App User id",
+                        "type": "integer",
+                        "example": ""
+                    },
+                    "status": {
+                        "title": "Current status",
+                        "description": "Current status",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "created_at": {
+                        "title": "Deletion creation timestamp",
+                        "description": "Deletion creation timestamp",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "updated_at": {
+                        "title": "Last update timestamp",
+                        "description": "Last update timestamp",
+                        "type": "string",
                         "example": ""
                     }
                 },

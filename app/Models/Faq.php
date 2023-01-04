@@ -42,4 +42,11 @@ class Faq extends Model
         'order',
         'locale',
     ];
+
+    public static function faqs(?string $locale = 'en')
+    {
+        return static::where('locale', $locale ? strtolower($locale) : 'en')
+                    ->orderBy('order')
+                    ->get();
+    }
 }
