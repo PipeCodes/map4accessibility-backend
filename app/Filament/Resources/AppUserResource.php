@@ -45,7 +45,7 @@ class AppUserResource extends Resource
                     ->dehydrated(fn ($state) => filled($state))
                     ->required(fn (string $context): bool => $context === 'create')
                     ->minLength(8)
-                    ->regex('/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*\"^~\'+\/=`-|\[\](){}_:;<>ç,.?]{8,}$/'),
+                    ->regex(config('auth.app_user_password_validation')),
                 Forms\Components\TextInput::make('password_confirmation')
                     ->password()->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->required(fn (string $context): bool => $context === 'create')

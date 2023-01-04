@@ -118,4 +118,5 @@ return [
 
     'password_timeout' => 10800,
 
+    'app_user_password_validation' => '/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*\"^~\'+\/=`-|\[\](){}_:;<>ç,.?]{8,}$/',
 ];
