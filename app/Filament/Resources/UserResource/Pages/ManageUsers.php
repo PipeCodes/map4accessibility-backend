@@ -14,13 +14,15 @@ class ManageUsers extends ManageRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make()->after(function (array $data) {
-                // Runs before the form fields are populated with their default values.
-                // We will send the password reset link to this user. Once we have attempted
-                // to send the link, we will examine the response then see the message we
-                // need to show to the user. Finally, we'll send out a proper response.
-                Password::sendResetLink($data);
-            }),
+            Actions\CreateAction::make()
+                ->successNotificationMessage('User created. A reset password email was sent to the new user.')
+                ->after(function (array $data) {
+                    // Runs before the form fields are populated with their default values.
+                    // We will send the password reset link to this user. Once we have attempted
+                    // to send the link, we will examine the response then see the message we
+                    // need to show to the user. Finally, we'll send out a proper response.
+                    Password::sendResetLink($data);
+                }),
         ];
     }
 }

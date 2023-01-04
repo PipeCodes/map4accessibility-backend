@@ -37,12 +37,15 @@ class AppUserResource extends Resource
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
+                    ->unique(table: AppUser::class, column: 'email', ignoreRecord: true)
                     ->maxLength(255),
                 Forms\Components\TextInput::make('password')
                     ->password()->label('New password')->reactive()->rules(['confirmed'])
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $context): bool => $context === 'create'),
+                    ->required(fn (string $context): bool => $context === 'create')
+                    ->minLength(8)
+                    ->regex(config('auth.app_user_password_validation')),
                 Forms\Components\TextInput::make('password_confirmation')
                     ->password()->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->required(fn (string $context): bool => $context === 'create')
@@ -51,11 +54,15 @@ class AppUserResource extends Resource
                     ->multiple()->searchable()->disablePlaceholderSelection()
                     ->options(__('validation.disabilities')),
                 Forms\Components\DatePicker::make('birthdate')
-                    ->required(),
+                    ->required()
+                    ->minDate(now()->subYears(100))
+                    ->maxDate(now()->subYears(16))
+                    ->default(now()->subYears(16)),
                 Forms\Components\FileUpload::make('avatar')
                     ->image(),
                 Forms\Components\Toggle::make('terms_accepted')
-                    ->required(),
+                    ->required()
+                    ->accepted(),
             ]);
     }
 
