@@ -19,4 +19,6 @@ return [
     'update_user_success' => 'User updated successfully',
     'user_exists_error' => 'User already exists',
     'create_user_success' => 'User created successfully',
+    'place_deletion_created' => 'Place Deletion created successfully',
+    'place_deletion_already_closed' => 'Place Deletion already closed',
 ];

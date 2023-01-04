@@ -246,11 +246,11 @@ class PlaceController extends Controller
                     })
                     ->withCount([
                         'placeEvaluations as thumbs_up_count' => function ($query) {
-                                $query->where('thumb_direction', 1);
-                            },
+                            $query->where('thumb_direction', 1);
+                        },
                         'placeEvaluations as thumbs_down_count' => function ($query) {
-                                $query->where('thumb_direction', 0);
-                            },
+                            $query->where('thumb_direction', 0);
+                        },
                     ])
             );
 
@@ -422,11 +422,11 @@ class PlaceController extends Controller
                     })
                     ->withCount([
                         'placeEvaluations as thumbs_up_count' => function ($query) {
-                                $query->where('thumb_direction', 1);
-                            },
+                            $query->where('thumb_direction', 1);
+                        },
                         'placeEvaluations as thumbs_down_count' => function ($query) {
-                                $query->where('thumb_direction', 0);
-                            },
+                            $query->where('thumb_direction', 0);
+                        },
                     ])
             );
 
@@ -605,11 +605,11 @@ class PlaceController extends Controller
                 })
                 ->withCount([
                     'placeEvaluations as thumbs_up_count' => function ($query) {
-                            $query->where('thumb_direction', 1);
-                        },
+                        $query->where('thumb_direction', 1);
+                    },
                     'placeEvaluations as thumbs_down_count' => function ($query) {
-                            $query->where('thumb_direction', 0);
-                        },
+                        $query->where('thumb_direction', 0);
+                    },
                 ])
                 ->first();
 
@@ -691,11 +691,11 @@ class PlaceController extends Controller
                 })
                 ->withCount([
                     'placeEvaluations as thumbs_up_count' => function ($query) {
-                            $query->where('thumb_direction', 1);
-                        },
+                        $query->where('thumb_direction', 1);
+                    },
                     'placeEvaluations as thumbs_down_count' => function ($query) {
-                            $query->where('thumb_direction', 0);
-                        },
+                        $query->where('thumb_direction', 0);
+                    },
                 ])
                 ->first();
 
