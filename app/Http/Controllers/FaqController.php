@@ -8,8 +8,8 @@ class FaqController extends Controller
 {
     public function faqs()
     {
-        return view('pages.faqs.index', [
-            'faqs' => Faq::faqs(app()->getLocale()),
-        ]);
+        $faqs = Faq::faqs(app()->getLocale());
+
+        return view('pages.faqs.index', ['faqs' => $faqs]);
     }
 }

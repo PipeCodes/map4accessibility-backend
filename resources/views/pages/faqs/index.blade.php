@@ -17,22 +17,22 @@
 
 @section('scripts')
     <script>
-        var acc = document.getElementsByClassName("accordion");
-        var i;
+        let acc = document.getElementsByClassName("accordion");
+        let i;
 
         for (i = 0; i < acc.length; i++) {
             acc[i].addEventListener("click", function() {
                 if(!this.classList.contains("active")) {
-                    var elems = document.querySelectorAll(".accordion.active");
+                    let elems = document.querySelectorAll(".accordion.active");
                     [].forEach.call(elems, function(el) {
                         el.classList.remove("active");
-                        var panel = el.nextElementSibling;
+                        let panel = el.nextElementSibling;
                         panel.style.maxHeight = null;
                     });
                 }
                 this.classList.toggle("active");
 
-                var panel = this.nextElementSibling;
+                let panel = this.nextElementSibling;
                 if (panel.style.maxHeight) {
                     panel.style.maxHeight = null;
                 } else {
