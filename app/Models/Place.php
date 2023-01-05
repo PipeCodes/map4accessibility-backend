@@ -122,6 +122,11 @@ class Place extends Model
         'schedule',
     ];
 
+    protected $casts = [
+        'ratio_up_down' => 'float',
+        'ratio_down_up' => 'float',
+    ];
+
     public function placeEvaluations()
     {
         return $this->hasMany(PlaceEvaluation::class);
