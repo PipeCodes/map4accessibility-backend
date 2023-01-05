@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\LegalTextController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,7 @@ Route::get('/', function () {
 
 Route::get('/terms-conditions', [LegalTextController::class, 'terms']);
 Route::get('/privacy-policy', [LegalTextController::class, 'privacy']);
+Route::get('/faqs', [FaqController::class, 'faqs']);
 
 Route::get('/dashboard', function () {
     return view('dashboard');
