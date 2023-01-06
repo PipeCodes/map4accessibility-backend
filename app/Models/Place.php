@@ -124,12 +124,7 @@ class Place extends Model
 
     public function placeEvaluations()
     {
-        return $this->hasMany(PlaceEvaluation::class)->with('appUser');
-    }
-
-    public function appUser()
-    {
-        return $this->hasOne(AppUser::class);
+        return $this->hasMany(PlaceEvaluation::class);
     }
 
     /**

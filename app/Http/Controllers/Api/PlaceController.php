@@ -600,6 +600,7 @@ class PlaceController extends Controller
                 ->select('*')
                 ->where('id', $id)
                 ->with('placeEvaluations')
+                ->with('placeEvaluations.appUser')
                 ->with('mediaEvaluations', function ($query) {
                     $query->select('file_url', 'file_type');
                 })
