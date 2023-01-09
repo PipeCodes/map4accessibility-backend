@@ -102,10 +102,11 @@ class RateQuestionForm extends Component implements HasForms
                 'id',
                 collect($state)->pluck('id')
             )
-            ->pluck('id');
+            ->pluck('id')
+            ->toArray();
 
         if (count($questionsToDelete) > 0) {
-            RateQuestion::destroy($questionsToDelete->toArray());
+            RateQuestion::destroy($questionsToDelete);
         }
     }
 
@@ -166,16 +167,15 @@ class RateQuestionForm extends Component implements HasForms
                 /**
                  * Create question
                  */
-                $model = RateQuestion::create($question);
+                $newQuestion = RateQuestion::create($question);
 
-                $model->answers()->saveMany(
+                $newQuestion->answers()->saveMany(
                     collect($question['answers'])
                         ->map(fn ($answer) => new RateAnswer([
                             'body' => $answer['body'],
                             'slug' => $answer['slug'],
                             'order' => $answer['order'],
                         ]))
-                        ->toArray()
                 );
             }
         }

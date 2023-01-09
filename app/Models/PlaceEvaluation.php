@@ -83,6 +83,7 @@ class PlaceEvaluation extends Model
         'questions_answers',
         'app_user_id',
         'place_id',
+        'status',
     ];
 
     /**
