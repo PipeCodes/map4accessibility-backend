@@ -881,7 +881,7 @@ class PlaceController extends Controller
                 'placeId' => $placeId,
             ], [
                 'placeId' => 'required|string|exists:places,id',
-                'media' => 'required|file|mimetypes:image/jpg,image/png,image/jpeg,video/mp4',
+                'media' => 'required|file|mimetypes:image/webp,image/png,image/jpeg,video/mp4,audio/mpeg,audio/x-wav',
             ]);
 
             if ($validator->fails()) {
