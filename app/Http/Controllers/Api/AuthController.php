@@ -539,7 +539,7 @@ class AuthController extends Controller
                         'regex:'.config('auth.app_user_password_validation'),
                     ],
                     'disabilities' => 'array',
-                    'avatar' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+                    'avatar' => 'file|mimetypes:image/webp,image/png,image/jpeg,image/jpg|max:2048',
                     'terms_accepted' => 'required',
                 ]
             );
@@ -668,7 +668,7 @@ class AuthController extends Controller
                     'surname' => 'required|string|max:255',
                     'birthdate' => 'date|max:255|older_than:16|younger_than:100',
                     'email' => 'required|string|email|max:255|unique:users',
-                    'avatar' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
+                    'avatar' => 'file|mimetypes:image/webp,image/png,image/jpeg,image/jpg|max:2048',
                 ]
             );
 
