@@ -30,8 +30,13 @@ class RateQuestion extends Model
         'id', 'slug', 'title', 'place_type',
     ];
 
-    public function answers()
+    /**
+     * Answers relation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->hasMany(RateAnswer::class);
+        return $this->hasMany(RateAnswer::class)->orderBy('order');
     }
 }

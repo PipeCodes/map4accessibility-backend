@@ -79,7 +79,9 @@ class CountryResponsibleForm extends Component implements HasForms
             ->pluck('id')
             ->toArray();
 
-        CountryResponsible::destroy($idsToDelete);
+        if (count($idsToDelete) > 0) {
+            CountryResponsible::destroy($idsToDelete);
+        }
 
         /**
          * Create or Update if already exists.
@@ -96,6 +98,8 @@ class CountryResponsibleForm extends Component implements HasForms
             $countries,
             ['country_iso']
         );
+
+        $this->original = CountryResponsible::all()->toArray();
 
         Notification::make()
             ->title('Saved successfully')

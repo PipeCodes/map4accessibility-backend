@@ -83,7 +83,7 @@ class PlaceEvaluationController extends Controller
                 array_merge($request->all(), ['placeEvaluationId' => $placeEvaluationId]),
                 [
                     'placeEvaluationId' => 'required|string|exists:place_evaluations,id',
-                    'media' => 'file|mimetypes:image/jpg,image/png,image/jpeg,video/mp4',
+                    'media' => 'file|mimetypes:image/webp,image/png,image/jpeg,video/mp4,audio/mpeg,audio/x-wav',
                 ]
             );
 
@@ -402,9 +402,12 @@ class PlaceEvaluationController extends Controller
                 ]),
                 'app_user_id' => $appUser->id,
                 'place_id' => $place->id,
+                'status' => PlaceEvaluationStatus::Pending->value,
             ]);
 
-            return $this->respondWithResource(new JsonResource($placeEvaluation));
+            return $this->respondWithResource(
+                new JsonResource($placeEvaluation->load(['appUser', 'place']))
+            );
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
