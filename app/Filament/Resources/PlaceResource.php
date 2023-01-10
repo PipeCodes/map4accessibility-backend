@@ -49,7 +49,7 @@ class PlaceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('google_place_id'),
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('country_code')
                     ->formatStateUsing(
                         fn (?string $state): ?string => Country::tryFrom($state)?->getLabel() ?? null

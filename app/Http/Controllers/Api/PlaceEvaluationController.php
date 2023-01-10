@@ -402,9 +402,12 @@ class PlaceEvaluationController extends Controller
                 ]),
                 'app_user_id' => $appUser->id,
                 'place_id' => $place->id,
+                'status' => PlaceEvaluationStatus::Pending->value,
             ]);
 
-            return $this->respondWithResource(new JsonResource($placeEvaluation));
+            return $this->respondWithResource(
+                new JsonResource($placeEvaluation->load(['appUser', 'place']))
+            );
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
