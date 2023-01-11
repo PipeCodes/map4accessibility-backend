@@ -106,11 +106,13 @@ class PlaceDeletionController extends Controller
 
         $deletion = PlaceDeletion::query()
             ->where('place_id', $request->get('place_id'))
-            ->where('app_user_id', $request->get('app_user_id'))
-            ->first();
+            ->where('app_user_id', $request->get('app_user_id'));
+        if ($deletion->count() > 0) {
+            return $this->respondError(__('api.user_has_already_deletion_place'), 422);
+        }
 
-        if ($deletion) {
-            return $this->closePlaceDeletion(deletion: $deletion);
+        if ($deletion->first()) {
+            return $this->closePlaceDeletion(deletion: $deletion->first());
         }
 
         return $this->storePlaceDeletion(

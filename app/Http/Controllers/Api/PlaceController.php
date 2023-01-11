@@ -607,6 +607,7 @@ class PlaceController extends Controller
             $place = Place::query()
                 ->select('*')
                 ->where('id', $id)
+                ->with('placeDeletion')
                 ->with('placeEvaluations')
                 ->with('placeEvaluations.appUser')
                 ->with('mediaEvaluations', function ($query) {
