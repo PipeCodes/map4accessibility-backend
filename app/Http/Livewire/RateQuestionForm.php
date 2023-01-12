@@ -167,16 +167,36 @@ class RateQuestionForm extends Component implements HasForms
                 /**
                  * Create question
                  */
-                $newQuestion = RateQuestion::create($question);
+                try {
+                    $newQuestion = RateQuestion::create($question);
+                } catch (\Throwable $th) {
+                    Notification::make()
+                        ->title('Questions cannot be the same, the slug is unique')
+                        ->danger()
+                        ->send();
 
-                $newQuestion->answers()->saveMany(
-                    collect($question['answers'])
-                        ->map(fn ($answer) => new RateAnswer([
-                            'body' => $answer['body'],
-                            'slug' => $answer['slug'],
-                            'order' => $answer['order'],
-                        ]))
-                );
+                    return;
+                }
+
+                try {
+                    $newQuestion->answers()->saveMany(
+                        collect($question['answers'])
+                            ->map(fn ($answer) => new RateAnswer([
+                                'body' => $answer['body'],
+                                'slug' => $answer['slug'],
+                                'order' => $answer['order'],
+                            ]))
+                    );
+                } catch (\Throwable $th) {
+                    $newQuestion->delete();
+
+                    Notification::make()
+                        ->title('Answers cannot be the same, slug is unique')
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
             }
         }
 
