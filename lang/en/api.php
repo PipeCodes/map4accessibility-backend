@@ -21,4 +21,5 @@ return [
     'create_user_success' => 'User created successfully',
     'place_deletion_created' => 'Place Deletion created successfully',
     'place_deletion_already_closed' => 'Place Deletion already closed',
+    'user_has_already_deletion_place' => 'Already delete the place once time',
 ];

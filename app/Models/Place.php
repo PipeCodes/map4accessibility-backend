@@ -132,6 +132,11 @@ class Place extends Model
         return $this->hasMany(PlaceEvaluation::class);
     }
 
+    public function placeDeletion()
+    {
+        return $this->hasMany(PlaceDeletion::class);
+    }
+
     /**
      * Get the media from cloud.
      *
