@@ -39,12 +39,12 @@ class PlaceEvaluationResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('appUser.email')
+                Tables\Columns\TextColumn::make('appUser.email')->searchable()
                     ->url(fn ($record) => "app-users/{$record->appUser->id}/edit"),
-                Tables\Columns\TextColumn::make('place.name'),
+                Tables\Columns\TextColumn::make('place.name')->searchable(),
                 Tables\Columns\BooleanColumn::make('thumb_direction'),
-                Tables\Columns\TextColumn::make('comment'),
-                Tables\Columns\TextColumn::make('questions_answers'),
+                Tables\Columns\TextColumn::make('comment')->searchable(),
+                Tables\Columns\TextColumn::make('questions_answers')->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
