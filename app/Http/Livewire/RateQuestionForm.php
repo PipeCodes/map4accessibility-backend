@@ -140,29 +140,56 @@ class RateQuestionForm extends Component implements HasForms
                         /**
                          * Update Answer
                          */
-                        RateAnswer::where('id', $answer['id'])
-                            ->update([
-                                'order' => $answer['order'],
-                                'body' => $answer['body'],
-                                'slug' => $answer['slug'],
-                            ]);
+                        try {
+                            RateAnswer::where('id', $answer['id'])
+                                ->update([
+                                    'order' => $answer['order'],
+                                    'body' => $answer['body'],
+                                    'slug' => $answer['slug'],
+                                ]);
+                        } catch (\Throwable $th) {
+                            Notification::make()
+                                ->title('Answers cannot be the same, slug is unique')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
                     } else {
                         /**
                          * Create Answer
                          */
-                        RateAnswer::create([
-                            ...$answer,
-                            'rate_question_id' => $question['id'],
-                        ]);
+                        try {
+                            RateAnswer::create([
+                                ...$answer,
+                                'rate_question_id' => $question['id'],
+                            ]);
+                        } catch (\Throwable $th) {
+                            Notification::make()
+                                ->title('Answers cannot be the same, slug is unique')
+                                ->danger()
+                                ->send();
+
+                            return;
+                        }
                     }
                 }
 
-                RateQuestion::where('id', $question['id'])
-                    ->update([
-                        'title' => $question['title'],
-                        'slug' => $question['slug'],
-                        'place_type' => $question['place_type'],
-                    ]);
+                try {
+                    RateQuestion::where('id', $question['id'])
+                        ->update([
+                            'title' => $question['title'],
+                            'slug' => $question['slug'],
+                            'place_type' => $question['place_type'],
+                        ]);
+                } catch (\Throwable $th) {
+                    Notification::make()
+                        ->title('Questions cannot be the same, the slug is unique')
+                        ->danger()
+                        ->send();
+
+                    return;
+                }
             } else {
                 /**
                  * Create question
