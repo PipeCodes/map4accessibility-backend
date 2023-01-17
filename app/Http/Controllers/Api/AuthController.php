@@ -192,9 +192,10 @@ class AuthController extends Controller
 
             if (! $user) {
                 return $this->respondUnAuthorized();
-            } elseif (! $user->accountStatus || 'active' !== $user->accountStatus->slug) {
-                // Only AppUsers with confirmed email can login
-                return $this->respondUnAuthorized(__('validation.appusers_confirmed_email'));
+            }
+
+            if ($user->account_status_id === 1) {
+                $user->markEmailAsActive();
             }
 
             return $this->respondWithResource(new AuthResource(
@@ -576,8 +577,9 @@ class AuthController extends Controller
 
             // we need this to access the relationships
             $user = AppUser::where('email', $request->email)->first();
-
-            Mail::to($user->email)->send(new EmailConfirmation($user));
+            if (! $request->has('auth_providers')) {
+                Mail::to($user->email)->send(new EmailConfirmation($user));
+            }
 
             return $this->respondWithAppUserLoginToken($user);
         } catch (\Throwable $th) {
