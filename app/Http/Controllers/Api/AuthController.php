@@ -194,10 +194,6 @@ class AuthController extends Controller
                 return $this->respondUnAuthorized();
             }
 
-            if ($user->account_status_id === 1) {
-                $user->markEmailAsActive();
-            }
-
             return $this->respondWithResource(new AuthResource(
                 new AppUserResource($user),
                 [
@@ -579,6 +575,8 @@ class AuthController extends Controller
             $user = AppUser::where('email', $request->email)->first();
             if (! $request->has('auth_providers')) {
                 Mail::to($user->email)->send(new EmailConfirmation($user));
+            } else {
+                $user->markEmailAsActive();
             }
 
             return $this->respondWithAppUserLoginToken($user);
