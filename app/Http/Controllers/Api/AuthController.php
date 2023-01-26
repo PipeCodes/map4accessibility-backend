@@ -573,10 +573,10 @@ class AuthController extends Controller
 
             // we need this to access the relationships
             $user = AppUser::where('email', $request->email)->first();
-            if (! $request->has('auth_providers')) {
-                Mail::to($user->email)->send(new EmailConfirmation($user));
-            } else {
+            if ($user->auth_providers) {
                 $user->markEmailAsActive();
+            } else {
+                Mail::to($user->email)->send(new EmailConfirmation($user));
             }
 
             return $this->respondWithAppUserLoginToken($user);
