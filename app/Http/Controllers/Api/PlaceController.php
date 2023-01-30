@@ -411,9 +411,9 @@ class PlaceController extends Controller
     public function listPlacesByRadius(Request $request)
     {
         try {
-            $validator = true;
+            $validator = $this->validatorListPlacesByRadiusRequest($request);
 
-            if (!$validator && $validator->fails()) {
+            if ($validator->fails()) {
                 return $this->respondError($validator->errors(), 422);
             }
 
