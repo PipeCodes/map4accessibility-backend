@@ -924,6 +924,13 @@ class PlaceController extends Controller
         }
     }
 
+    /**
+     * @param array $localhostGooglePlacesIds
+     * @param string $location
+     * @param int $radius
+     * @param array $params
+     * @return Collection
+     */
     protected function googlePlacesNearbySearch(array $localhostGooglePlacesIds, string $location, int $radius = 50000, array $params = []): Collection
     {
         $googlePlacesResult = collect([]);
