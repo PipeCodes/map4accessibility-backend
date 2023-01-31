@@ -8,7 +8,10 @@ use App\Http\Traits\UploadTrait;
 use App\Models\Place;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
+use SKAgarwal\GoogleApi\Exceptions\GooglePlacesApiException;
+use SKAgarwal\GoogleApi\PlacesApi;
 
 class PlaceController extends Controller
 {
@@ -47,7 +50,7 @@ class PlaceController extends Controller
      * Returns the validator for the endpoint
      * that is used to create a new Place.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorCreatePlace(Request $request)
@@ -78,7 +81,7 @@ class PlaceController extends Controller
      * Returns the validator for the endpoint
      * that lists places.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorListPlacesRequest(Request $request)
@@ -92,7 +95,7 @@ class PlaceController extends Controller
      * Returns the validator for the endpoint
      * that lists places.
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorListPlacesByRadiusRequest(Request $request)
@@ -225,7 +228,7 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return JsonResponse
      */
     public function listPlaces(Request $request)
@@ -285,9 +288,6 @@ class PlaceController extends Controller
      * @OA\Get (
      *     path="/places/radius",
      *     tags={"Places"},
-     *     security={
-     *          {"api_key_security": {}}
-     *      },
      *     summary="filter for places for the given google_place_id OR coords",
      *     description="filter for places for the given google_place_id OR coords",
      *     operationId="listPlacesByRadius",
@@ -405,12 +405,13 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return JsonResponse
      */
     public function listPlacesByRadius(Request $request)
     {
         try {
+            $googlePlacesResult = collect([]);
             $validator = $this->validatorListPlacesByRadiusRequest($request);
 
             if ($validator->fails()) {
@@ -447,10 +448,19 @@ class PlaceController extends Controller
             [$totalThumbsUp, $totalThumbsDown] =
                 $this->totalEvaluationsListPlaces($places->items());
 
+            if (1 === (int)$request->get('page', 1)) {
+                $googlePlacesResult = $this->googlePlacesNearbySearch(
+                    $places->pluck('google_place_id')->toArray(),
+                    ($request->latitude . ',' . $request->longitude),
+                    $request->get('geo_query_radius', env('GEO_QUERY_RADIUS', 5)),
+                    ['type' => $request->get('place_type', '')]
+                );
+            }
+
             $result = collect([
                 'total_thumbs_up' => $totalThumbsUp,
                 'total_thumbs_down' => $totalThumbsDown,
-            ])->merge($places);
+            ])->merge($places->concat($googlePlacesResult));
 
             return $this->respondWithResource(new JsonResource($result));
         } catch (\Throwable $th) {
@@ -499,7 +509,7 @@ class PlaceController extends Controller
             $request->get('name') !== ''
         ) {
             $query->where(
-                'name', 'like', '%'.$request->get('name').'%'
+                'name', 'like', '%' . $request->get('name') . '%'
             );
         }
 
@@ -508,7 +518,7 @@ class PlaceController extends Controller
             $request->get('place_type') !== ''
         ) {
             $query->where(
-                'place_type', 'like', '%'.$request->get('place_type').'%'
+                'place_type', 'like', '%' . $request->get('place_type') . '%'
             );
         }
 
@@ -525,7 +535,7 @@ class PlaceController extends Controller
      * Calculates the total of thumbs up and thumbs down
      * evaluations that a list of places has.
      *
-     * @param  array  $places
+     * @param array $places
      * @return array
      */
     protected function totalEvaluationsListPlaces(array $places)
@@ -585,7 +595,7 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return JsonResponse
      */
     public function getPlaceById(Request $request, string $id)
@@ -623,7 +633,7 @@ class PlaceController extends Controller
                 ])
                 ->first();
 
-            if (! $place) {
+            if (!$place) {
                 return $this->respondNotFound();
             }
 
@@ -674,7 +684,7 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return JsonResponse
      */
     public function getPlaceByGooglePlaceId(Request $request, string $id)
@@ -709,7 +719,7 @@ class PlaceController extends Controller
                 ])
                 ->first();
 
-            if (! $place) {
+            if (!$place) {
                 return $this->respondNotFound();
             }
 
@@ -771,7 +781,7 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
+     * @param Request $request
      * @return JsonResponse
      */
     public function createPlace(Request $request)
@@ -874,8 +884,9 @@ class PlaceController extends Controller
      */
     public function attachMediaToPlace(
         Request $request,
-        $placeId
-    ) {
+                $placeId
+    )
+    {
         try {
             $validator = Validator::make([
                 ...$request->all(),
@@ -914,5 +925,58 @@ class PlaceController extends Controller
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
+    }
+
+    /**
+     * @param array $localhostGooglePlacesIds
+     * @param string $location
+     * @param int $radius
+     * @param array $params
+     * @return Collection
+     */
+    protected function googlePlacesNearbySearch(array $localhostGooglePlacesIds, string $location, int $radius = 50000, array $params = []): Collection
+    {
+        $googlePlacesResult = collect([]);
+        $googlePlacesAPIResult = collect([]);
+        $googlePlacesNextPage = false;
+        $radius = $radius ?? 50000; // radius default
+
+        do {
+            try {
+
+                $googlePlacesAPIResponse = $this->googlePlaces->nearbySearch($location, $radius, $params);
+
+                $googlePlacesNextPage = $googlePlacesAPIResponse->get('next_page_token', false);
+                $params['pagetoken'] = $googlePlacesNextPage;
+
+                $googlePlacesAPIResponse = $googlePlacesAPIResponse->get('results', [])?->whereNotIn('place_id', $localhostGooglePlacesIds);
+                $googlePlacesAPIResult = $googlePlacesAPIResult->concat($googlePlacesAPIResponse);
+
+                if ($googlePlacesAPIResult !== null) {
+                    $googlePlacesResult = $googlePlacesAPIResult->map(function ($item, $key) {
+                        return collect(
+                            [
+                                "id" => null,
+                                "google_place_id" => $item['place_id'],
+                                "name" => $item['name'],
+                                "place_type" => $item['types'],
+                                "address" => $item['vicinity'],
+                                "latitude" => $item['geometry']['location']['lat'],
+                                "longitude" => $item['geometry']['location']['lng']
+                            ]);
+                    });
+
+                }
+                if ($googlePlacesNextPage) {
+                    sleep(2);
+                }
+            } catch (GooglePlacesApiException $e) {
+                $googlePlacesNextPage = false;
+            }
+
+        } while (!empty($googlePlacesNextPage));
+
+        return $googlePlacesResult;
+
     }
 }
