@@ -411,6 +411,7 @@ class PlaceController extends Controller
     public function listPlacesByRadius(Request $request)
     {
         try {
+            $googlePlacesResult = collect([]);
             $validator = $this->validatorListPlacesByRadiusRequest($request);
 
             if ($validator->fails()) {
@@ -447,12 +448,14 @@ class PlaceController extends Controller
             [$totalThumbsUp, $totalThumbsDown] =
                 $this->totalEvaluationsListPlaces($places->items());
 
-            $googlePlacesResult = $this->googlePlacesNearbySearch(
-                $places->pluck('google_place_id')->toArray(),
-                ($request->latitude . ',' . $request->longitude),
-                $request->get('geo_query_radius', env('GEO_QUERY_RADIUS', 5)),
-                ['type' => $request->get('place_type', '')]
-            );
+            if (1 === $request->get('page', 1)) {
+                $googlePlacesResult = $this->googlePlacesNearbySearch(
+                    $places->pluck('google_place_id')->toArray(),
+                    ($request->latitude . ',' . $request->longitude),
+                    $request->get('geo_query_radius', env('GEO_QUERY_RADIUS', 5)),
+                    ['type' => $request->get('place_type', '')]
+                );
+            }
 
             $result = collect([
                 'total_thumbs_up' => $totalThumbsUp,
