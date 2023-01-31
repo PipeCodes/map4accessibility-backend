@@ -154,7 +154,7 @@ class PlaceEvaluationController extends Controller
                 'schedule' => 'string|nullable',
                 'thumb_direction' => 'required|boolean',
                 'comment' => 'string|min:6|nullable',
-                'question_answers' => 'nullable',
+                'questions_answers' => 'nullable',
             ]
         );
     }
@@ -398,7 +398,7 @@ class PlaceEvaluationController extends Controller
 
             $placeEvaluation = PlaceEvaluation::create([
                 ...$request->only([
-                    'thumb_direction', 'comment', 'question_answers',
+                    'thumb_direction', 'comment', 'questions_answers',
                 ]),
                 'app_user_id' => $appUser->id,
                 'place_id' => $place->id,
