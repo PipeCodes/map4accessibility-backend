@@ -2,6 +2,6 @@
     "editor.formatOnSave": true,
     "laravel-pint.enable": true,
     "[php]": {
-        "editor.defaultFormatter": "svipas.prettier-plus"
+        "editor.defaultFormatter": "open-southeners.laravel-pint"
     }
 }
