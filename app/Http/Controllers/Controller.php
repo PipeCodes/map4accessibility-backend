@@ -43,6 +43,6 @@ class Controller extends BaseController
 
     public function __construct()
     {
-        $this->googlePlaces = new PlacesApi(env('GOOGLE_MAPS_API_KEY', false));
+        $this->googlePlaces = new PlacesApi(config('app.GOOGLE_MAPS_API_KEY', false));
     }
 }

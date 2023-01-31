@@ -448,7 +448,7 @@ class PlaceController extends Controller
             [$totalThumbsUp, $totalThumbsDown] =
                 $this->totalEvaluationsListPlaces($places->items());
 
-            if (1 === $request->get('page', 1)) {
+            if (1 === (int)$request->get('page', 1)) {
                 $googlePlacesResult = $this->googlePlacesNearbySearch(
                     $places->pluck('google_place_id')->toArray(),
                     ($request->latitude . ',' . $request->longitude),
