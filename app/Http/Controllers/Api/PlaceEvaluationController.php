@@ -142,7 +142,7 @@ class PlaceEvaluationController extends Controller
             [
                 'latitude' => ['required', 'regex:/^[-]?(([0-8]?[0-9])\.(\d+))|(90(\.0+)?)$/'],
                 'longitude' => ['required', 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/'],
-                'google_place_id' => 'integer|nullable',
+                'google_place_id' => 'string|nullable',
                 'name' => 'string|min:3|required',
                 'place_type' => 'string|nullable',
                 'country_code' => 'string|min:2|nullable',
@@ -227,8 +227,7 @@ class PlaceEvaluationController extends Controller
      *          property="google_place_id",
      *          description="Google Place ID",
      *          title="Google Place ID",
-     *          format="int64",
-     *          type="integer"
+     *          type="string"
      *      ),
      *      @OA\Property(
      *          property="name",
@@ -402,7 +401,7 @@ class PlaceEvaluationController extends Controller
                 ]),
                 'app_user_id' => $appUser->id,
                 'place_id' => $place->id,
-                'status' => PlaceEvaluationStatus::Pending->value,
+                'status' => PlaceEvaluationStatus::Accepted->value,
             ]);
 
             return $this->respondWithResource(
