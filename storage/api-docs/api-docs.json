@@ -898,12 +898,7 @@
                     "400": {
                         "description": "Internal error"
                     }
-                },
-                "security": [
-                    {
-                        "api_key_security": []
-                    }
-                ]
+                }
             }
         },
         "/places/{id}": {
