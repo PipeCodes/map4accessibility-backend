@@ -63,7 +63,7 @@ class PlaceController extends Controller
                 'required',
                 'regex:/^[-]?((((1[0-7][0-9])|([0-9]?[0-9]))\.(\d+))|180(\.0+)?)$/',
             ],
-            'google_place_id' => 'integer|nullable',
+            'google_place_id' => 'string|nullable',
             'name' => 'string|min:3|nullable',
             'place_type' => 'string|nullable',
             'country_code' => 'string|min:2|nullable',
@@ -459,7 +459,7 @@ class PlaceController extends Controller
             $result = collect([
                 'total_thumbs_up' => $totalThumbsUp,
                 'total_thumbs_down' => $totalThumbsDown,
-            ])->merge($places->concat($googlePlacesResult));
+            ])->merge([$places->concat($googlePlacesResult)]);
 
             return $this->respondWithResource(new JsonResource($result));
         } catch (\Throwable $th) {

@@ -22,11 +22,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *      ),
  *      @OA\Property(
  *          property="google_place_id",
- *          format="int64",
  *          description="Google Place id",
  *          title="Google Place id",
  *          example="",
- *          type="integer"
+ *          type="string"
  *      ),
  *      @OA\Property(
  *          property="name",
