@@ -59,7 +59,8 @@ class AppUserResource extends Resource
                     ->maxDate(now()->subYears(16))
                     ->default(now()->subYears(16)),
                 Forms\Components\FileUpload::make('avatar')
-                    ->image(),
+                    ->image()
+                    ->directory('app-users'),
                 Forms\Components\Toggle::make('terms_accepted')
                     ->required()
                     ->accepted(),
