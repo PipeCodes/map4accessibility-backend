@@ -60,7 +60,8 @@ class AppUserResource extends Resource
                     ->default(now()->subYears(16)),
                 Forms\Components\FileUpload::make('avatar')
                     ->image()
-                    ->directory('storage/app-users'),
+                    ->disk('public')
+                    ->directory('app-users'),
                 Forms\Components\Toggle::make('terms_accepted')
                     ->required()
                     ->accepted(),
