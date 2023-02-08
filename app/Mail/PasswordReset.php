@@ -45,7 +45,7 @@ class PasswordReset extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        $url = env('APP_FRONTEND_URL').
+        $url = config('app.APP_FRONTEND_URL').
             "/change-password/?email={$this->user->email}&token={$this->token}";
 
         return $this->markdown('emails.appUsers.password-reset')
