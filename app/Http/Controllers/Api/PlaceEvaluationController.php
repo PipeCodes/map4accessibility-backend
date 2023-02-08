@@ -7,13 +7,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaceEvaluationCollection;
 use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
+use App\Mail\NegativeRate;
 use App\Models\AppUser;
+use App\Models\CountryResponsible;
 use App\Models\Place;
 use App\Models\PlaceEvaluation;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class PlaceEvaluationController extends Controller
@@ -403,6 +406,13 @@ class PlaceEvaluationController extends Controller
                 'place_id' => $place->id,
                 'status' => PlaceEvaluationStatus::Accepted->value,
             ]);
+
+            if ($placeEvaluation->thumb_direction === false) {
+                $listResponsibles = CountryResponsible::where('country_iso', $place->country_code)->get()->pluck('email')->toArray();
+                if (count($listResponsibles) > 0) {
+                    Mail::to($listResponsibles)->send(new NegativeRate($placeEvaluation));
+                }
+            }
 
             return $this->respondWithResource(
                 new JsonResource($placeEvaluation->load(['appUser', 'place']))
