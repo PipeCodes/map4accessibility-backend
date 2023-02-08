@@ -269,10 +269,18 @@ class PlaceController extends Controller
             [$totalThumbsUp, $totalThumbsDown] =
                 $this->totalEvaluationsListPlaces($places->items());
 
+            if (1 === (int) $request->get('page', 1)) {
+                $googlePlacesResult = $this->googlePlacesTextSearch(
+                    $places->pluck('google_place_id')->toArray(),
+                    $request->get('name', ''),
+                    ['type' => $request->get('place_type', '')]
+                );
+            }
+
             $result = collect([
                 'total_thumbs_up' => $totalThumbsUp,
                 'total_thumbs_down' => $totalThumbsDown,
-            ])->merge($places);
+            ])->merge([$places->concat($googlePlacesResult)]);
 
             return $this->respondWithResource(new JsonResource($result));
         } catch (\Throwable $th) {
@@ -958,6 +966,53 @@ class PlaceController extends Controller
                                 'name' => $item['name'],
                                 'place_type' => $item['types'],
                                 'address' => $item['vicinity'],
+                                'latitude' => $item['geometry']['location']['lat'],
+                                'longitude' => $item['geometry']['location']['lng'],
+                            ]);
+                    });
+                }
+                if ($googlePlacesNextPage) {
+                    sleep(2);
+                }
+            } catch (GooglePlacesApiException $e) {
+                $googlePlacesNextPage = false;
+            }
+        } while (! empty($googlePlacesNextPage));
+
+        return $googlePlacesResult;
+    }
+
+    /**
+     * @param  array  $localhostGooglePlacesIds
+     * @param  string  $location
+     * @param  int  $radius
+     * @param  array  $params
+     * @return Collection
+     */
+    protected function googlePlacesTextSearch(array $localhostGooglePlacesIds, string $query, array $params = []): Collection
+    {
+        $googlePlacesResult = collect([]);
+        $googlePlacesAPIResult = collect([]);
+        $googlePlacesNextPage = false;
+
+        do {
+            try {
+                $googlePlacesAPIResponse = $this->googlePlaces->textSearch($query, $params);
+
+                $googlePlacesNextPage = $googlePlacesAPIResponse->get('next_page_token', false);
+                $params['pagetoken'] = $googlePlacesNextPage;
+
+                $googlePlacesAPIResponse = $googlePlacesAPIResponse->get('results', [])?->whereNotIn('place_id', $localhostGooglePlacesIds);
+                $googlePlacesAPIResult = $googlePlacesAPIResult->concat($googlePlacesAPIResponse);
+
+                if ($googlePlacesAPIResult !== null) {
+                    $googlePlacesResult = $googlePlacesAPIResult->map(function ($item, $key) {
+                        return collect(
+                            [
+                                'id' => null,
+                                'google_place_id' => $item['place_id'],
+                                'name' => $item['name'],
+                                'place_type' => $item['types'],
                                 'latitude' => $item['geometry']['location']['lat'],
                                 'longitude' => $item['geometry']['location']['lng'],
                             ]);
