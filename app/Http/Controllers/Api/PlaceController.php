@@ -965,7 +965,6 @@ class PlaceController extends Controller
                                 'google_place_id' => $item['place_id'],
                                 'name' => $item['name'],
                                 'place_type' => $item['types'],
-                                'address' => $item['vicinity'],
                                 'latitude' => $item['geometry']['location']['lat'],
                                 'longitude' => $item['geometry']['location']['lng'],
                             ]);
