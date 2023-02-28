@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
 use App\Models\Place;
+use App\Models\PlaceEvaluation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
@@ -40,6 +41,7 @@ class PlaceController extends Controller
             ],
             'name' => ['string'],
             'place_type' => ['string'],
+            'disabilities' => ['string'],
             'page' => ['integer', 'min:1'],
             'size' => ['integer', 'min:1'],
         ];
@@ -125,9 +127,6 @@ class PlaceController extends Controller
      * @OA\Get (
      *     path="/places",
      *     tags={"Places"},
-     *     security={
-     *          {"api_key_security": {}}
-     *      },
      *     summary="List of places",
      *     description="List of places",
      *     operationId="listPlaces",
@@ -147,6 +146,12 @@ class PlaceController extends Controller
      *         in="query",
      *         name="place_type",
      *         description="Place Type",
+     *         example=""
+     *     ),
+     *     @OA\Parameter(
+     *         in="query",
+     *         name="disabilities",
+     *         description="for search by on disabilities",
      *         example=""
      *     ),
      *     @OA\Parameter(
@@ -238,26 +243,37 @@ class PlaceController extends Controller
             if ($validator->fails()) {
                 return $this->respondError($validator->errors(), 422);
             }
+            $disabilities = null;
+            if (
+                $request->has('disabilities') &&
+                $request->get('disabilities') !== ''
+            ) {
+                $disabilities = $request->get('disabilities');
+            }
 
             $basicRatioQuery = '(select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?)';
 
             $query = $this->queryListPlaces(
                 $request,
                 Place::query()
-                    ->select('*')
+                    ->select('places.*')
+                    ->selectRaw('app_users.id as app_user_id , app_users.name as app_user_name,
+                    app_users.surname as app_user_surname, app_users.email as app_user_email,
+                        app_users.birthdate as app_user_birthdate, app_users.disabilities as app_user_disabilities,
+                        app_users.avatar as app_user_avatar')
                     ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_up_down`", [1, 0, 1])
                     ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_down_up`", [0, 1, 0])
-                    ->with('mediaEvaluations', function ($query) {
+                    ->with(['mediaEvaluations' => function ($query) {
                         $query->select('file_url', 'file_name');
-                    })
-                    ->withCount([
+                    }])->withCount([
                         'placeEvaluations as thumbs_up_count' => function ($query) {
                             $query->where('thumb_direction', 1);
                         },
                         'placeEvaluations as thumbs_down_count' => function ($query) {
                             $query->where('thumb_direction', 0);
                         },
-                    ])
+                    ])->join('place_evaluations', 'places.id', '=', 'place_evaluations.place_id')
+                    ->join('app_users as app_users', 'place_evaluations.app_user_id', '=', 'app_users.id')->distinct()
             );
 
             $places = $query->paginate(
@@ -269,7 +285,8 @@ class PlaceController extends Controller
             [$totalThumbsUp, $totalThumbsDown] =
                 $this->totalEvaluationsListPlaces($places->items());
 
-            if (1 === (int) $request->get('page', 1)) {
+            $googlePlacesResult = [];
+            if (1 === (int)$request->get('page', 1)) {
                 $googlePlacesResult = $this->googlePlacesTextSearch(
                     $places->pluck('google_place_id')->toArray(),
                     $request->get('name', ''),
@@ -525,7 +542,16 @@ class PlaceController extends Controller
             $request->get('place_type') !== ''
         ) {
             $query->where(
-                'place_type', 'like', '%'.$request->get('place_type').'%'
+                'place_type', 'like', '%' . $request->get('place_type') . '%'
+            );
+        }
+
+        if (
+            $request->has('disabilities') &&
+            $request->get('disabilities') !== ''
+        ) {
+            $query->where(
+                'app_users.disabilities', 'like', '%' . $request->get('disabilities') . '%'
             );
         }
 

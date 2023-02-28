@@ -580,6 +580,12 @@
                         "example": ""
                     },
                     {
+                        "name": "disabilities",
+                        "in": "query",
+                        "description": "for search by on disabilities",
+                        "example": ""
+                    },
+                    {
                         "name": "asc_order_by",
                         "in": "query",
                         "description": "Parameter to sort by ASC",
@@ -678,12 +684,7 @@
                     "400": {
                         "description": "Internal error"
                     }
-                },
-                "security": [
-                    {
-                        "api_key_security": []
-                    }
-                ]
+                }
             },
             "post": {
                 "tags": [
@@ -1695,8 +1696,7 @@
                     "google_place_id": {
                         "title": "Google Place ID",
                         "description": "Google Place ID",
-                        "type": "integer",
-                        "format": "int64"
+                        "type": "string"
                     },
                     "name": {
                         "title": "Place name",
@@ -2064,8 +2064,7 @@
                     "google_place_id": {
                         "title": "Google Place id",
                         "description": "Google Place id",
-                        "type": "integer",
-                        "format": "int64",
+                        "type": "string",
                         "example": ""
                     },
                     "name": {
