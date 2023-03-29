@@ -13,7 +13,6 @@ use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
 use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
 
 class PlaceResource extends Resource
@@ -45,7 +44,7 @@ class PlaceResource extends Resource
         $countryCases = Country::cases();
         $countries = array_combine(
             keys: array_column($countryCases, 'value'),
-            values: array_map(fn($c) => $c->getLabel(), $countryCases)
+            values: array_map(fn ($c) => $c->getLabel(), $countryCases)
         );
 
         return $table
@@ -54,7 +53,7 @@ class PlaceResource extends Resource
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('country_code')
                     ->formatStateUsing(
-                        fn(?string $state): ?string => Country::tryFrom($state)?->getLabel() ?? null
+                        fn (?string $state): ?string => Country::tryFrom($state)?->getLabel() ?? null
                     ),
                 Tables\Columns\TextColumn::make('place_type'),
                 Tables\Columns\TextColumn::make('city'),
