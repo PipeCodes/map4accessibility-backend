@@ -286,7 +286,7 @@ class PlaceController extends Controller
                 $this->totalEvaluationsListPlaces($places->items());
 
             $googlePlacesResult = [];
-            if (1 === (int)$request->get('page', 1)) {
+            if (1 === (int) $request->get('page', 1)) {
                 $googlePlacesResult = $this->googlePlacesTextSearch(
                     $places->pluck('google_place_id')->toArray(),
                     $request->get('name', ''),
@@ -542,7 +542,7 @@ class PlaceController extends Controller
             $request->get('place_type') !== ''
         ) {
             $query->where(
-                'place_type', 'like', '%' . $request->get('place_type') . '%'
+                'place_type', 'like', '%'.$request->get('place_type').'%'
             );
         }
 
@@ -551,7 +551,7 @@ class PlaceController extends Controller
             $request->get('disabilities') !== ''
         ) {
             $query->where(
-                'app_users.disabilities', 'like', '%' . $request->get('disabilities') . '%'
+                'app_users.disabilities', 'like', '%'.$request->get('disabilities').'%'
             );
         }
 
