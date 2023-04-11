@@ -93,6 +93,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *           title="Coord. Longitude",
  *           example=""
  *       ),
+ *      @OA\Property(
+ *           property="evaluation_score",
+ *           format="decimal",
+ *           description="Current evaluation score calculation",
+ *           title="Current evaluation score calculation",
+ *           example="2.5"
+ *       ),
  *  )
  */
 class Place extends Model
@@ -119,6 +126,7 @@ class Place extends Model
         'email',
         'website',
         'schedule',
+        'evaluation_score',
     ];
 
     protected $casts = [

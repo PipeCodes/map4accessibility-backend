@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helper\Evaluation;
 use CloudinaryLabs\CloudinaryLaravel\MediaAlly;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,12 +26,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *          title="ID",
  *      ),
  *      @OA\Property(
- *          property="thumb_direction",
+ *          property="evaluation",
  *          type="integer",
  *          minimum=0,
- *          maximum=1,
- *          description="Thumb Direction boolean (0- thumb_down, 1- thumb_up)",
- *          title="Thumb Direction"
+ *          maximum=2,
+ *          description="Evaluation (0 = Inaccessible, 1 = Neutral, 2 = Accessible)",
+ *          title="Evaluation"
  *      ),
  *      @OA\Property(
  *          property="comment",
@@ -78,7 +79,7 @@ class PlaceEvaluation extends Model
      * @var array
      */
     protected $fillable = [
-        'thumb_direction',
+        'evaluation',
         'comment',
         'questions_answers',
         'app_user_id',
@@ -99,7 +100,7 @@ class PlaceEvaluation extends Model
      * @var array
      */
     protected $casts = [
-        'thumb_direction' => 'boolean',
+        'evaluation' => Evaluation::class,
         'questions_answers' => 'array',
     ];
 

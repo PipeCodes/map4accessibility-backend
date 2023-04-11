@@ -5,8 +5,10 @@
             @forelse ($record->placeEvaluations as $evaluation)
                 <div class="flex items-center py-4 space-x-4">
                     <div>
-                        @if ($evaluation->thumb_direction)
+                        @if ($evaluation->evaluation->value === \App\Helper\Evaluation::Accessible->value)
                             <span class="text-lg">&#128077</span>
+                        @elseif ($evaluation->evaluation->value === \App\Helper\Evaluation::Neutral->value)
+                            <span class="text-lg">&#8212</span>
                         @else
                             <span class="text-lg">&#128078</span>
                         @endif
@@ -32,7 +34,7 @@
                         </div>
                     </div>
                     <div class="self-start">
-                        <div class="flex flex-col"> 
+                        <div class="flex flex-col">
                             <span class="text-sm font-semibold text-gray-400">Comment:</span>
                             <span class="text-xs font-semibold text-gray-800">{{ $evaluation->comment }}</span>
                         </div>

@@ -1293,13 +1293,13 @@
                         "name": "asc_order_by",
                         "in": "query",
                         "description": "Parameter to sort by ASC",
-                        "example": "thumb_direction"
+                        "example": "evaluation"
                     },
                     {
                         "name": "desc_order_by",
                         "in": "query",
                         "description": "Parameter to sort by DESC",
-                        "example": "thumb_direction"
+                        "example": "evaluation"
                     },
                     {
                         "name": "page",
@@ -1680,7 +1680,7 @@
                     "latitude",
                     "longitude",
                     "name",
-                    "thumb_direction"
+                    "evaluation"
                 ],
                 "properties": {
                     "latitude": {
@@ -1744,11 +1744,11 @@
                         "description": "Place Schedule",
                         "type": "string"
                     },
-                    "thumb_direction": {
-                        "title": "Thumb Direction",
-                        "description": "Thumb Direction (0 = Thumbs Down, 1 = Thumbs Up)",
+                    "evaluation": {
+                        "title": "Evaluation",
+                        "description": "Evaluation (0 = Inaccessible, 1 = Neutral, 2 = Accessible)",
                         "type": "integer",
-                        "maximum": 1,
+                        "maximum": 2,
                         "minimum": 0
                     },
                     "comment": {
@@ -2121,6 +2121,12 @@
                         "description": "Coord. Longitude",
                         "format": "decimal",
                         "example": ""
+                    },
+                    "evaluation_score": {
+                        "title": "Current evaluation score calculation",
+                        "description": "Current evaluation score calculation",
+                        "format": "decimal",
+                        "example": "2.5"
                     }
                 },
                 "type": "object"
@@ -2168,11 +2174,11 @@
                         "format": "int64",
                         "readOnly": 1
                     },
-                    "thumb_direction": {
-                        "title": "Thumb Direction",
-                        "description": "Thumb Direction boolean (0- thumb_down, 1- thumb_up)",
+                    "evaluation": {
+                        "title": "Evaluation",
+                        "description": "Evaluation (0 = Inaccessible, 1 = Neutral, 2 = Accessible)",
                         "type": "integer",
-                        "maximum": 1,
+                        "maximum": 2,
                         "minimum": 0
                     },
                     "comment": {

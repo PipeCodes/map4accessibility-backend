@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Helper\Evaluation;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
 use App\Models\Place;
-use App\Models\PlaceEvaluation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
@@ -243,36 +243,34 @@ class PlaceController extends Controller
             if ($validator->fails()) {
                 return $this->respondError($validator->errors(), 422);
             }
-            $disabilities = null;
-            if (
-                $request->has('disabilities') &&
-                $request->get('disabilities') !== ''
-            ) {
-                $disabilities = $request->get('disabilities');
-            }
 
-            $basicRatioQuery = '(select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?)';
+            $basicRatioQuery = '(select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`evaluation` = ?)';
 
             $query = $this->queryListPlaces(
                 $request,
                 Place::query()
                     ->select('places.*')
                     ->selectRaw('app_users.id as app_user_id , app_users.name as app_user_name,
-                    app_users.surname as app_user_surname, app_users.email as app_user_email,
+                        app_users.surname as app_user_surname, app_users.email as app_user_email,
                         app_users.birthdate as app_user_birthdate, app_users.disabilities as app_user_disabilities,
                         app_users.avatar as app_user_avatar')
-                    ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_up_down`", [1, 0, 1])
-                    ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_down_up`", [0, 1, 0])
+                    ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_accessible_inaccessible`", [Evaluation::Accessible->value, Evaluation::Inaccessible->value, Evaluation::Accessible->value])
+                    ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_inaccessible_accessible`", [Evaluation::Inaccessible->value, Evaluation::Accessible->value, Evaluation::Inaccessible->value])
                     ->with(['mediaEvaluations' => function ($query) {
                         $query->select('file_url', 'file_name');
-                    }])->withCount([
-                        'placeEvaluations as thumbs_up_count' => function ($query) {
-                            $query->where('thumb_direction', 1);
+                    }])
+                    ->withCount([
+                        'placeEvaluations as accessible_count' => function ($query) {
+                            $query->where('evaluation', Evaluation::Accessible->value);
                         },
-                        'placeEvaluations as thumbs_down_count' => function ($query) {
-                            $query->where('thumb_direction', 0);
+                        'placeEvaluations as neutral_count' => function ($query) {
+                            $query->where('evaluation', Evaluation::Neutral->value);
                         },
-                    ])->join('place_evaluations', 'places.id', '=', 'place_evaluations.place_id')
+                        'placeEvaluations as inaccessible_count' => function ($query) {
+                            $query->where('evaluation', Evaluation::Inaccessible->value);
+                        },
+                    ])
+                    ->join('place_evaluations', 'places.id', '=', 'place_evaluations.place_id')
                     ->join('app_users as app_users', 'place_evaluations.app_user_id', '=', 'app_users.id')->distinct()
             );
 
@@ -282,7 +280,7 @@ class PlaceController extends Controller
                 'page'
             )->withQueryString();
 
-            [$totalThumbsUp, $totalThumbsDown] =
+            [$totalAccessible, $totalNeutral, $totalInaccessible] =
                 $this->totalEvaluationsListPlaces($places->items());
 
             $googlePlacesResult = [];
@@ -295,8 +293,9 @@ class PlaceController extends Controller
             }
 
             $result = collect([
-                'total_thumbs_up' => $totalThumbsUp,
-                'total_thumbs_down' => $totalThumbsDown,
+                'total_accessible' => $totalAccessible,
+                'total_neutral' => $totalNeutral,
+                'total_inaccessible' => $totalInaccessible,
             ])->merge([$places->concat($googlePlacesResult)]);
 
             return $this->respondWithResource(new JsonResource($result));
@@ -442,23 +441,26 @@ class PlaceController extends Controller
                 return $this->respondError($validator->errors(), 422);
             }
 
-            $basicRatioQuery = '(select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`thumb_direction` = ?)';
+            $basicRatioQuery = '(select count(*) from `place_evaluations` where `places`.`id` = `place_evaluations`.`place_id` and `place_evaluations`.`deleted_at` is null and `place_evaluations`.`evaluation` = ?)';
 
             $query = $this->queryListPlaces(
                 $request,
                 Place::query()
                     ->select('*')
-                    ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_up_down`", [1, 0, 1])
-                    ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_down_up`", [0, 1, 0])
+                    ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_accessible_inaccessible`", [Evaluation::Accessible->value, Evaluation::Inaccessible->value, Evaluation::Accessible->value])
+                    ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_inaccessible_accessible`", [Evaluation::Inaccessible->value, Evaluation::Accessible->value, Evaluation::Inaccessible->value])
                     ->with('mediaEvaluations', function ($query) {
                         $query->select('file_url', 'file_name');
                     })
                     ->withCount([
-                        'placeEvaluations as thumbs_up_count' => function ($query) {
-                            $query->where('thumb_direction', 1);
+                        'placeEvaluations as accessible_count' => function ($query) {
+                            $query->where('evaluation', Evaluation::Accessible->value);
                         },
-                        'placeEvaluations as thumbs_down_count' => function ($query) {
-                            $query->where('thumb_direction', 0);
+                        'placeEvaluations as neutral_count' => function ($query) {
+                            $query->where('evaluation', Evaluation::Neutral->value);
+                        },
+                        'placeEvaluations as inaccessible_count' => function ($query) {
+                            $query->where('evaluation', Evaluation::Inaccessible->value);
                         },
                     ])
             );
@@ -469,7 +471,7 @@ class PlaceController extends Controller
                 'page'
             )->withQueryString();
 
-            [$totalThumbsUp, $totalThumbsDown] =
+            [$totalAccessible, $totalNeutral, $totalInaccessible] =
                 $this->totalEvaluationsListPlaces($places->items());
 
             if (1 === (int) $request->get('page', 1)) {
@@ -482,8 +484,9 @@ class PlaceController extends Controller
             }
 
             $result = collect([
-                'total_thumbs_up' => $totalThumbsUp,
-                'total_thumbs_down' => $totalThumbsDown,
+                'total_accessible' => $totalAccessible,
+                'total_neutral' => $totalNeutral,
+                'total_inaccessible' => $totalInaccessible,
             ])->merge([$places->concat($googlePlacesResult)]);
 
             return $this->respondWithResource(new JsonResource($result));
@@ -573,18 +576,20 @@ class PlaceController extends Controller
      */
     protected function totalEvaluationsListPlaces(array $places)
     {
-        $totalThumbsUp = $totalThumbsDown = 0;
+        $totalAccessible = $totalNeutral = $totalInaccessible = 0;
 
         collect($places)
             ->each(function (Place $place) use (
-                &$totalThumbsUp,
-                &$totalThumbsDown
+                &$totalAccessible,
+                &$totalNeutral,
+                &$totalInaccessible,
             ) {
-                $totalThumbsUp += $place->thumbs_up_count;
-                $totalThumbsDown += $place->thumbs_down_count;
+                $totalAccessible += $place->accessible_count;
+                $totalNeutral += $place->neutral_count;
+                $totalInaccessible += $place->inaccessible_count;
             });
 
-        return [$totalThumbsUp, $totalThumbsDown];
+        return [$totalAccessible, $totalNeutral, $totalInaccessible];
     }
 
     /**
@@ -657,11 +662,14 @@ class PlaceController extends Controller
                     $query->select('file_url', 'file_type');
                 })
                 ->withCount([
-                    'placeEvaluations as thumbs_up_count' => function ($query) {
-                        $query->where('thumb_direction', 1);
+                    'placeEvaluations as accessible_count' => function ($query) {
+                        $query->where('evaluation', Evaluation::Accessible->value);
                     },
-                    'placeEvaluations as thumbs_down_count' => function ($query) {
-                        $query->where('thumb_direction', 0);
+                    'placeEvaluations as neutral_count' => function ($query) {
+                        $query->where('evaluation', Evaluation::Neutral->value);
+                    },
+                    'placeEvaluations as inaccessible_count' => function ($query) {
+                        $query->where('evaluation', Evaluation::Inaccessible->value);
                     },
                 ])
                 ->first();
@@ -739,15 +747,21 @@ class PlaceController extends Controller
             $place = Place::query()
                 ->select('*')
                 ->where('google_place_id', $id)
+                ->with('placeDeletion')
+                ->with('placeEvaluations')
+                ->with('placeEvaluations.appUser')
                 ->with('mediaEvaluations', function ($query) {
                     $query->select('file_url', 'file_name');
                 })
                 ->withCount([
-                    'placeEvaluations as thumbs_up_count' => function ($query) {
-                        $query->where('thumb_direction', 1);
+                    'placeEvaluations as accessible_count' => function ($query) {
+                        $query->where('evaluation', Evaluation::Accessible->value);
                     },
-                    'placeEvaluations as thumbs_down_count' => function ($query) {
-                        $query->where('thumb_direction', 0);
+                    'placeEvaluations as neutral_count' => function ($query) {
+                        $query->where('evaluation', Evaluation::Neutral->value);
+                    },
+                    'placeEvaluations as inaccessible_count' => function ($query) {
+                        $query->where('evaluation', Evaluation::Inaccessible->value);
                     },
                 ])
                 ->first();
@@ -763,9 +777,7 @@ class PlaceController extends Controller
     }
 
     /**
-     * Creates a new PlaceEvaluation and also a
-     * new Place, in case it does not exist yet
-     * in the database.
+     * Creates a new Place.
      *
      * @OA\Post(
      *     path="/places",
