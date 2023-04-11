@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Place\UpdateEvaluationScore;
+use App\Helper\Evaluation;
 use App\Helper\PlaceEvaluationStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PlaceEvaluationCollection;
@@ -155,7 +157,7 @@ class PlaceEvaluationController extends Controller
                 'email' => 'string|email|nullable',
                 'website' => 'string|url|nullable',
                 'schedule' => 'string|nullable',
-                'thumb_direction' => 'required|boolean',
+                'evaluation' => 'required|in:'.implode(',', Evaluation::values()),
                 'comment' => 'string|min:6|nullable',
                 'questions_answers' => 'nullable',
             ]
@@ -288,12 +290,12 @@ class PlaceEvaluationController extends Controller
      *          type="string",
      *      ),
      *      @OA\Property(
-     *          property="thumb_direction",
+     *          property="evaluation",
      *          type="integer",
      *          minimum=0,
-     *          maximum=1,
-     *          description="Thumb Direction (0 = Thumbs Down, 1 = Thumbs Up)",
-     *          title="Thumb Direction",
+     *          maximum=2,
+     *          description="Evaluation (0 = Inaccessible, 1 = Neutral, 2 = Accessible)",
+     *          title="Evaluation",
      *      ),
      *      @OA\Property(
      *          property="comment",
@@ -376,6 +378,10 @@ class PlaceEvaluationController extends Controller
             $latitude = number_format($request->get('latitude'), 8);
             $longitude = number_format($request->get('longitude'), 8);
 
+            /**
+             * Searches for a place with those coordinates, and if it
+             * does not exist, creates it.
+             */
             $place = Place::query()
                 ->where('latitude', $latitude)
                 ->where('longitude', $longitude)
@@ -398,19 +404,43 @@ class PlaceEvaluationController extends Controller
                 ]));
             }
 
+            /**
+             * Creates the new PlaceEvaluation.
+             *
+             * @var PlaceEvaluation $placeEvaluation
+             */
             $placeEvaluation = PlaceEvaluation::create([
                 ...$request->only([
-                    'thumb_direction', 'comment', 'questions_answers',
+                    'evaluation', 'comment', 'questions_answers',
                 ]),
                 'app_user_id' => $appUser->id,
                 'place_id' => $place->id,
                 'status' => PlaceEvaluationStatus::Accepted->value,
             ]);
 
-            if ($placeEvaluation->thumb_direction === false) {
-                $listResponsibles = CountryResponsible::where('country_iso', $place->country_code)->get()->pluck('email')->toArray();
+            /**
+             * Sets the new evaluation score of the place in question
+             * based on this new evaluation.
+             */
+            $place = (new UpdateEvaluationScore)($place, $placeEvaluation);
+
+            /**
+             * In case the evaluation is negative, send emails
+             * to all responsible people of that place.
+             */
+            if (
+                $placeEvaluation->evaluation
+                    === Evaluation::Inaccessible->value
+            ) {
+                $listResponsibles = CountryResponsible::query()
+                    ->where('country_iso', $place->country_code)
+                    ->get()
+                    ->pluck('email')
+                    ->toArray();
+
                 if (count($listResponsibles) > 0) {
-                    Mail::to($listResponsibles)->send(new NegativeRate($placeEvaluation));
+                    Mail::to($listResponsibles)
+                        ->send(new NegativeRate($placeEvaluation));
                 }
             }
 
@@ -576,8 +606,9 @@ class PlaceEvaluationController extends Controller
             )->withQueryString();
 
             $countThumbDirection = collect([
-                'total_thumbs_up' => (clone $query)->where('thumb_direction', '=', 1)->count(),
-                'total_thumbs_down' => (clone $query)->where('thumb_direction', '=', 0)->count(),
+                'total_accessible' => (clone $query)->where('evaluation', Evaluation::Accessible->value)->count(),
+                'total_neutral' => (clone $query)->where('evaluation', Evaluation::Neutral->value)->count(),
+                'total_inaccessible' => (clone $query)->where('evaluation', Evaluation::Inaccessible->value)->count(),
             ]);
 
             $result = $countThumbDirection->merge(
@@ -761,8 +792,9 @@ class PlaceEvaluationController extends Controller
             }]);
 
         $counts = collect([
-            'total_thumbs_up' => (clone $query)->where('thumb_direction', 1)->count(),
-            'total_thumbs_down' => (clone $query)->where('thumb_direction', 0)->count(),
+            'total_accessible' => (clone $query)->where('evaluation', Evaluation::Accessible->value)->count(),
+            'total_neutral' => (clone $query)->where('evaluation', Evaluation::Neutral->value)->count(),
+            'total_inaccessible' => (clone $query)->where('evaluation', Evaluation::Inaccessible->value)->count(),
             'total_accepted' => (clone $query)->where('status', PlaceEvaluationStatus::Accepted->value)->count(),
             'total_rejected' => (clone $query)->where('status', PlaceEvaluationStatus::Rejected->value)->count(),
             'total_pending' => (clone $query)->where('status', PlaceEvaluationStatus::Pending->value)->count(),
