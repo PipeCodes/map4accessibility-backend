@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PlaceEvaluationResource\Pages;
+use App\Helper\Evaluation;
 use App\Models\PlaceEvaluation;
 use Filament\Forms;
 use Filament\Resources\Form;
@@ -27,7 +28,8 @@ class PlaceEvaluationResource extends Resource
                     ->relationship('appUser', 'email'),
                 Forms\Components\Select::make('place_id')
                 ->relationship('place', 'name'),
-                Forms\Components\Toggle::make('thumb_direction'),
+                Forms\Components\Select::make('evaluation')
+                    ->options(Evaluation::array()),
                 Forms\Components\Textarea::make('comment')
                     ->maxLength(65535),
                 Forms\Components\TextInput::make('questions_answers'),
@@ -42,7 +44,10 @@ class PlaceEvaluationResource extends Resource
                 Tables\Columns\TextColumn::make('appUser.email')->searchable()
                     ->url(fn ($record) => "app-users/{$record->appUser->id}/edit"),
                 Tables\Columns\TextColumn::make('place.name')->searchable(),
-                Tables\Columns\BooleanColumn::make('thumb_direction'),
+                Tables\Columns\TextColumn::make('evaluation')
+                    ->getStateUsing(function ($record) {
+                        return $record->evaluation->name;
+                    }),
                 Tables\Columns\TextColumn::make('comment')->searchable(),
                 Tables\Columns\TextColumn::make('questions_answers')->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
