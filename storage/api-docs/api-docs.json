@@ -1293,13 +1293,13 @@
                         "name": "asc_order_by",
                         "in": "query",
                         "description": "Parameter to sort by ASC",
-                        "example": "thumb_direction"
+                        "example": "evaluation"
                     },
                     {
                         "name": "desc_order_by",
                         "in": "query",
                         "description": "Parameter to sort by DESC",
-                        "example": "thumb_direction"
+                        "example": "evaluation"
                     },
                     {
                         "name": "page",
@@ -1680,7 +1680,7 @@
                     "latitude",
                     "longitude",
                     "name",
-                    "thumb_direction"
+                    "evaluation"
                 ],
                 "properties": {
                     "latitude": {
