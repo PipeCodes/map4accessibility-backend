@@ -17,4 +17,27 @@ enum Evaluation: int
     {
         return array_column(Evaluation::cases(), 'value');
     }
+
+    /**
+     * Returns all cases of this enum as an array
+     * with translated labels.
+     *
+     * @return array
+     */
+    public static function array(): array
+    {
+        $keys = Evaluation::values();
+
+        return array_combine(
+            keys: $keys,
+            values: array_map(function (int $key) {
+                return static::nameOf($key);
+            }, $keys)
+        );
+    }
+
+    public static function nameOf(int $value)
+    {
+        return static::tryFrom($value)->name;
+    }
 }

@@ -194,12 +194,12 @@ class PlaceEvaluationController extends Controller
                 'place_type' => ['string'],
                 'asc_order_by' => [
                     'string',
-                    'in:thumb_direction,comment,created_at,updated_at',
+                    'in:evaluation,comment,created_at,updated_at',
                 ],
                 'desc_order_by' => [
                     'exclude_with:asc_order_by',
                     'string',
-                    'in:thumb_direction,comment,created_at,updated_at',
+                    'in:evaluation,comment,created_at,updated_at',
                 ],
                 'page' => ['integer', 'min:1'],
                 'size' => ['integer', 'min:1'],
@@ -215,7 +215,7 @@ class PlaceEvaluationController extends Controller
      * @OA\Schema(
      *      schema="CreatePlaceEvaluationRequest",
      *      type="object",
-     *      required={"latitude", "longitude", "name", "thumb_direction"},
+     *      required={"latitude", "longitude", "name", "evaluation"},
      *      @OA\Property(
      *          property="latitude",
      *          format="decimal",
@@ -502,13 +502,13 @@ class PlaceEvaluationController extends Controller
      *         in="query",
      *         name="asc_order_by",
      *         description="Parameter to sort by ASC",
-     *         example="thumb_direction"
+     *         example="evaluation"
      *     ),
      *     @OA\Parameter(
      *         in="query",
      *         name="desc_order_by",
      *         description="Parameter to sort by DESC",
-     *         example="thumb_direction"
+     *         example="evaluation"
      *     ),
      *     @OA\Parameter(
      *         in="query",
