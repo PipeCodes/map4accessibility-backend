@@ -28,12 +28,12 @@ class PlaceController extends Controller
         return [
             'asc_order_by' => [
                 'string',
-                'in:thumbs_up_count,thumbs_down_count,ratio_up_down,ratio_down_up,name,country_code,place_type,created_at,updated_at',
+                'in:accessible_count,inaccessible_count,ratio_up_down,ratio_down_up,name,country_code,place_type,created_at,updated_at',
             ],
             'desc_order_by' => [
                 'exclude_with:asc_order_by',
                 'string',
-                'in:thumbs_up_count,thumbs_down_count,ratio_up_down,ratio_down_up,name,country_code,place_type,created_at,updated_at',
+                'in:accessible_count,inaccessible_count,ratio_up_down,ratio_down_up,name,country_code,place_type,created_at,updated_at',
             ],
             'country_code' => [
                 'string',
@@ -568,7 +568,7 @@ class PlaceController extends Controller
     }
 
     /**
-     * Calculates the total of thumbs up and thumbs down
+     * Calculates the total of
      * evaluations that a list of places has.
      *
      * @param  array  $places

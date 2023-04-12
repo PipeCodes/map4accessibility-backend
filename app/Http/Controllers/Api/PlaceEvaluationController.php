@@ -605,13 +605,13 @@ class PlaceEvaluationController extends Controller
                 'page'
             )->withQueryString();
 
-            $countThumbDirection = collect([
+            $countEvaluations = collect([
                 'total_accessible' => (clone $query)->where('evaluation', Evaluation::Accessible->value)->count(),
                 'total_neutral' => (clone $query)->where('evaluation', Evaluation::Neutral->value)->count(),
                 'total_inaccessible' => (clone $query)->where('evaluation', Evaluation::Inaccessible->value)->count(),
             ]);
 
-            $result = $countThumbDirection->merge(
+            $result = $countEvaluations->merge(
                 $query->paginate(
                     $request->get('size', 20),
                     ['*'],

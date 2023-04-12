@@ -61,7 +61,10 @@ class RateSettingsController extends Controller
     public function getPlaceRateSettings()
     {
         try {
-            $questions = RateQuestion::with('answers')->get();
+            $questions = RateQuestion::with('answers')
+                ->orderBy('question_type')
+                ->get();
+
             $countryResponsibles = CountryResponsible::all();
 
             return $this->respondWithResource(
