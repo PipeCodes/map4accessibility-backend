@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helper\QuestionType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -27,7 +28,11 @@ class RateQuestion extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id', 'slug', 'title', 'place_type',
+        'id', 'slug', 'title', 'place_type', 'question_type',
+    ];
+
+    protected $casts = [
+        'question_type' => QuestionType::class,
     ];
 
     /**

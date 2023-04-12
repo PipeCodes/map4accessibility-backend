@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire;
 
+use App\Helper\PlaceType;
+use App\Helper\QuestionType;
 use App\Models\RateAnswer;
 use App\Models\RateQuestion;
 use Closure;
@@ -43,25 +45,27 @@ class RateQuestionForm extends Component implements HasForms
         return [
             Repeater::make('questions')
                 ->schema([
+                    TextInput::make('title')
+                        ->required()
+                        ->label('Question Title')
+                        ->placeholder('Question Title')
+                        ->reactive()
+                        ->afterStateUpdated(function (Closure $set, $state) {
+                            $set('slug', Str::slug($state));
+                        }),
+                    TextInput::make('slug')
+                        ->hidden(),
                     Grid::make(2)->schema([
-                        TextInput::make('title')
+                        Select::make('question_type')
                             ->required()
-                            ->label('Question Title')
-                            ->placeholder('Question Title')
-                            ->reactive()
-                            ->afterStateUpdated(function (Closure $set, $state) {
-                                $set('slug', Str::slug($state));
-                            }),
-                        TextInput::make('slug')
-                            ->hidden(),
+                            ->label('Question Type')
+                            ->options(QuestionType::array()),
                         Select::make('place_type')
                             ->required()
                             ->label('Place Type')
-                            ->options([
-                                'type1' => 'Type 1',
-                                'type2' => 'Type 2',
-                                'type3' => 'Type 3',
-                            ]),
+                            ->options(PlaceType::array())
+                            ->default(PlaceType::Google->value)
+                            ->disabled(),
                     ]),
                     Repeater::make('answers')
                         ->schema([
@@ -181,6 +185,7 @@ class RateQuestionForm extends Component implements HasForms
                             'title' => $question['title'],
                             'slug' => $question['slug'],
                             'place_type' => $question['place_type'],
+                            'question_type' => $question['question_type'],
                         ]);
                 } catch (\Throwable $th) {
                     Notification::make()
