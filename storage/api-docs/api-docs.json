@@ -2283,6 +2283,11 @@
                         "type": "string",
                         "example": "type3"
                     },
+                    "is_mandatory": {
+                        "title": "is_mandatory",
+                        "type": "boolean",
+                        "example": "true"
+                    },
                     "created_at": {
                         "title": "created_at",
                         "type": "dateTime",
