@@ -250,12 +250,9 @@ class PlaceController extends Controller
                 $request,
                 Place::query()
                     ->select('places.*')
-                    ->selectRaw('app_users.id as app_user_id , app_users.name as app_user_name,
-                        app_users.surname as app_user_surname, app_users.email as app_user_email,
-                        app_users.birthdate as app_user_birthdate, app_users.disabilities as app_user_disabilities,
-                        app_users.avatar as app_user_avatar')
                     ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_accessible_inaccessible`", [Evaluation::Accessible->value, Evaluation::Inaccessible->value, Evaluation::Accessible->value])
                     ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_inaccessible_accessible`", [Evaluation::Inaccessible->value, Evaluation::Accessible->value, Evaluation::Inaccessible->value])
+                    ->with('placeEvaluations.appUser')
                     ->with(['mediaEvaluations' => function ($query) {
                         $query->select('file_url', 'file_name');
                     }])
@@ -270,8 +267,6 @@ class PlaceController extends Controller
                             $query->where('evaluation', Evaluation::Inaccessible->value);
                         },
                     ])
-                    ->join('place_evaluations', 'places.id', '=', 'place_evaluations.place_id')
-                    ->join('app_users as app_users', 'place_evaluations.app_user_id', '=', 'app_users.id')->distinct()
             );
 
             $places = $query->paginate(
