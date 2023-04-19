@@ -528,7 +528,7 @@ class PlaceController extends Controller
             $request->has('country_code') &&
             $request->get('country_code') !== ''
         ) {
-            $query->where('country_code', $request->get('country_code'));
+            $query->where('places.country_code', $request->get('country_code'));
         }
 
         if (
@@ -536,7 +536,7 @@ class PlaceController extends Controller
             $request->get('name') !== ''
         ) {
             $query->where(
-                'name', 'like', '%'.$request->get('name').'%'
+                'places.name', 'like', '%'.$request->get('name').'%'
             );
         }
 
@@ -545,7 +545,7 @@ class PlaceController extends Controller
             $request->get('place_type') !== ''
         ) {
             $query->where(
-                'place_type', 'like', '%'.$request->get('place_type').'%'
+                'places.place_type', 'like', '%'.$request->get('place_type').'%'
             );
         }
 
