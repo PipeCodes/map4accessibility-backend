@@ -547,6 +547,7 @@ class PlaceController extends Controller
             $request->has('disabilities') &&
             $request->get('disabilities') !== ''
         ) {
+            $query->with('creator');
             $query->whereHas('creator', function ($subQuery) use ($request) {
                 $subQuery->where('disabilities', 'like', '%'.$request->get('disabilities').'%');
             });
