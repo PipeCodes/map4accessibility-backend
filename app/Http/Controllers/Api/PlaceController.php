@@ -252,7 +252,6 @@ class PlaceController extends Controller
                     ->select('places.*')
                     ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_accessible_inaccessible`", [Evaluation::Accessible->value, Evaluation::Inaccessible->value, Evaluation::Accessible->value])
                     ->selectRaw("ifnull($basicRatioQuery / $basicRatioQuery, $basicRatioQuery / 1) as `ratio_inaccessible_accessible`", [Evaluation::Inaccessible->value, Evaluation::Accessible->value, Evaluation::Inaccessible->value])
-                    ->with('placeEvaluations.appUser')
                     ->with(['mediaEvaluations' => function ($query) {
                         $query->select('file_url', 'file_name');
                     }])
@@ -548,9 +547,9 @@ class PlaceController extends Controller
             $request->has('disabilities') &&
             $request->get('disabilities') !== ''
         ) {
-            $query->where(
-                'app_users.disabilities', 'like', '%'.$request->get('disabilities').'%'
-            );
+            $query->whereHas('creator', function ($subQuery) use ($request) {
+                $subQuery->where('disabilities', 'like', '%'.$request->get('disabilities').'%');
+            });
         }
 
         if ($request->has('asc_order_by')) {

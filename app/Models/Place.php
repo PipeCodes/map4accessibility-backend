@@ -167,4 +167,12 @@ class Place extends Model
             'id'
         );
     }
+
+    public function creator()
+    {
+        return $this
+            ->belongsToMany(AppUser::class, 'place_evaluations')
+            ->oldest()
+            ->take(1);
+    }
 }
