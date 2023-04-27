@@ -30,10 +30,10 @@ class PlaceEvaluationResource extends Resource
                 ->relationship('place', 'name'),
                 Forms\Components\Select::make('evaluation')
                     ->options(Evaluation::array()),
-                Forms\Components\Textarea::make('comment')
-                    ->maxLength(65535),
-                Forms\Components\TextInput::make('questions_answers'),
                 Forms\Components\TextInput::make('media_url'),
+                Forms\Components\Textarea::make('comment')
+                    ->columnSpan(2)
+                    ->maxLength(65535),
             ]);
     }
 
@@ -49,7 +49,10 @@ class PlaceEvaluationResource extends Resource
                         return $record->evaluation->name;
                     }),
                 Tables\Columns\TextColumn::make('comment')->searchable(),
-                Tables\Columns\TextColumn::make('questions_answers')->searchable(),
+                Tables\Columns\TextColumn::make('questions_answers')
+                    ->getStateUsing(function ($record) {
+                        return count($record->questions_answers ?? []).' questions answered';
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
@@ -76,6 +79,13 @@ class PlaceEvaluationResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            AppUserResource\Widgets\AppUserComments::class,
         ];
     }
 
