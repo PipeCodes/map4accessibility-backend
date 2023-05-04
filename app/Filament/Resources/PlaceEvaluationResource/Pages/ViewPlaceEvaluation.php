@@ -13,4 +13,11 @@ class ViewPlaceEvaluation extends ViewRecord
     {
         return [];
     }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            PlaceEvaluationResource\Widgets\QuestionsAnswers::class,
+        ];
+    }
 }
