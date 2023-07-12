@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PlaceEvaluationResource\Pages;
+use App\Helper\Country;
 use App\Helper\Evaluation;
 use App\Models\PlaceEvaluation;
 use Filament\Forms;
@@ -40,6 +41,12 @@ class PlaceEvaluationResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $countryCases = Country::cases();
+        $countries = array_combine(
+            keys: array_column($countryCases, 'value'),
+            values: array_map(fn ($c) => $c->getLabel(), $countryCases)
+        );
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('appUser.email')->searchable()
@@ -62,6 +69,7 @@ class PlaceEvaluationResource extends Resource
             ->filters([
                 SelectFilter::make('appUser')->relationship('appUser', 'email'),
                 SelectFilter::make('place')->relationship('place', 'name'),
+                SelectFilter::make('country_code')->options($countries),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
