@@ -52,6 +52,8 @@ class PlaceEvaluationResource extends Resource
                 Tables\Columns\TextColumn::make('appUser.email')->searchable()
                     ->url(fn ($record) => "app-users/{$record->appUser->id}/edit"),
                 Tables\Columns\TextColumn::make('place.name')->searchable(),
+                Tables\Columns\TextColumn::make('place.latitude'),
+                Tables\Columns\TextColumn::make('place.longitude'),
                 Tables\Columns\TextColumn::make('evaluation')
                     ->getStateUsing(function ($record) {
                         return $record->evaluation->name;
