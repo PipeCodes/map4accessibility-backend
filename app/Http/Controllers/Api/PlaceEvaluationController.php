@@ -166,6 +166,23 @@ class PlaceEvaluationController extends Controller
 
     /**
      * Returns the validator for the endpoint
+     * that is used to delete a Place Evaluation.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Validation\Validator
+     */
+    protected function validatorDeletePlaceEvaluation(Request $request)
+    {
+        return Validator::make(
+            $request->all(),
+            [
+                'commentId' => ['required'],
+            ]
+        );
+    }
+
+    /**
+     * Returns the validator for the endpoint
      * that lists place evaluations.
      *
      * @param  Request  $request
@@ -443,6 +460,104 @@ class PlaceEvaluationController extends Controller
                         ->send(new NegativeRate($placeEvaluation));
                 }
             }
+
+            return $this->respondWithResource(
+                new JsonResource($placeEvaluation->load(['appUser', 'place']))
+            );
+        } catch (\Throwable $th) {
+            return $this->respondInternalError($th->getMessage());
+        }
+    }
+
+
+    /**
+     * Deletes a PlaceEvaluation
+     *
+     * @OA\Schema(
+     *      schema="DeletePlaceEvaluationRequest",
+     *      type="object",
+     *      required={"commentId"},
+     *      @OA\Property(
+     *          property="commentId",
+     *          format="decimal",
+     *          description="Place Evaluation Id",
+     *          title="Place Evaluation Id",
+     *      ),
+     *)
+     *
+     * @OA\Delete(
+     *     path="/place-evaluations",
+     *     tags={"PlaceEvaluation"},
+     *     summary="Delete a Place Evaluation by AppUser AUTH TOKEN",
+     *     description="Delete a Place Evaluation by AppUser AUTH TOKEN",
+     *     operationId="placeEvaluationByAuthenticated",
+     *     @OA\RequestBody(
+     *          @OA\JsonContent(
+     *             ref="#/components/schemas/DeletePlaceEvaluationRequest"
+     *         )
+     *     ),
+     *      @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *         @OA\Header(
+     *             header="X-Rate-Limit",
+     *             description="calls per hour allowed by the user",
+     *             @OA\Schema(
+     *                 type="integer",
+     *                 format="int32"
+     *             )
+     *         ),
+     *         @OA\Header(
+     *             header="X-Expires-After",
+     *             description="date in UTC when token expires",
+     *             @OA\Schema(
+     *                 type="string",
+     *                 format="datetime"
+     *             )
+     *         ),
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
+     *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
+     *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/PlaceEvaluation"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Invalid username/password supplied"
+     *     ),
+     *     @OA\Response(
+     *          response=400,
+     *          description="Internal error"
+     *     ),
+     * )
+     *
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function deletePlaceEvaluation(Request $request)
+    {
+        try {
+            $validator = $this->validatorDeletePlaceEvaluation($request);
+
+            if ($validator->fails()) {
+                return $this->respondError($validator->errors(), 422);
+            }
+
+            $appUser = auth()->user();
+            if (!$appUser) {
+                return $this->respondNotFound();
+            }
+
+            /**
+             * Deletes the PlaceEvaluation.
+             *
+             * @var PlaceEvaluation $placeEvaluation
+             */
+
+            PlaceEvaluation::where('id', $request->commentId)
+                ->where('app_user_id', $appUser->id)
+                ->delete();
 
             return $this->respondWithResource(
                 new JsonResource($placeEvaluation->load(['appUser', 'place']))
