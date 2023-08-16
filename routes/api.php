@@ -66,6 +66,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('place-evaluations')->group(function () {
             Route::get('/', [PlaceEvaluationController::class, 'listPlaceEvaluations']);
             Route::post('/', [PlaceEvaluationController::class, 'createPlaceEvaluation']);
+            Route::delete('/', [PlaceEvaluationController::class, 'deletePlaceEvaluation']);
             Route::post('/{placeEvaluationId}/media', [PlaceEvaluationController::class, 'attachMediaPlaceEvaluationByAuthenticated']);
         });
 
