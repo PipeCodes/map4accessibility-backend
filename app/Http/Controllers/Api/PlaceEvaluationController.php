@@ -559,9 +559,7 @@ class PlaceEvaluationController extends Controller
                 ->where('app_user_id', $appUser->id)
                 ->delete();
 
-            return $this->respondWithResource(
-                new JsonResource($placeEvaluation->load(['appUser', 'place']))
-            );
+            return $this->respondSuccess('place evaluation deleted');
         } catch (\Throwable $th) {
             return $this->respondInternalError($th->getMessage());
         }
