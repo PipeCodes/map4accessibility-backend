@@ -23,17 +23,21 @@ class FaqController extends Controller
      *  tags={"FAQ's"},
      *  summary="Get list of FAQs",
      *  description="Returns list of FAQs",
+     *
      *  @OA\Parameter(
      *      name="Accept-Language",
      *      in="header",
      *      required=true,
      *      description="Set language parameter",
+     *
      *      @OA\Schema(
      *         type="string",
      *         example="en",
      *      )
      *  ),
+     *
      *  @OA\Response(response=200, description="Successful operation",
+     *
      *    @OA\JsonContent(ref="#/components/schemas/FAQs"),
      *  ),
      * )

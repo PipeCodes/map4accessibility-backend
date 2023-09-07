@@ -27,6 +27,7 @@ class AuthController extends Controller
      * @OA\Schema(
      *     schema="requestLoginObject",
      *     type="object",
+     *
      *     @OA\Property(property="email", format="email"),
      *     @OA\Property(property="password")
      * )
@@ -40,34 +41,43 @@ class AuthController extends Controller
      *     security={
      *          {"api_key_security": {}}
      *      },
+     *
      *     @OA\RequestBody(
      *         description=" object",
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/requestLoginObject")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -97,7 +107,7 @@ class AuthController extends Controller
 
             if (! $user || ! Hash::check($request->password, $user->password)) {
                 return $this->respondUnAuthorized();
-            } elseif (! $user->accountStatus || 'active' !== $user->accountStatus->slug) {
+            } elseif (! $user->accountStatus || $user->accountStatus->slug !== 'active') {
                 // Only AppUsers with confirmed email can login
                 return $this->respondUnAuthorized(__('validation.appusers_confirmed_email'));
             }
@@ -118,6 +128,7 @@ class AuthController extends Controller
      * @OA\Schema(
      *     schema="requestLoginByProviderObject",
      *     type="object",
+     *
      *     @OA\Property(property="email", format="email"),
      *     @OA\Property(property="auth_type", example="facebook"),
      *     @OA\Property(type="string", property="auth_code", example="123")
@@ -132,34 +143,43 @@ class AuthController extends Controller
      *     security={
      *          {"api_key_security": {}}
      *      },
+     *
      *     @OA\RequestBody(
      *         description=" object",
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/requestLoginByProviderObject")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid provider data supplied"
@@ -210,6 +230,7 @@ class AuthController extends Controller
      * @OA\Schema(
      *     schema="requestpasswordRecoverObject",
      *     type="object",
+     *
      *     @OA\Property(property="email", format="email")
      * )
      *
@@ -222,34 +243,43 @@ class AuthController extends Controller
      *     security={
      *          {"api_key_security": {}}
      *      },
+     *
      *     @OA\RequestBody(
      *         description=" object",
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/requestpasswordRecoverObject")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid API KEY supplied"
@@ -289,6 +319,7 @@ class AuthController extends Controller
      * @OA\Schema(
      *     schema="resetPasswordRequest",
      *     type="object",
+     *
      *     @OA\Property(property="token"),
      *     @OA\Property(property="email", format="email"),
      *     @OA\Property(property="password"),
@@ -304,34 +335,43 @@ class AuthController extends Controller
      *     security={
      *          {"api_key_security": {}}
      *      },
+     *
      *     @OA\RequestBody(
      *         description=" object",
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/resetPasswordRequest")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid API KEY supplied"
@@ -397,6 +437,7 @@ class AuthController extends Controller
      * @OA\Schema(
      *     schema="requestCheckEmailObject",
      *     type="object",
+     *
      *     @OA\Property(property="email", format="email")
      * )
      *
@@ -409,34 +450,43 @@ class AuthController extends Controller
      *     security={
      *          {"api_key_security": {}}
      *      },
+     *
      *     @OA\RequestBody(
      *         description=" object",
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/requestCheckEmailObject")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=409,
      *          description="Duplicate content"
@@ -481,34 +531,43 @@ class AuthController extends Controller
      *     security={
      *          {"api_key_security": {}}
      *      },
+     *
      *     @OA\RequestBody(
      *         description="Create AppUser object",
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/AppUser")
      *     ),
+     *
      *      @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -589,6 +648,7 @@ class AuthController extends Controller
      * @OA\Schema(
      *     schema="AppUserUpdateRequest",
      *     type="object",
+     *
      *     @OA\Property(
      *         property="name",
      *         description="Name",
@@ -620,34 +680,43 @@ class AuthController extends Controller
      *     summary="Update AppUser",
      *     description="",
      *     operationId="update",
+     *
      *     @OA\RequestBody(
      *         description="Update the AppUser's profile",
      *         required=true,
+     *
      *         @OA\JsonContent(ref="#/components/schemas/AppUserUpdateRequest")
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -728,27 +797,34 @@ class AuthController extends Controller
      *     summary="Get AppUser Data",
      *     description="",
      *     operationId="getAuthenticated",
+     *
      *      @OA\Response(
      *         response=200,
      *         description="successful get data",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(ref="#/components/schemas/AppUser")
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"

@@ -13,10 +13,10 @@ use Spatie\Permission\Traits\HasRoles;
  *
  * @author  Miguel Fortes <miguel.fortes@pipecodes.com>
  *
- *
  * @OA\Schema(
  *  schema="AppUser",
  * type="object",
+ *
  *   @OA\Property(
  *     readOnly=1,
  *     property="id",
@@ -57,9 +57,11 @@ use Spatie\Permission\Traits\HasRoles;
  *     description="Disabilities",
  *     title="Disabilities",
  *     type="array",
+ *
  *     @OA\Items(type="string"),
  *     example={"visual", "motor"}
  * ),
+ *
  * @OA\Property(
  *     property="terms_accepted",
  *     type="bool",
@@ -78,7 +80,7 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class AppUser extends Authenticatable
 {
-    use HasApiTokens, Notifiable, HasRoles;
+    use HasApiTokens, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.

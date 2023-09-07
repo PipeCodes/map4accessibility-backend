@@ -10,10 +10,6 @@ class UpdateEvaluationScore
 {
     /**
      * Calculates and updates, via a formula, the evaluation score a Place.
-     *
-     * @param  Place  $place
-     * @param  PlaceEvaluation  $evaluation
-     * @return Place
      */
     public function __invoke(Place $place, PlaceEvaluation $evaluation): Place
     {

@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  *   description="FAQ model",
  *   title="FAQ Object",
  *   required={},
+ *
  *   @OA\Property(type="integer",description="id of Book",title="id",property="id",example="1",readOnly="true"),
  *   @OA\Property(type="string",title="question",property="question",example="Is this a question?"),
  *   @OA\Property(type="string",title="answer",property="answer",example="This is an answer!"),
@@ -23,10 +24,12 @@ use Illuminate\Database\Eloquent\Model;
  * @OA\Schema(
  *   schema="FAQs",
  *   title="FAQ Response",
+ *
  *   @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
  *   @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
  *   @OA\Property(title="result",property="result",type="object",
  *      @OA\Property(title="data",property="data",type="array",
+ *
  *          @OA\Items(type="object",ref="#/components/schemas/FAQ"),
  *      )
  *   )
@@ -46,7 +49,7 @@ class Faq extends Model
     public static function faqs(?string $locale = 'en')
     {
         return static::where('locale', $locale ? strtolower($locale) : 'en')
-                    ->orderBy('order')
-                    ->get();
+            ->orderBy('order')
+            ->get();
     }
 }

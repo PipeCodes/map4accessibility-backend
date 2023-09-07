@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  *  *  @OA\Schema(
  *      schema="PlaceDeletion",
  *      type="object",
+ *
  *      @OA\Property(
  *          property="place_id",
  *          description="Place id",
@@ -86,8 +87,6 @@ class PlaceDeletion extends Model
      * Closes the Place Deletion.
      * Returns false if the action of closing the deletion
      * is not at the proper stage, i.e., the status is not Pending.
-     *
-     * @return PlaceDeletion|bool
      */
     public function close(): PlaceDeletion|bool
     {
@@ -104,8 +103,6 @@ class PlaceDeletion extends Model
 
     /**
      * Returns the Place for which this deletion belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function place(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
@@ -114,8 +111,6 @@ class PlaceDeletion extends Model
 
     /**
      * Returns the AppUser for which this deletion belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function appUser(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {

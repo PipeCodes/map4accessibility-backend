@@ -14,10 +14,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @author  Miguel Fortes <miguel.fortes@pipecodes.com>
  *
- *
  * @OA\Schema(
  *      schema="PlaceEvaluation",
  *      type="object",
+ *
  *      @OA\Property(
  *          readOnly=1,
  *          property="id",
@@ -121,8 +121,6 @@ class PlaceEvaluation extends Model
 
     /**
      * Get the media from cloud.
-     *
-     * @return Attribute
      */
     protected function mediaUrl(): Attribute
     {

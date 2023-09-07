@@ -23,18 +23,23 @@ class LegalTextController extends Controller
      *  tags={"Legal Texts"},
      *  summary="Get a legal text",
      *  description="Returns a legal text",
+     *
      *  @OA\Parameter(
      *      name="Accept-Language",
      *      in="header",
      *      required=true,
      *      description="Set language parameter",
+     *
      *      @OA\Schema(
      *         type="string",
      *         example="en",
      *      )
      *  ),
+     *
      *  @OA\Parameter(ref="#/components/parameters/LegalText--type"),
+     *
      *  @OA\Response(response=200, description="Successful operation",
+     *
      *    @OA\JsonContent(ref="#/components/schemas/LegalText"),
      *  ),
      * )

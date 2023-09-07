@@ -22,7 +22,6 @@ class EmailConfirmation extends Mailable implements ShouldQueue
     /**
      * Create a new message instance.
      *
-     * @param  \App\Models\appUser  $user
      * @return void
      */
     public function __construct(appUser $user)

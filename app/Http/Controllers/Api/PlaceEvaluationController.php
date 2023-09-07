@@ -33,11 +33,16 @@ class PlaceEvaluationController extends Controller
      *     summary="upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
      *     description="upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
      *     operationId="attachMediaPlaceEvaluationByAuthenticated",
+     *
      *     @OA\Parameter(in="path", name="placeEvaluationId",required=true),
+     *
      *     @OA\RequestBody(
+     *
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
+     *
      *             @OA\Schema(
+     *
      *                  @OA\Property(
      *                      property="media",
      *                      type="string",
@@ -46,29 +51,36 @@ class PlaceEvaluationController extends Controller
      *             )
      *         )
      *     ),
+     *
      *      @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -137,7 +149,6 @@ class PlaceEvaluationController extends Controller
      * Returns the validator for the endpoint
      * that is used to create a new Place Evaluation.
      *
-     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorCreatePlaceEvaluation(Request $request)
@@ -168,7 +179,6 @@ class PlaceEvaluationController extends Controller
      * Returns the validator for the endpoint
      * that is used to delete a Place Evaluation.
      *
-     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorDeletePlaceEvaluation(Request $request)
@@ -185,7 +195,6 @@ class PlaceEvaluationController extends Controller
      * Returns the validator for the endpoint
      * that lists place evaluations.
      *
-     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorListPlaceEvaluationsByRadiusRequest(
@@ -233,6 +242,7 @@ class PlaceEvaluationController extends Controller
      *      schema="CreatePlaceEvaluationRequest",
      *      type="object",
      *      required={"latitude", "longitude", "name", "evaluation"},
+     *
      *      @OA\Property(
      *          property="latitude",
      *          format="decimal",
@@ -334,37 +344,47 @@ class PlaceEvaluationController extends Controller
      *     summary="Create Place Evaluation by AppUser AUTH TOKEN",
      *     description="Create Place Evaluation by AppUser AUTH TOKEN",
      *     operationId="placeEvaluationByAuthenticated",
+     *
      *     @OA\RequestBody(
+     *
      *          @OA\JsonContent(
      *             ref="#/components/schemas/CreatePlaceEvaluationRequest"
      *         )
      *     ),
+     *
      *      @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/PlaceEvaluation"),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -375,7 +395,6 @@ class PlaceEvaluationController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
      * @return JsonResponse
      */
     public function createPlaceEvaluation(Request $request)
@@ -476,6 +495,7 @@ class PlaceEvaluationController extends Controller
      *      schema="DeletePlaceEvaluationRequest",
      *      type="object",
      *      required={"commentId"},
+     *
      *      @OA\Property(
      *          property="commentId",
      *          format="decimal",
@@ -490,37 +510,47 @@ class PlaceEvaluationController extends Controller
      *     summary="Delete a Place Evaluation by AppUser AUTH TOKEN",
      *     description="Delete a Place Evaluation by AppUser AUTH TOKEN",
      *     operationId="placeEvaluationByAuthenticated",
+     *
      *     @OA\RequestBody(
+     *
      *          @OA\JsonContent(
      *             ref="#/components/schemas/DeletePlaceEvaluationRequest"
      *         )
      *     ),
+     *
      *      @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/PlaceEvaluation"),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -531,7 +561,6 @@ class PlaceEvaluationController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
      * @return JsonResponse
      */
     public function deletePlaceEvaluation(Request $request)
@@ -573,6 +602,7 @@ class PlaceEvaluationController extends Controller
      *     summary="filter for evaluations for the given google_place_id OR coords, place",
      *     description="filter for evaluations for the given google_place_id OR coords, place",
      *     operationId="placeEvaluations",
+     *
      *     @OA\Parameter(
      *         in="query",
      *         name="latitude",
@@ -633,17 +663,22 @@ class PlaceEvaluationController extends Controller
      *         description="Quantity of comments to return",
      *         example="10"
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",
      *                 @OA\Property(title="data",property="data",type="array",
+     *
      *                     @OA\Items(type="object",ref="#/components/schemas/PlaceEvaluation")
      *                 ),
+     *
      *                 @OA\Property(title="links",property="links",type="object",
      *                     @OA\Property(
      *                         property="first",
@@ -677,6 +712,7 @@ class PlaceEvaluationController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -739,13 +775,12 @@ class PlaceEvaluationController extends Controller
     }
 
     /**
-     * @param  Request  $request
      * @param  Request|null  $request
      * @return Builder
      */
     protected function queryListPlaceEvaluation(
         Request $request,
-        ?Builder $query = null
+        Builder $query = null
     ) {
         $query = $query ?: PlaceEvaluation::query()->select('*');
 
@@ -811,6 +846,7 @@ class PlaceEvaluationController extends Controller
      *     summary="Lists all place evaluations made by the app user that is currently logged in.",
      *     description="Lists all place evaluations made by the app user that is currently logged in.",
      *     operationId="placeEvaluationsByAppUser",
+     *
      *     @OA\Parameter(
      *         in="query",
      *         name="page",
@@ -823,17 +859,22 @@ class PlaceEvaluationController extends Controller
      *         description="Quantity of comments to return",
      *         example="10"
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",
      *                 @OA\Property(title="data",property="data",type="array",
+     *
      *                     @OA\Items(type="object",ref="#/components/schemas/PlaceEvaluation")
      *                 ),
+     *
      *                 @OA\Property(title="links",property="links",type="object",
      *                     @OA\Property(
      *                         property="first",
@@ -867,6 +908,7 @@ class PlaceEvaluationController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"

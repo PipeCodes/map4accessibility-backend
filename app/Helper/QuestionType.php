@@ -9,8 +9,6 @@ enum QuestionType: string
 
     /**
      * Returns all values in a simple array.
-     *
-     * @return array
      */
     public static function values(): array
     {
@@ -19,8 +17,6 @@ enum QuestionType: string
 
     /**
      * Returns all names in a simple array.
-     *
-     * @return array
      */
     public static function names(): array
     {
@@ -30,8 +26,6 @@ enum QuestionType: string
     /**
      * Returns all cases of this enum as an array
      * with translated labels.
-     *
-     * @return array
      */
     public static function array(): array
     {
