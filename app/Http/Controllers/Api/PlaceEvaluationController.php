@@ -469,7 +469,6 @@ class PlaceEvaluationController extends Controller
         }
     }
 
-
     /**
      * Deletes a PlaceEvaluation
      *
@@ -545,7 +544,7 @@ class PlaceEvaluationController extends Controller
             }
 
             $appUser = auth()->user();
-            if (!$appUser) {
+            if (! $appUser) {
                 return $this->respondNotFound();
             }
 
@@ -554,7 +553,6 @@ class PlaceEvaluationController extends Controller
              *
              * @var PlaceEvaluation $placeEvaluation
              */
-
             PlaceEvaluation::where('id', $request->commentId)
                 ->where('app_user_id', $appUser->id)
                 ->delete();

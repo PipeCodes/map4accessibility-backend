@@ -71,7 +71,15 @@ class PlaceEvaluationResource extends Resource
             ->filters([
                 SelectFilter::make('appUser')->relationship('appUser', 'email'),
                 SelectFilter::make('place')->relationship('place', 'name'),
-                SelectFilter::make('country_code')->options($countries),
+                SelectFilter::make('country_code')->options($countries)->query(function (Builder $query, array $data): Builder {
+                    if (isset($data['value'])) {
+                        return $query->whereHas('place', function ($query) use ($data) {
+                            $query->where('country_code', '=', $data['value']);
+                        });
+                    }
+
+                    return $query;
+                }),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
