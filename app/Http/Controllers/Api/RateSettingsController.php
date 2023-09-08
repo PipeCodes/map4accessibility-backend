@@ -24,17 +24,21 @@ class RateSettingsController extends Controller
      *  tags={"Settings"},
      *  summary="Get the settings for the place rating",
      *  description="Returns the settings for the place rating",
+     *
      *  @OA\Parameter(
      *      name="Accept-Language",
      *      in="header",
      *      required=true,
      *      description="Set language parameter",
+     *
      *      @OA\Schema(
      *         type="string",
      *         example="en",
      *      )
      *  ),
+     *
      *  @OA\Response(response=200, description="Successful operation",
+     *
      *    @OA\JsonContent(ref="#/components/schemas/PlaceRateSettingsResponse"),
      *  ),
      * )
@@ -42,13 +46,17 @@ class RateSettingsController extends Controller
      * @OA\Schema(
      *   schema="PlaceRateSettingsResponse",
      *   title="Place Rate Settings Response",
+     *
      *   @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *   @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *   @OA\Property(title="result",property="result",type="object",
      *      @OA\Property(title="questions",property="questions",type="array",
+     *
      *          @OA\Items(type="object",ref="#/components/schemas/RateQuestion")
      *      ),
+     *
      *      @OA\Property(title="country_responsibles",property="country_responsibles",type="array",
+     *
      *          @OA\Items(type="object",ref="#/components/schemas/CountryResponsible")
      *      ),
      *   )

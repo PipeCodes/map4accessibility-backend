@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  *   description="Rate Answer model",
  *   title="Rate Answer Object",
  *   required={},
+ *
  *   @OA\Property(type="integer",description="Answers's ID",title="id",property="id",example="1",readOnly="true"),
  *   @OA\Property(type="integer",description="Answers's Question ID",title="rate_question_id",property="rate_question_id",example="1",readOnly="true"),
  *   @OA\Property(type="integer",description="Answer's placement order",title="order",property="order",example="1",readOnly="true"),

@@ -32,17 +32,17 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::get('email-confirmation/{tokenEmailConfirmation}', [VerifyEmailAppUserController::class, 'changeStatus'])
-        ->name('emailConfirmation');
+    ->name('emailConfirmation');
 Route::get('email-confirmation/resend/{email}', [VerifyEmailAppUserController::class, 'emailConfirmationResend'])
     ->name('email-confirmation.resend');
 
 Route::middleware('auth')->group(function () {
     Route::get('verify-email', [EmailVerificationPromptController::class, '__invoke'])
-                ->name('verification.notice');
+        ->name('verification.notice');
 
     Route::get('verify-email/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-                ->middleware(['signed', 'throttle:6,1'])
-                ->name('verification.verify');
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
 
     Route::post('email/verification-notification', [EmailVerificationNotificationController::class, 'store'])
         ->middleware('throttle:6,1')

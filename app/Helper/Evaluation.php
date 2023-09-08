@@ -10,8 +10,6 @@ enum Evaluation: int
 
     /**
      * Returns all values in a simple array.
-     *
-     * @return array
      */
     public static function values(): array
     {
@@ -21,8 +19,6 @@ enum Evaluation: int
     /**
      * Returns all cases of this enum as an array
      * with translated labels.
-     *
-     * @return array
      */
     public static function array(): array
     {
@@ -38,6 +34,6 @@ enum Evaluation: int
 
     public static function nameOf(int $value)
     {
-        return static::tryFrom($value)->name;
+        return self::tryFrom($value)->name;
     }
 }

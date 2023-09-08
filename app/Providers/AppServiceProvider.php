@@ -40,7 +40,7 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend(
             rule: 'older_than',
             extension: fn ($attribute, $value, $parameters) => Carbon::now()
-                    ->diff(new Carbon($value))
+                ->diff(new Carbon($value))
                     ->y >= (int) $parameters[0],
         );
 
@@ -55,7 +55,7 @@ class AppServiceProvider extends ServiceProvider
         Validator::extend(
             rule: 'younger_than',
             extension: fn ($attribute, $value, $parameters) => Carbon::now()
-                    ->diff(new Carbon($value))
+                ->diff(new Carbon($value))
                     ->y < (int) $parameters[0],
         );
 

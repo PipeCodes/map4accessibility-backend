@@ -29,7 +29,6 @@ class PasswordReset extends Mailable implements ShouldQueue
     /**
      * Create a new message instance.
      *
-     * @param  \App\Models\AppUser  $user
      * @return void
      */
     public function __construct(AppUser $user, string $token)

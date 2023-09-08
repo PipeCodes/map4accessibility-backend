@@ -13,7 +13,6 @@ class AppUserPasswordResetLinkController extends Controller
     /**
      * Display the password reset view.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\View\View
      */
     public function create(Request $request)
@@ -24,7 +23,6 @@ class AppUserPasswordResetLinkController extends Controller
     /**
      * Handle an incoming new password request.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      *
      * @throws \Illuminate\Validation\ValidationException
