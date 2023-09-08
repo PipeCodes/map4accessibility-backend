@@ -22,6 +22,7 @@
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
         "pxlrbt/filament-excel": "^1.1",
+        "sentry/sentry-laravel": "^3.8",
         "skagarwal/google-places-api": "^2.0",
         "spatie/laravel-permission": "^5.5"
     },
@@ -73,7 +74,8 @@
         "preferred-install": "dist",
         "sort-packages": true,
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "php-http/discovery": true
         }
     },
     "minimum-stability": "dev",

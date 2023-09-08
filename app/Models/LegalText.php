@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  *   description="Legal Text model",
  *   title="Legal Text Object",
  *   required={},
+ *
  *   @OA\Property(type="integer",description="id of Legal Text",title="id",property="id",example="1",readOnly="true"),
  *   @OA\Property(type="string",title="type",property="type",example="terms"),
  *   @OA\Property(type="string",title="description",property="description",example="This is a Legal Text!"),
@@ -22,10 +23,12 @@ use Illuminate\Database\Eloquent\Model;
  * @OA\Schema(
  *   schema="LegalTexts",
  *   title="Legal Text Response",
+ *
  *   @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
  *   @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
  *   @OA\Property(title="result",property="result",type="object",
  *      @OA\Property(title="data",property="data",type="array",
+ *
  *          @OA\Items(type="object",ref="#/components/schemas/LegalText"),
  *      )
  *   )
@@ -37,6 +40,7 @@ use Illuminate\Database\Eloquent\Model;
  *      name="type",
  *      required=true,
  *      description="Type of Legal Text",
+ *
  *      @OA\Schema(
  *          type="string",
  *          example="terms",

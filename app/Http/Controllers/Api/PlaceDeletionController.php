@@ -17,9 +17,6 @@ class PlaceDeletionController extends Controller
     /**
      * Returns the validator for the endpoint
      * that is used to create a new Place Deletion.
-     *
-     * @param  Request  $request
-     * @return \Illuminate\Validation\Validator
      */
     protected function validator(Request $request): \Illuminate\Validation\Validator
     {
@@ -38,9 +35,12 @@ class PlaceDeletionController extends Controller
      *     summary="Creates a deletion for a Place",
      *     description="Creates a deletion for a Place",
      *     operationId="deletePlace",
+     *
      *     @OA\RequestBody(
+     *
      *          @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(
      *                  property="place_id",
      *                  description="Place id",
@@ -57,32 +57,40 @@ class PlaceDeletionController extends Controller
      *             ),
      *         ),
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/PlaceDeletion"),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -93,7 +101,6 @@ class PlaceDeletionController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
      * @return \Illuminate\Http\JsonResponse
      */
     public function handle(Request $request)
@@ -125,10 +132,6 @@ class PlaceDeletionController extends Controller
 
     /**
      * Creates a new pending place deletion.
-     *
-     * @param  int  $placeId
-     * @param  int  $appUserId
-     * @return \Illuminate\Http\JsonResponse
      */
     protected function storePlaceDeletion(
         int $placeId,
@@ -147,9 +150,6 @@ class PlaceDeletionController extends Controller
 
     /**
      * Closes the PlaceDeletion and returns it.
-     *
-     * @param  PlaceDeletion  $deletion
-     * @return \Illuminate\Http\JsonResponse
      */
     protected function closePlaceDeletion(
         PlaceDeletion $deletion

@@ -29,7 +29,7 @@ class PlaceEvaluationResource extends Resource
                 Forms\Components\Select::make('app_user_id')
                     ->relationship('appUser', 'email'),
                 Forms\Components\Select::make('place_id')
-                ->relationship('place', 'name'),
+                    ->relationship('place', 'name'),
                 Forms\Components\Select::make('evaluation')
                     ->options(Evaluation::array()),
                 Forms\Components\TextInput::make('media_url'),

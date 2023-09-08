@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *  @OA\Schema(
  *      schema="Place",
  *      type="object",
+ *
  *      @OA\Property(
  *          readOnly=1,
  *          property="id",
@@ -104,7 +105,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Place extends Model
 {
-    use HasFactory, SoftDeletes, MediaAlly;
+    use HasFactory, MediaAlly, SoftDeletes;
 
     /**
      * The accessors to append to the model's array form.
@@ -146,8 +147,6 @@ class Place extends Model
 
     /**
      * Get the media from cloud.
-     *
-     * @return Attribute
      */
     protected function media(): Attribute
     {

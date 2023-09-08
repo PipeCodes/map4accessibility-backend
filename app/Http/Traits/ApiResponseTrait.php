@@ -15,8 +15,6 @@ use Illuminate\Validation\ValidationException;
 trait ApiResponseTrait
 {
     /**
-     * @param  JsonResource  $resource
-     * @param  null  $message
      * @param  int  $statusCode
      * @param  array  $headers
      * @return JsonResponse
@@ -90,7 +88,6 @@ trait ApiResponseTrait
     /**
      * Return generic json response with the given data.
      *
-     * @param    $data
      * @param  int  $statusCode
      * @param  array  $headers
      * @return JsonResponse
@@ -114,8 +111,6 @@ trait ApiResponseTrait
      */
 
     /**
-     * @param  ResourceCollection  $resourceCollection
-     * @param  null  $message
      * @param  int  $statusCode
      * @param  array  $headers
      * @return JsonResponse
@@ -148,7 +143,6 @@ trait ApiResponseTrait
     /**
      * Respond with created.
      *
-     * @param $data
      * @return JsonResponse
      */
     protected function respondCreated($data)
@@ -203,9 +197,6 @@ trait ApiResponseTrait
     /**
      * Respond with error.
      *
-     * @param $message
-     * @param  int  $statusCode
-     * @param  Exception|null  $exception
      * @param  bool|null  $error_code
      * @return JsonResponse
      */

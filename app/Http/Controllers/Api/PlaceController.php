@@ -20,8 +20,6 @@ class PlaceController extends Controller
 
     /**
      * Basic validation rules for the places list.
-     *
-     * @return array
      */
     protected function validationRulesListPlaces(): array
     {
@@ -51,7 +49,6 @@ class PlaceController extends Controller
      * Returns the validator for the endpoint
      * that is used to create a new Place.
      *
-     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorCreatePlace(Request $request)
@@ -82,7 +79,6 @@ class PlaceController extends Controller
      * Returns the validator for the endpoint
      * that lists places.
      *
-     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorListPlacesRequest(Request $request)
@@ -96,7 +92,6 @@ class PlaceController extends Controller
      * Returns the validator for the endpoint
      * that lists places.
      *
-     * @param  Request  $request
      * @return \Illuminate\Validation\Validator
      */
     protected function validatorListPlacesByRadiusRequest(Request $request)
@@ -130,6 +125,7 @@ class PlaceController extends Controller
      *     summary="List of places",
      *     description="List of places",
      *     operationId="listPlaces",
+     *
      *     @OA\Parameter(
      *         in="query",
      *         name="name",
@@ -178,17 +174,22 @@ class PlaceController extends Controller
      *         description="Quantity of comments to return",
      *         example="10"
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",
      *                 @OA\Property(title="data",property="data",type="array",
+     *
      *                     @OA\Items(type="object",ref="#/components/schemas/Place")
      *                 ),
+     *
      *                 @OA\Property(title="links",property="links",type="object",
      *                     @OA\Property(
      *                         property="first",
@@ -222,6 +223,7 @@ class PlaceController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -232,7 +234,6 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
      * @return JsonResponse
      */
     public function listPlaces(Request $request)
@@ -278,7 +279,7 @@ class PlaceController extends Controller
                 $this->totalEvaluationsListPlaces($places->items());
 
             $googlePlacesResult = [];
-            if (1 === (int) $request->get('page', 1)) {
+            if ((int) $request->get('page', 1) === 1) {
                 $googlePlacesResult = $this->googlePlacesTextSearch(
                     $places->pluck('google_place_id')->toArray(),
                     $request->get('name', ''),
@@ -308,6 +309,7 @@ class PlaceController extends Controller
      *     summary="filter for places for the given google_place_id OR coords",
      *     description="filter for places for the given google_place_id OR coords",
      *     operationId="listPlacesByRadius",
+     *
      *     @OA\Parameter(
      *         in="query",
      *         name="latitude",
@@ -368,17 +370,22 @@ class PlaceController extends Controller
      *         description="Quantity of comments to return",
      *         example="10"
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",
      *                 @OA\Property(title="data",property="data",type="array",
+     *
      *                     @OA\Items(type="object",ref="#/components/schemas/Place")
      *                 ),
+     *
      *                 @OA\Property(title="links",property="links",type="object",
      *                     @OA\Property(
      *                         property="first",
@@ -412,6 +419,7 @@ class PlaceController extends Controller
      *             )
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -422,7 +430,6 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
      * @return JsonResponse
      */
     public function listPlacesByRadius(Request $request)
@@ -468,7 +475,7 @@ class PlaceController extends Controller
             [$totalAccessible, $totalNeutral, $totalInaccessible] =
                 $this->totalEvaluationsListPlaces($places->items());
 
-            if (1 === (int) $request->get('page', 1)) {
+            if ((int) $request->get('page', 1) === 1) {
                 $googlePlacesResult = $this->googlePlacesNearbySearch(
                     $places->pluck('google_place_id')->toArray(),
                     ($request->latitude.','.$request->longitude),
@@ -566,7 +573,6 @@ class PlaceController extends Controller
      * Calculates the total of
      * evaluations that a list of places has.
      *
-     * @param  array  $places
      * @return array
      */
     protected function totalEvaluationsListPlaces(array $places)
@@ -597,27 +603,33 @@ class PlaceController extends Controller
      *     summary="Get Place by its ID",
      *     description="Get Place its ID",
      *     operationId="getPlaceById",
+     *
      *     @OA\Parameter(
      *         parameter="Place--id",
      *         in="path",
      *         name="id",
      *         required=true,
      *         description="Place ID",
+     *
      *         @OA\Schema(
      *             type="string",
      *             example="1",
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/Place"),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -628,7 +640,6 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
      * @return JsonResponse
      */
     public function getPlaceById(Request $request, string $id)
@@ -689,27 +700,33 @@ class PlaceController extends Controller
      *     summary="Get Place by a Google Place ID",
      *     description="Get Place by a Google Place ID",
      *     operationId="getPlaceByGooglePlaceId",
+     *
      *     @OA\Parameter(
      *         parameter="Place--google_place_id",
      *         in="path",
      *         name="id",
      *         required=true,
      *         description="Google Place ID",
+     *
      *         @OA\Schema(
      *             type="string",
      *             example="123456",
      *         )
      *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/Place"),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -720,7 +737,6 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
      * @return JsonResponse
      */
     public function getPlaceByGooglePlaceId(Request $request, string $id)
@@ -780,37 +796,47 @@ class PlaceController extends Controller
      *     summary="Create a new Place",
      *     description="Create a new Place",
      *     operationId="createPlace",
+     *
      *     @OA\RequestBody(
+     *
      *          @OA\JsonContent(
      *             ref="#/components/schemas/Place"
      *         )
      *     ),
+     *
      *      @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object",
+     *
      *             @OA\Property(type="boolean",title="success",property="success",example="true",readOnly="true"),
      *             @OA\Property(type="string",title="message",property="message",example="null",readOnly="true"),
      *             @OA\Property(title="result",property="result",type="object",ref="#/components/schemas/Place"),
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -821,7 +847,6 @@ class PlaceController extends Controller
      *     ),
      * )
      *
-     * @param  Request  $request
      * @return JsonResponse
      */
     public function createPlace(Request $request)
@@ -876,11 +901,16 @@ class PlaceController extends Controller
      *     summary="upload a media file for Place ID by AppUser AUTH TOKEN",
      *     description="upload a media file for Place ID by AppUser AUTH TOKEN",
      *     operationId="attachMediaToPlaces",
+     *
      *     @OA\Parameter(in="path", name="placeId", required=true),
+     *
      *     @OA\RequestBody(
+     *
      *         @OA\MediaType(
      *             mediaType="multipart/form-data",
+     *
      *             @OA\Schema(
+     *
      *                  @OA\Property(
      *                      property="media",
      *                      type="string",
@@ -889,29 +919,36 @@ class PlaceController extends Controller
      *             )
      *         )
      *     ),
+     *
      *      @OA\Response(
      *         response=200,
      *         description="successful operation",
+     *
      *         @OA\Header(
      *             header="X-Rate-Limit",
      *             description="calls per hour allowed by the user",
+     *
      *             @OA\Schema(
      *                 type="integer",
      *                 format="int32"
      *             )
      *         ),
+     *
      *         @OA\Header(
      *             header="X-Expires-After",
      *             description="date in UTC when token expires",
+     *
      *             @OA\Schema(
      *                 type="string",
      *                 format="datetime"
      *             )
      *         ),
+     *
      *         @OA\JsonContent(
      *             type="object"
      *         )
      *     ),
+     *
      *     @OA\Response(
      *          response=401,
      *          description="Invalid username/password supplied"
@@ -924,7 +961,7 @@ class PlaceController extends Controller
      */
     public function attachMediaToPlace(
         Request $request,
-                $placeId
+        $placeId
     ) {
         try {
             $validator = Validator::make([
@@ -966,13 +1003,6 @@ class PlaceController extends Controller
         }
     }
 
-    /**
-     * @param  array  $localhostGooglePlacesIds
-     * @param  string  $location
-     * @param  int  $radius
-     * @param  array  $params
-     * @return Collection
-     */
     protected function googlePlacesNearbySearch(array $localhostGooglePlacesIds, string $location, int $radius = 50000, array $params = []): Collection
     {
         $googlePlacesResult = collect([]);
@@ -1015,11 +1045,8 @@ class PlaceController extends Controller
     }
 
     /**
-     * @param  array  $localhostGooglePlacesIds
      * @param  string  $location
      * @param  int  $radius
-     * @param  array  $params
-     * @return Collection
      */
     protected function googlePlacesTextSearch(array $localhostGooglePlacesIds, string $query, array $params = []): Collection
     {
