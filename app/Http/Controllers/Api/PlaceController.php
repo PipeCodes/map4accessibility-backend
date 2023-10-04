@@ -538,6 +538,8 @@ class PlaceController extends Controller
         ) {
             $query->where(
                 'places.name', 'like', '%'.$request->get('name').'%'
+            )->orWhere(
+                'places.city', 'like', '%'.$request->get('name').'%'
             );
         }
 
