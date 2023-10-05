@@ -537,10 +537,13 @@ class PlaceController extends Controller
             $request->get('name') !== ''
         ) {
             $query->where(
-                'places.name', 'like', '%'.$request->get('name').'%'
-            )->orWhere(
-                'places.city', 'like', '%'.$request->get('name').'%'
-            );
+                function ($query) use ($request) {
+                    return $query->where(
+                        'places.name', 'like', '%'.$request->get('name').'%'
+                    )->orWhere(
+                        'places.city', 'like', '%'.$request->get('name').'%'
+                    );
+                });
         }
 
         if (
@@ -556,10 +559,11 @@ class PlaceController extends Controller
             $request->has('disabilities') &&
             $request->get('disabilities') !== ''
         ) {
-            $query->with('creator');
-            $query->whereHas('creator', function ($subQuery) use ($request) {
-                $subQuery->where('disabilities', 'like', '%'.$request->get('disabilities').'%');
-            });
+            $disabilitiesArr = explode(',', $request->get('disabilities'));
+            $query->whereNotIn('places.disabilities', $disabilitiesArr);
+        } else {
+            // every place that doesn't have a disability problem
+            $query->where('places.disabilities', '');
         }
 
         if ($request->has('asc_order_by')) {
