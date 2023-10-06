@@ -101,6 +101,15 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *           title="Current evaluation score calculation",
  *           example="2.5"
  *       ),
+ *      @OA\Property(
+ *          property="disabilities",
+ *          description="Disabilities",
+ *          title="Disabilities",
+ *          type="array",
+ *
+ *          @OA\Items(type="string"),
+ *          example={"visual", "motor"}
+ *      ),
  *  )
  */
 class Place extends Model
@@ -128,11 +137,13 @@ class Place extends Model
         'website',
         'schedule',
         'evaluation_score',
+        'disabilities',
     ];
 
     protected $casts = [
         'ratio_up_down' => 'float',
         'ratio_down_up' => 'float',
+        'disabilities' => 'array',
     ];
 
     public function placeEvaluations()
