@@ -11,7 +11,7 @@ class UpdateEvaluationScore
     /**
      * Calculates and updates, via a formula, the evaluation score a Place.
      */
-    public function __invoke(Place $place, PlaceEvaluation $evaluation): Place
+    public function __invoke(Place $place, PlaceEvaluation $evaluation, array $disabilities = []): Place
     {
         $w = config('evaluation.alignment_w');
         $z = config('evaluation.alignment_z');
@@ -21,6 +21,7 @@ class UpdateEvaluationScore
         if (! $current) {
             return tap($place)->update([
                 'evaluation_score' => $evaluation->evaluation->value,
+                'disabilities' => $disabilities,
             ]);
         }
 
@@ -42,6 +43,7 @@ class UpdateEvaluationScore
 
         return tap($place)->update([
             'evaluation_score' => round($score, 2),
+            'disabilities' => $disabilities,
         ]);
     }
 }
