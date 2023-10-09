@@ -563,7 +563,11 @@ class PlaceController extends Controller
             $query->whereNotIn('places.disabilities', $disabilitiesArr);
         } else {
             // every place that doesn't have a disability problem
-            $query->where('places.disabilities', '');
+            $query->where(
+                function ($query) {
+                    return $query->where('places.disabilities', '')
+                        ->orWhere('places.disabilities', '[]');
+                });
         }
 
         if ($request->has('asc_order_by')) {
