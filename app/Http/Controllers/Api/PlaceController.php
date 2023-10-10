@@ -883,6 +883,8 @@ class PlaceController extends Controller
                 );
             }
 
+            $request['disabilities'] = [];
+
             $place = Place::create($request->only([
                 'latitude',
                 'longitude',
@@ -896,6 +898,7 @@ class PlaceController extends Controller
                 'email',
                 'website',
                 'schedule',
+                'disabilities',
             ]));
 
             return $this->respondWithResource(new JsonResource($place));
