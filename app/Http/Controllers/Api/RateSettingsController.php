@@ -70,6 +70,11 @@ class RateSettingsController extends Controller
     {
         try {
             $questions = RateQuestion::with('answers')
+                ->where(
+                    'locale',
+                    '=',
+                    app()->getLocale()
+                )
                 ->orderBy('question_type')
                 ->get();
 
