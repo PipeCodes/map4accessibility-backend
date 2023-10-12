@@ -171,7 +171,7 @@ class PlaceEvaluationController extends Controller
                 'evaluation' => 'required|in:'.implode(',', Evaluation::values()),
                 'comment' => 'string|min:6|nullable',
                 'questions_answers' => 'nullable',
-                'disabilities' => 'array|required',
+                'disabilities' => 'array',
             ]
         );
     }
@@ -459,7 +459,7 @@ class PlaceEvaluationController extends Controller
              * Sets the new evaluation score of the place in question
              * based on this new evaluation.
              */
-            $place = (new UpdateEvaluationScore)($place, $placeEvaluation, $request->get('disabilities'));
+            $place = (new UpdateEvaluationScore)($place, $placeEvaluation, $request->has('disabilities') ? $request->get('disabilities') : []);
 
             /**
              * In case the evaluation is negative, send emails
