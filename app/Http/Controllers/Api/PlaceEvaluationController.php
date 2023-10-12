@@ -438,6 +438,7 @@ class PlaceEvaluationController extends Controller
                     'email',
                     'website',
                     'schedule',
+                    'disabilities',
                 ]));
             }
 
@@ -459,7 +460,7 @@ class PlaceEvaluationController extends Controller
              * Sets the new evaluation score of the place in question
              * based on this new evaluation.
              */
-            $place = (new UpdateEvaluationScore)($place, $placeEvaluation, $request->has('disabilities') ? $request->get('disabilities') : []);
+            $place = (new UpdateEvaluationScore)($place, $placeEvaluation, $request->get('disabilities') ? $request->get('disabilities') : []);
 
             /**
              * In case the evaluation is negative, send emails
