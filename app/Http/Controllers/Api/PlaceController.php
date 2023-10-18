@@ -523,6 +523,21 @@ class PlaceController extends Controller
                     $request->latitude,
                 ]
             )->havingRaw('distance < ?', [$radius]);
+        } else {
+            if (
+                $request->has('disabilities') &&
+                $request->get('disabilities') !== ''
+            ) {
+                $disabilitiesArr = explode(',', $request->get('disabilities'));
+                $query->whereNotIn('places.disabilities', $disabilitiesArr);
+            } else {
+                // every place that doesn't have a disability problem
+                $query->where(
+                    function ($query) {
+                        return $query->where('places.disabilities', '')
+                            ->orWhere('places.disabilities', '[]');
+                    });
+            }
         }
 
         if (
@@ -553,21 +568,6 @@ class PlaceController extends Controller
             $query->where(
                 'places.place_type', 'like', '%'.$request->get('place_type').'%'
             );
-        }
-
-        if (
-            $request->has('disabilities') &&
-            $request->get('disabilities') !== ''
-        ) {
-            $disabilitiesArr = explode(',', $request->get('disabilities'));
-            $query->whereNotIn('places.disabilities', $disabilitiesArr);
-        } else {
-            // every place that doesn't have a disability problem
-            $query->where(
-                function ($query) {
-                    return $query->where('places.disabilities', '')
-                        ->orWhere('places.disabilities', '[]');
-                });
         }
 
         if ($request->has('asc_order_by')) {
