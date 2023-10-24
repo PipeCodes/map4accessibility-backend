@@ -49,6 +49,7 @@ class PlaceResource extends Resource
 
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('id')->hidden()->label('Place ID'),
                 Tables\Columns\TextColumn::make('google_place_id'),
                 Tables\Columns\TextColumn::make('name')->searchable(),
                 Tables\Columns\TextColumn::make('country_code')
