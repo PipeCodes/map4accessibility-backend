@@ -64,6 +64,10 @@ class PlaceEvaluationResource extends Resource
                     ->getStateUsing(function ($record) {
                         return count($record->questions_answers ?? []).' questions answered';
                     }),
+                Tables\Columns\TextColumn::make('questions_answers_2')
+                    ->getStateUsing(function ($record) {
+                        return $record->questions_answers ? json_encode($record->questions_answers) : '';
+                    })->hidden()->label('Answers'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('updated_at')
