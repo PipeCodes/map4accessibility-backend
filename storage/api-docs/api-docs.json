@@ -1,0 +1,2367 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Map4Accessibility Backend",
+        "description": "Map4Accessibility Backend",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "email": "apiteam@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "0.0.2"
+    },
+    "servers": [
+        {
+            "url": "/api/v1"
+        }
+    ],
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "login AppUser",
+                "description": "",
+                "operationId": "login",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestLoginObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/auth/login-by-provider": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "login provider AppUser",
+                "description": "",
+                "operationId": "loginByProvider",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestLoginByProviderObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid provider data supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/auth/password-recover": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "password recover AppUser",
+                "description": "",
+                "operationId": "passwordRecover",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestpasswordRecoverObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid API KEY supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/auth/reset-password": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Reset the App User's password",
+                "description": "",
+                "operationId": "resetPassword",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/resetPasswordRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid API KEY supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/auth/check-email": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "check-email AppUser",
+                "description": "",
+                "operationId": "checkEmail",
+                "requestBody": {
+                    "description": " object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/requestCheckEmailObject"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Duplicate content"
+                    },
+                    "401": {
+                        "description": "Invalid API KEY supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Create AppUser",
+                "description": "",
+                "operationId": "register",
+                "requestBody": {
+                    "description": "Create AppUser object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppUser"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/profile/update": {
+            "post": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Update AppUser",
+                "description": "",
+                "operationId": "update",
+                "requestBody": {
+                    "description": "Update the AppUser's profile",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AppUserUpdateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/profile": {
+            "get": {
+                "tags": [
+                    "appUser"
+                ],
+                "summary": "Get AppUser Data",
+                "description": "",
+                "operationId": "getAuthenticated",
+                "responses": {
+                    "200": {
+                        "description": "successful get data",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AppUser"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/faqs": {
+            "get": {
+                "tags": [
+                    "FAQ's"
+                ],
+                "summary": "Get list of FAQs",
+                "description": "Returns list of FAQs",
+                "operationId": "getFaqs",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FAQs"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/legal-text/{type}": {
+            "get": {
+                "tags": [
+                    "Legal Texts"
+                ],
+                "summary": "Get a legal text",
+                "description": "Returns a legal text",
+                "operationId": "getLegalText",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    },
+                    {
+                        "$ref": "#/components/parameters/LegalText--type"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LegalText"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/places": {
+            "get": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "List of places",
+                "description": "List of places",
+                "operationId": "listPlaces",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Name of a Place",
+                        "example": ""
+                    },
+                    {
+                        "name": "country_code",
+                        "in": "query",
+                        "description": "Country Code of a country",
+                        "example": "PT"
+                    },
+                    {
+                        "name": "place_type",
+                        "in": "query",
+                        "description": "Place Type",
+                        "example": ""
+                    },
+                    {
+                        "name": "disabilities",
+                        "in": "query",
+                        "description": "for search by on disabilities",
+                        "example": ""
+                    },
+                    {
+                        "name": "asc_order_by",
+                        "in": "query",
+                        "description": "Parameter to sort by ASC",
+                        "example": "country_code"
+                    },
+                    {
+                        "name": "desc_order_by",
+                        "in": "query",
+                        "description": "Parameter to sort by DESC",
+                        "example": "country_code"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "example": "1"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Quantity of comments to return",
+                        "example": "10"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "title": "result",
+                                            "properties": {
+                                                "data": {
+                                                    "title": "data",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Place"
+                                                    }
+                                                },
+                                                "links": {
+                                                    "title": "links",
+                                                    "properties": {
+                                                        "first": {
+                                                            "title": "First Page",
+                                                            "description": "First Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "last": {
+                                                            "title": "Last Page",
+                                                            "description": "Last Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "prev": {
+                                                            "title": "Previous Page",
+                                                            "description": "Previous Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "next": {
+                                                            "title": "Next Page",
+                                                            "description": "Next Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "Create a new Place",
+                "description": "Create a new Place",
+                "operationId": "createPlace",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Place"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "$ref": "#/components/schemas/Place"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/places/radius": {
+            "get": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "filter for places for the given google_place_id OR coords",
+                "description": "filter for places for the given google_place_id OR coords",
+                "operationId": "listPlacesByRadius",
+                "parameters": [
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "description": "Latitude",
+                        "example": ""
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "description": "Longitude",
+                        "example": ""
+                    },
+                    {
+                        "name": "geo_query_radius",
+                        "in": "query",
+                        "description": "Radius (in meters) to search across",
+                        "example": "2000"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Name of a Place",
+                        "example": ""
+                    },
+                    {
+                        "name": "country_code",
+                        "in": "query",
+                        "description": "Country Code of a country",
+                        "example": "PT"
+                    },
+                    {
+                        "name": "place_type",
+                        "in": "query",
+                        "description": "Place Type",
+                        "example": ""
+                    },
+                    {
+                        "name": "asc_order_by",
+                        "in": "query",
+                        "description": "Parameter to sort by ASC",
+                        "example": "country_code"
+                    },
+                    {
+                        "name": "desc_order_by",
+                        "in": "query",
+                        "description": "Parameter to sort by DESC",
+                        "example": "country_code"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "example": "1"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Quantity of comments to return",
+                        "example": "10"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "title": "result",
+                                            "properties": {
+                                                "data": {
+                                                    "title": "data",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/Place"
+                                                    }
+                                                },
+                                                "links": {
+                                                    "title": "links",
+                                                    "properties": {
+                                                        "first": {
+                                                            "title": "First Page",
+                                                            "description": "First Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "last": {
+                                                            "title": "Last Page",
+                                                            "description": "Last Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "prev": {
+                                                            "title": "Previous Page",
+                                                            "description": "Previous Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "next": {
+                                                            "title": "Next Page",
+                                                            "description": "Next Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/places/{id}": {
+            "get": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "Get Place by its ID",
+                "description": "Get Place its ID",
+                "operationId": "getPlaceById",
+                "parameters": [
+                    {
+                        "parameter": "Place--id",
+                        "name": "id",
+                        "in": "path",
+                        "description": "Place ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "1"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "$ref": "#/components/schemas/Place"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/places/google/{id}": {
+            "get": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "Get Place by a Google Place ID",
+                "description": "Get Place by a Google Place ID",
+                "operationId": "getPlaceByGooglePlaceId",
+                "parameters": [
+                    {
+                        "parameter": "Place--google_place_id",
+                        "name": "id",
+                        "in": "path",
+                        "description": "Google Place ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "$ref": "#/components/schemas/Place"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            }
+        },
+        "/places/{placeId}/media": {
+            "post": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "upload a media file for Place ID by AppUser AUTH TOKEN",
+                "description": "upload a media file for Place ID by AppUser AUTH TOKEN",
+                "operationId": "attachMediaToPlaces",
+                "parameters": [
+                    {
+                        "name": "placeId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "media": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/places/delete": {
+            "post": {
+                "tags": [
+                    "Places"
+                ],
+                "summary": "Creates a deletion for a Place",
+                "description": "Creates a deletion for a Place",
+                "operationId": "deletePlace",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "place_id": {
+                                        "title": "Place id",
+                                        "description": "Place id",
+                                        "type": "integer",
+                                        "example": ""
+                                    },
+                                    "app_user_id": {
+                                        "title": "App User id",
+                                        "description": "App User id",
+                                        "type": "integer",
+                                        "example": ""
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "$ref": "#/components/schemas/PlaceDeletion"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/place-evaluations/{placeEvaluationId}/media": {
+            "post": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
+                "description": "upload a media file for Place Evaluation ID by AppUser AUTH TOKEN",
+                "operationId": "attachMediaPlaceEvaluationByAuthenticated",
+                "parameters": [
+                    {
+                        "name": "placeEvaluationId",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "media": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/place-evaluations": {
+            "get": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "filter for evaluations for the given google_place_id OR coords, place",
+                "description": "filter for evaluations for the given google_place_id OR coords, place",
+                "operationId": "placeEvaluations",
+                "parameters": [
+                    {
+                        "name": "latitude",
+                        "in": "query",
+                        "description": "Latitude",
+                        "example": ""
+                    },
+                    {
+                        "name": "longitude",
+                        "in": "query",
+                        "description": "Longitude",
+                        "example": ""
+                    },
+                    {
+                        "name": "geo_query_radius",
+                        "in": "query",
+                        "description": "Radius (in meters) to search across",
+                        "example": "2000"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Name of a Place",
+                        "example": ""
+                    },
+                    {
+                        "name": "country_code",
+                        "in": "query",
+                        "description": "Country Code of a country",
+                        "example": "PT"
+                    },
+                    {
+                        "name": "place_type",
+                        "in": "query",
+                        "description": "Place Type",
+                        "example": ""
+                    },
+                    {
+                        "name": "asc_order_by",
+                        "in": "query",
+                        "description": "Parameter to sort by ASC",
+                        "example": "evaluation"
+                    },
+                    {
+                        "name": "desc_order_by",
+                        "in": "query",
+                        "description": "Parameter to sort by DESC",
+                        "example": "evaluation"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "example": "1"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Quantity of comments to return",
+                        "example": "10"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "title": "result",
+                                            "properties": {
+                                                "data": {
+                                                    "title": "data",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/PlaceEvaluation"
+                                                    }
+                                                },
+                                                "links": {
+                                                    "title": "links",
+                                                    "properties": {
+                                                        "first": {
+                                                            "title": "First Page",
+                                                            "description": "First Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "last": {
+                                                            "title": "Last Page",
+                                                            "description": "Last Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "prev": {
+                                                            "title": "Previous Page",
+                                                            "description": "Previous Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "next": {
+                                                            "title": "Next Page",
+                                                            "description": "Next Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                },
+                "security": [
+                    {
+                        "api_key_security": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "Create Place Evaluation by AppUser AUTH TOKEN",
+                "description": "Create Place Evaluation by AppUser AUTH TOKEN",
+                "operationId": "placeEvaluationByAuthenticated",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreatePlaceEvaluationRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "headers": {
+                            "X-Rate-Limit": {
+                                "description": "calls per hour allowed by the user",
+                                "schema": {
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            },
+                            "X-Expires-After": {
+                                "description": "date in UTC when token expires",
+                                "schema": {
+                                    "type": "string",
+                                    "format": "datetime"
+                                }
+                            }
+                        },
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "$ref": "#/components/schemas/PlaceEvaluation"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/auth/place-evaluations": {
+            "get": {
+                "tags": [
+                    "PlaceEvaluation"
+                ],
+                "summary": "Lists all place evaluations made by the app user that is currently logged in.",
+                "description": "Lists all place evaluations made by the app user that is currently logged in.",
+                "operationId": "placeEvaluationsByAppUser",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Page",
+                        "example": "1"
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "description": "Quantity of comments to return",
+                        "example": "10"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "title": "success",
+                                            "type": "boolean",
+                                            "readOnly": "true",
+                                            "example": "true"
+                                        },
+                                        "message": {
+                                            "title": "message",
+                                            "type": "string",
+                                            "readOnly": "true",
+                                            "example": "null"
+                                        },
+                                        "result": {
+                                            "title": "result",
+                                            "properties": {
+                                                "data": {
+                                                    "title": "data",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "$ref": "#/components/schemas/PlaceEvaluation"
+                                                    }
+                                                },
+                                                "links": {
+                                                    "title": "links",
+                                                    "properties": {
+                                                        "first": {
+                                                            "title": "First Page",
+                                                            "description": "First Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "last": {
+                                                            "title": "Last Page",
+                                                            "description": "Last Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "prev": {
+                                                            "title": "Previous Page",
+                                                            "description": "Previous Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        },
+                                                        "next": {
+                                                            "title": "Next Page",
+                                                            "description": "Next Page",
+                                                            "format": "string",
+                                                            "example": "http://www.example.com?page=1&size=10"
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid username/password supplied"
+                    },
+                    "400": {
+                        "description": "Internal error"
+                    }
+                }
+            }
+        },
+        "/place-rate-settings": {
+            "get": {
+                "tags": [
+                    "Settings"
+                ],
+                "summary": "Get the settings for the place rating",
+                "description": "Returns the settings for the place rating",
+                "operationId": "getPlaceRateSettings",
+                "parameters": [
+                    {
+                        "name": "Accept-Language",
+                        "in": "header",
+                        "description": "Set language parameter",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "en"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PlaceRateSettingsResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "requestLoginObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    },
+                    "password": {}
+                },
+                "type": "object"
+            },
+            "requestLoginByProviderObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    },
+                    "auth_type": {
+                        "example": "facebook"
+                    },
+                    "auth_code": {
+                        "type": "string",
+                        "example": "123"
+                    }
+                },
+                "type": "object"
+            },
+            "requestpasswordRecoverObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    }
+                },
+                "type": "object"
+            },
+            "resetPasswordRequest": {
+                "properties": {
+                    "token": {},
+                    "email": {
+                        "format": "email"
+                    },
+                    "password": {},
+                    "password_confirmation": {}
+                },
+                "type": "object"
+            },
+            "requestCheckEmailObject": {
+                "properties": {
+                    "email": {
+                        "format": "email"
+                    }
+                },
+                "type": "object"
+            },
+            "AppUserUpdateRequest": {
+                "properties": {
+                    "name": {
+                        "title": "Name",
+                        "description": "Name"
+                    },
+                    "email": {
+                        "title": "Email",
+                        "description": "Email",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "surname": {
+                        "title": "Surname",
+                        "description": "Surname"
+                    },
+                    "birthdate": {
+                        "title": "Birthdate",
+                        "description": "Birthdate",
+                        "format": "date"
+                    }
+                },
+                "type": "object"
+            },
+            "CreatePlaceEvaluationRequest": {
+                "required": [
+                    "latitude",
+                    "longitude",
+                    "name",
+                    "evaluation"
+                ],
+                "properties": {
+                    "latitude": {
+                        "title": "Latitude",
+                        "description": "Latitude",
+                        "format": "decimal"
+                    },
+                    "longitude": {
+                        "title": "Longitude",
+                        "description": "Longitude",
+                        "format": "decimal"
+                    },
+                    "google_place_id": {
+                        "title": "Google Place ID",
+                        "description": "Google Place ID",
+                        "type": "string"
+                    },
+                    "name": {
+                        "title": "Place name",
+                        "description": "Place Name",
+                        "type": "string"
+                    },
+                    "place_type": {
+                        "title": "Place Type",
+                        "description": "Place Type",
+                        "type": "string"
+                    },
+                    "country_code": {
+                        "title": "Country Code",
+                        "description": "Country Code",
+                        "type": "string"
+                    },
+                    "city": {
+                        "title": "Place City",
+                        "description": "Place City",
+                        "type": "string"
+                    },
+                    "address": {
+                        "title": "Place Address",
+                        "description": "Place Address",
+                        "type": "string"
+                    },
+                    "phone": {
+                        "title": "Place Phone",
+                        "description": "Place Phone",
+                        "type": "string"
+                    },
+                    "email": {
+                        "title": "Place Email",
+                        "description": "Place Email",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "website": {
+                        "title": "Place Website",
+                        "description": "Place Website",
+                        "type": "string"
+                    },
+                    "schedule": {
+                        "title": "Place Schedule",
+                        "description": "Place Schedule",
+                        "type": "string"
+                    },
+                    "evaluation": {
+                        "title": "Evaluation",
+                        "description": "Evaluation (0 = Inaccessible, 1 = Neutral, 2 = Accessible)",
+                        "type": "integer",
+                        "maximum": 2,
+                        "minimum": 0
+                    },
+                    "comment": {
+                        "title": "Comment",
+                        "description": "Comment"
+                    },
+                    "questions_answers": {
+                        "title": "Questions Answers JSON",
+                        "description": "Questions Answers JSON",
+                        "type": "object",
+                        "example": []
+                    }
+                },
+                "type": "object"
+            },
+            "PlaceRateSettingsResponse": {
+                "title": "Place Rate Settings Response",
+                "properties": {
+                    "success": {
+                        "title": "success",
+                        "type": "boolean",
+                        "readOnly": "true",
+                        "example": "true"
+                    },
+                    "message": {
+                        "title": "message",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "null"
+                    },
+                    "result": {
+                        "title": "result",
+                        "properties": {
+                            "questions": {
+                                "title": "questions",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/RateQuestion"
+                                }
+                            },
+                            "country_responsibles": {
+                                "title": "country_responsibles",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/CountryResponsible"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "AppUser": {
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID",
+                        "format": "int64",
+                        "readOnly": 1
+                    },
+                    "email": {
+                        "title": "Email",
+                        "description": "Email",
+                        "format": "email",
+                        "example": "user@example.com"
+                    },
+                    "password": {
+                        "title": "Password",
+                        "description": "Password"
+                    },
+                    "name": {
+                        "title": "Name",
+                        "description": "Name"
+                    },
+                    "surname": {
+                        "title": "Surname",
+                        "description": "Surname"
+                    },
+                    "birthdate": {
+                        "title": "Birthdate",
+                        "description": "Birthdate",
+                        "format": "date"
+                    },
+                    "disabilities": {
+                        "title": "Disabilities",
+                        "description": "Disabilities",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "example": [
+                            "visual",
+                            "motor"
+                        ]
+                    },
+                    "terms_accepted": {
+                        "title": "Terms Accepted",
+                        "description": "Terms Accepted",
+                        "type": "boolean"
+                    },
+                    "auth_providers": {
+                        "title": "Auth Providers",
+                        "description": "Auth Providers",
+                        "type": "object",
+                        "example": {
+                            "facebook": 123,
+                            "gmail": 456456546
+                        },
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "CountryResponsible": {
+                "title": "Country Responsible Object",
+                "description": "Country Responsible model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "Country responsible's ID",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "country_iso": {
+                        "title": "country_iso",
+                        "type": "string",
+                        "example": "PT"
+                    },
+                    "email": {
+                        "title": "email",
+                        "type": "string",
+                        "example": "example@example.com"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    }
+                },
+                "type": "object"
+            },
+            "FAQ": {
+                "title": "FAQ Object",
+                "description": "FAQ model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "id of Book",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "question": {
+                        "title": "question",
+                        "type": "string",
+                        "example": "Is this a question?"
+                    },
+                    "answer": {
+                        "title": "answer",
+                        "type": "string",
+                        "example": "This is an answer!"
+                    },
+                    "order": {
+                        "title": "order",
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "locale": {
+                        "title": "locale",
+                        "type": "string",
+                        "example": "en"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    }
+                },
+                "type": "object"
+            },
+            "FAQs": {
+                "title": "FAQ Response",
+                "properties": {
+                    "success": {
+                        "title": "success",
+                        "type": "boolean",
+                        "readOnly": "true",
+                        "example": "true"
+                    },
+                    "message": {
+                        "title": "message",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "null"
+                    },
+                    "result": {
+                        "title": "result",
+                        "properties": {
+                            "data": {
+                                "title": "data",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/FAQ"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "LegalText": {
+                "title": "Legal Text Object",
+                "description": "Legal Text model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "id of Legal Text",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "type": {
+                        "title": "type",
+                        "type": "string",
+                        "example": "terms"
+                    },
+                    "description": {
+                        "title": "description",
+                        "type": "string",
+                        "example": "This is a Legal Text!"
+                    },
+                    "locale": {
+                        "title": "locale",
+                        "type": "string",
+                        "example": "en"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    }
+                },
+                "type": "object"
+            },
+            "LegalTexts": {
+                "title": "Legal Text Response",
+                "properties": {
+                    "success": {
+                        "title": "success",
+                        "type": "boolean",
+                        "readOnly": "true",
+                        "example": "true"
+                    },
+                    "message": {
+                        "title": "message",
+                        "type": "string",
+                        "readOnly": "true",
+                        "example": "null"
+                    },
+                    "result": {
+                        "title": "result",
+                        "properties": {
+                            "data": {
+                                "title": "data",
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/LegalText"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "Place": {
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "Place ID",
+                        "format": "int64",
+                        "readOnly": 1
+                    },
+                    "google_place_id": {
+                        "title": "Google Place id",
+                        "description": "Google Place id",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "name": {
+                        "title": "Name",
+                        "description": "Name Place"
+                    },
+                    "place_type": {
+                        "title": "Place Type",
+                        "description": "Place Type"
+                    },
+                    "country_code": {
+                        "title": "country_code",
+                        "description": "Country Code"
+                    },
+                    "city": {
+                        "title": "Place City",
+                        "description": "Place City",
+                        "type": "string"
+                    },
+                    "address": {
+                        "title": "Place Address",
+                        "description": "Place Address",
+                        "type": "string"
+                    },
+                    "phone": {
+                        "title": "Place Phone",
+                        "description": "Place Phone",
+                        "type": "string"
+                    },
+                    "email": {
+                        "title": "Place Email",
+                        "description": "Place Email",
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "website": {
+                        "title": "Place Website",
+                        "description": "Place Website",
+                        "type": "string"
+                    },
+                    "schedule": {
+                        "title": "Place Schedule",
+                        "description": "Place Schedule",
+                        "type": "string"
+                    },
+                    "latitude": {
+                        "title": "Coord. Latitude",
+                        "description": "Coord. Latitude",
+                        "format": "decimal",
+                        "example": ""
+                    },
+                    "longitude": {
+                        "title": "Coord. Longitude",
+                        "description": "Coord. Longitude",
+                        "format": "decimal",
+                        "example": ""
+                    },
+                    "evaluation_score": {
+                        "title": "Current evaluation score calculation",
+                        "description": "Current evaluation score calculation",
+                        "format": "decimal",
+                        "example": "2.5"
+                    }
+                },
+                "type": "object"
+            },
+            "PlaceDeletion": {
+                "properties": {
+                    "place_id": {
+                        "title": "Place id",
+                        "description": "Place id",
+                        "type": "integer",
+                        "example": ""
+                    },
+                    "app_user_id": {
+                        "title": "App User id",
+                        "description": "App User id",
+                        "type": "integer",
+                        "example": ""
+                    },
+                    "status": {
+                        "title": "Current status",
+                        "description": "Current status",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "created_at": {
+                        "title": "Deletion creation timestamp",
+                        "description": "Deletion creation timestamp",
+                        "type": "string",
+                        "example": ""
+                    },
+                    "updated_at": {
+                        "title": "Last update timestamp",
+                        "description": "Last update timestamp",
+                        "type": "string",
+                        "example": ""
+                    }
+                },
+                "type": "object"
+            },
+            "PlaceEvaluation": {
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "placeEvaluationId",
+                        "format": "int64",
+                        "readOnly": 1
+                    },
+                    "evaluation": {
+                        "title": "Evaluation",
+                        "description": "Evaluation (0 = Inaccessible, 1 = Neutral, 2 = Accessible)",
+                        "type": "integer",
+                        "maximum": 2,
+                        "minimum": 0
+                    },
+                    "comment": {
+                        "title": "Comment",
+                        "description": "Comment"
+                    },
+                    "questions_answers": {
+                        "title": "Questions Answers JSON",
+                        "description": "Questions Answers JSON",
+                        "type": "object",
+                        "example": []
+                    },
+                    "media_url": {
+                        "title": "Media Url Cloudinary",
+                        "description": "Media Url Cloudinary",
+                        "readOnly": 1
+                    },
+                    "place": {
+                        "$ref": "#/components/schemas/Place"
+                    },
+                    "app_user": {
+                        "$ref": "#/components/schemas/AppUser"
+                    }
+                },
+                "type": "object"
+            },
+            "RateAnswer": {
+                "title": "Rate Answer Object",
+                "description": "Rate Answer model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "Answers's ID",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "rate_question_id": {
+                        "title": "rate_question_id",
+                        "description": "Answers's Question ID",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "order": {
+                        "title": "order",
+                        "description": "Answer's placement order",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "body": {
+                        "title": "body",
+                        "type": "string",
+                        "example": "My Answer"
+                    },
+                    "slug": {
+                        "title": "slug",
+                        "type": "string",
+                        "example": "my-answer"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    }
+                },
+                "type": "object"
+            },
+            "RateQuestion": {
+                "title": "Rate Question Object",
+                "description": "Rate Question model",
+                "required": [],
+                "properties": {
+                    "id": {
+                        "title": "id",
+                        "description": "Question's ID",
+                        "type": "integer",
+                        "readOnly": "true",
+                        "example": "1"
+                    },
+                    "title": {
+                        "title": "title",
+                        "type": "string",
+                        "example": "My Question"
+                    },
+                    "slug": {
+                        "title": "slug",
+                        "type": "string",
+                        "example": "my-question"
+                    },
+                    "place_type": {
+                        "title": "place_type",
+                        "type": "string",
+                        "example": "type3"
+                    },
+                    "is_mandatory": {
+                        "title": "is_mandatory",
+                        "type": "boolean",
+                        "example": "true"
+                    },
+                    "created_at": {
+                        "title": "created_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "updated_at": {
+                        "title": "updated_at",
+                        "type": "dateTime",
+                        "readOnly": "true",
+                        "example": "2022-07-04T02:41:42.336Z"
+                    },
+                    "answers": {
+                        "title": "answers",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RateAnswer"
+                        }
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "parameters": {
+            "LegalText--type": {
+                "name": "type",
+                "in": "path",
+                "description": "Type of Legal Text",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "example": "terms"
+                }
+            }
+        },
+        "securitySchemes": {
+            "api_key_security": {
+                "type": "apiKey",
+                "description": "A API_KEY 1 security validation",
+                "name": "x-api-key",
+                "in": "header"
+            },
+            "sanctum": {
+                "type": "apiKey",
+                "description": "A 2 security validation, enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "appUser",
+            "description": "Operations about App User",
+            "externalDocs": {
+                "description": "Find out more about store",
+                "url": "http://swagger.io"
+            }
+        }
+    ],
+    "externalDocs": {
+        "description": "Find out more about Swagger",
+        "url": "http://swagger.io"
+    },
+    "security": [
+        {
+            "api_key_security": [
+                "read",
+                "write"
+            ],
+            "sanctum": [
+                "read",
+                "write"
+            ]
+        }
+    ]
+}

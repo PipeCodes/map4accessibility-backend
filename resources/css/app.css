@@ -1,0 +1,71 @@
+@import '../../vendor/filament/filament/resources/css/app.css';
+
+@font-face {
+    font-family: 'easyreadingprobold';
+    src: url('/public/fonts/easyreadingprobold-webfont.woff2') format('woff2'),
+         url('/public/fonts/easyreadingprobold-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'easyreadingproregular';
+    src: url('/public/fonts/easyreadingpro-webfont.woff2') format('woff2'),
+         url('/public/fonts/easyreadingpro-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.faqs {
+    font-size: 14px;
+    font-weight: 22px;
+    letter-spacing: 0px;
+}
+.faqs .accordion.active,
+.faqs .accordion:hover {
+    background-color: #E0E5EE;
+}
+.faqs .accordion {
+    font-family: 'easyreadingprobold';
+    background-color: #F5F5F5;
+    color: #232245;
+    cursor: pointer;
+    padding: 20px 30px;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #D3D2DA;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+.faqs .accordion.active,
+.faqs .accordion:last-of-type,
+.faqs .accordion:last-of-type + .panel {
+    border-bottom:none !important;
+}
+.faqs .accordion.active + .panel{
+    border-bottom: 1px solid #D3D2DA;
+}
+.faqs .accordion:after {
+    content: url(/public/images/chevron-down.svg);
+    font-size: 13px;
+    float: right;
+    margin-left: 20px;
+}
+
+.faqs .active:after {
+    content: url(/public/images/chevron-up.svg);
+}
+.faqs .panel {
+    font-family: 'easyreadingproregular';
+    padding: 0px 30px;
+    background-color: #E0E5EE;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease-out;
+    color: #707070;
+}
+.faqs .panel p {
+    padding-bottom: 20px;
+}
