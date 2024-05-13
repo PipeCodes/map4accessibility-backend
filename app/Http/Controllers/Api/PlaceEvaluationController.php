@@ -469,8 +469,9 @@ class PlaceEvaluationController extends Controller
              */
             if (
                 $placeEvaluation->evaluation
-                    === Evaluation::Inaccessible->value
+                    === Evaluation::Inaccessible
             ) {
+
                 $listResponsibles = CountryResponsible::query()
                     ->where('country_iso', $place->country_code)
                     ->get()
