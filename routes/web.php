@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CacheController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\LegalTextController;
 use Illuminate\Support\Facades\Route;
@@ -26,5 +27,7 @@ Route::get('/faqs', [FaqController::class, 'faqs']);
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
+
+Route::get('/clear-cache', [CacheController::class, 'clearCache']);
 
 require __DIR__.'/auth.php';
