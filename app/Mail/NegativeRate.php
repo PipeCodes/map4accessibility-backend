@@ -20,14 +20,20 @@ class NegativeRate extends Mailable implements ShouldQueue
     public $placeEvaluation;
 
     /**
+     * The instance.
+     */
+    public $email;
+
+    /**
      * Create a new message instance.
      *
      * @param  \App\Models\PlaceEvaluation  $user
      * @return void
      */
-    public function __construct(PlaceEvaluation $placeEvaluation)
+    public function __construct(PlaceEvaluation $placeEvaluation, $email = '')
     {
         $this->placeEvaluation = $placeEvaluation;
+        $this->email = $email;
     }
 
     /**
@@ -46,6 +52,7 @@ class NegativeRate extends Mailable implements ShouldQueue
             ->with(
                 [
                     'placeEvaluation' => $this->placeEvaluation,
+                    'email' => $this->email,
                     'url' => $url,
                 ]
             );
