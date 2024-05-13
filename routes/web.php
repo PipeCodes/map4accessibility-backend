@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\Controllers\CacheController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\LegalTextController;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,6 +28,13 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
-Route::get('/clear-cache', [CacheController::class, 'clearCache']);
+Route::get('/clear-cache', function () {
+    Artisan::call('cache:clear');
+    Artisan::call('route:cache');
+    Artisan::call('config:cache');
+    Artisan::call('view:clear');
+
+    return 'Cache has been cleared';
+});
 
 require __DIR__.'/auth.php';
