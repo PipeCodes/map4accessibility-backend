@@ -66,7 +66,7 @@ class CountyResponsibleForm extends Component implements HasForms
 
     public function submit(): void
     {
-        $current = $this->form->getState()['Counties'];
+        $current = $this->form->getState()['counties'];
 
         /**
          * Delete if not present in the current state.
