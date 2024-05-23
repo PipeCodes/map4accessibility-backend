@@ -10,8 +10,10 @@ use App\Http\Resources\PlaceEvaluationCollection;
 use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\UploadTrait;
 use App\Mail\NegativeRate;
+use App\Mail\NegativeRateCounty;
 use App\Models\AppUser;
 use App\Models\CountryResponsible;
+use App\Models\CountyEmails;
 use App\Models\Place;
 use App\Models\PlaceEvaluation;
 use Illuminate\Database\Eloquent\Builder;
@@ -468,8 +470,9 @@ class PlaceEvaluationController extends Controller
              */
             if (
                 $placeEvaluation->evaluation
-                    === Evaluation::Inaccessible->value
+                    === Evaluation::Inaccessible
             ) {
+
                 $listResponsibles = CountryResponsible::query()
                     ->where('country_iso', $place->country_code)
                     ->get()
@@ -478,7 +481,18 @@ class PlaceEvaluationController extends Controller
 
                 if (count($listResponsibles) > 0) {
                     Mail::to($listResponsibles)
-                        ->send(new NegativeRate($placeEvaluation));
+                        ->send(new NegativeRate($placeEvaluation, $place->email));
+                }
+
+                $listEmails = CountyEmails::query()
+                    ->where('county_iso', $request->get('county'))
+                    ->get()
+                    ->pluck('email')
+                    ->toArray();
+
+                if (count($listEmails) > 0) {
+                    Mail::to($listEmails)
+                        ->send(new NegativeRateCounty($placeEvaluation, $place->email));
                 }
             }
 

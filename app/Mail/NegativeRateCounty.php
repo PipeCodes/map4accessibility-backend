@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class NegativeRate extends Mailable implements ShouldQueue
+class NegativeRateCounty extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -47,7 +47,7 @@ class NegativeRate extends Mailable implements ShouldQueue
         $url = config('app.APP_FRONTEND_URL').
         "/place-details/{$this->placeEvaluation->place->id}/{$google_place_id}";
 
-        return $this->markdown('emails.placeRates.negative-rate')
+        return $this->markdown('emails.placeRates.negative-rate-county')
             ->subject(__('mail.negative_place_rate'))
             ->with(
                 [

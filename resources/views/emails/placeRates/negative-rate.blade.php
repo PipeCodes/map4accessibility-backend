@@ -1,10 +1,18 @@
 @component('mail::message')
 
-Hello,<br />
-A user in your country posted a negative review, <br />
-"{{ $placeEvaluation->comment }}"
+Hello,<br>
+A user in your country posted a negative review,
 
-@component('mail::button', ['url' => $url, 'color' => 'map4accessibility'])
+Comment:<br> 
+"{{ $placeEvaluation->comment ?? '- The review has no comment -' }}"
+
+Place Email:<br>
+{{ $email ?? '- No email defined -' }}
+
+@component('mail::button', [
+    'url' => $url, 
+    'color' => 'map4accessibility'
+])
 Check Comments
 @endcomponent
 
