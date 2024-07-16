@@ -1043,6 +1043,7 @@ class PlaceController extends Controller
                                 'place_type' => $item['types'],
                                 'latitude' => $item['geometry']['location']['lat'],
                                 'longitude' => $item['geometry']['location']['lng'],
+                                'address' => $item['formatted_address'],
                             ]);
                     });
                 }
@@ -1087,6 +1088,7 @@ class PlaceController extends Controller
                                 'place_type' => $item['types'],
                                 'latitude' => $item['geometry']['location']['lat'],
                                 'longitude' => $item['geometry']['location']['lng'],
+                                'address' => $item['formatted_address'],
                             ]);
                     });
                 }
