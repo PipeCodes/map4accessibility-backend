@@ -22,3 +22,4 @@ yarn-error.log
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+.qodo
