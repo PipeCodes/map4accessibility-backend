@@ -908,7 +908,7 @@
                     "Places"
                 ],
                 "summary": "Get Place by its ID",
-                "description": "Get Place its ID",
+                "description": "Get Place its ID, also checks if has with google id",
                 "operationId": "getPlaceById",
                 "parameters": [
                     {

@@ -610,8 +610,8 @@ class PlaceController extends Controller
      *     security={
      *          {"api_key_security": {}}
      *      },
-     *     summary="Get Place by its ID",
-     *     description="Get Place its ID",
+     *     summary="Get Place by its ID, also checks if has with google id",
+     *     description="Get Place its ID, also checks if has with google id",
      *     operationId="getPlaceById",
      *
      *     @OA\Parameter(
@@ -655,22 +655,15 @@ class PlaceController extends Controller
     public function getPlaceById(Request $request, string $id)
     {
         try {
-            $validator = Validator::make(
-                $request->all(), [
-                    'id' => [
-                        'exists:places,id',
-                        'integer',
-                    ],
-                ]
-            );
+            $validator = Validator::make(['id' => $id], [
+                'id' => ['string'],
+            ]);
 
             if ($validator->fails()) {
                 return $this->respondError($validator->errors(), 422);
             }
 
-            $place = Place::query()
-                ->select('*')
-                ->where('id', $id)
+            $query = Place::query()->select('*')
                 ->with('placeDeletion')
                 ->with('placeEvaluations')
                 ->with('placeEvaluations.appUser')
@@ -687,8 +680,15 @@ class PlaceController extends Controller
                     'placeEvaluations as inaccessible_count' => function ($query) {
                         $query->where('evaluation', Evaluation::Inaccessible->value);
                     },
-                ])
-                ->first();
+                ]);
+
+            if (is_numeric($id)) {
+                $query->where('id', $id);
+            } else {
+                $query->where('google_place_id', $id);
+            }
+
+            $place = $query->first();
 
             if (! $place) {
                 return $this->respondNotFound();
